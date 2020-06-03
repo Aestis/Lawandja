@@ -13,6 +13,7 @@ public class Quest {
 	private String Faction;
 	private Integer MinReputation;
 	private String Title;
+	private ItemStack Icon;
 	private String Description;
 	private String Target;
 	private String Short;
@@ -56,6 +57,9 @@ public class Quest {
 	
 	public String getTitle() {return this.Title;}
 	public void setTitle(String Title) {this.Title = Title;}
+	
+	public ItemStack getIcon() {return this.Icon;}
+	public void setIcon(ItemStack Icon) {this.Icon = Icon;}
 	
 	public String getDescription() {return this.Description;}
 	public void setDescription(String Description) {this.Description = Description;}

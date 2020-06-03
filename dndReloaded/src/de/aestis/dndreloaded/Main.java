@@ -13,6 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
+import de.aestis.dndreloaded.Util.QuestMap;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Database.Mysql;
@@ -42,7 +43,7 @@ public class Main extends JavaPlugin {
 	
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
-	public HashMap<Integer, Quest> QuestData = new HashMap<Integer, Quest>();
+	public QuestMap QuestData = new QuestMap();
 	
 	/*
 	 * Enable the whole plugin
@@ -133,7 +134,7 @@ public class Main extends JavaPlugin {
 		try {
 			
 			/*
-			 * Load PlayerData after reload
+			 * Load PlayerData initially and after reload
 			 * */
 			
 			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
@@ -238,6 +239,8 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Professions.inscriber")) {config.set("Localization.Professions.inscriber", "Gelehrter");}
         if (!config.isSet("Localization.Professions.alchemist")) {config.set("Localization.Professions.alchemist", "Alchemist");}
         if (!config.isSet("Localization.Professions.farmer")) {config.set("Localization.Professions.farmer", "Bauer");}
+        
+        if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest auswählen");}
         
         saveConfig();
     }

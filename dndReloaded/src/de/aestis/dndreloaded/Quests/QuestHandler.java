@@ -1,7 +1,9 @@
 package de.aestis.dndreloaded.Quests;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -23,12 +25,12 @@ public class QuestHandler {
 	
 	private static QuestHandler instance;
 	
-	private final Main Plugin = Main.instance;
-	
 	/*
 	 * Setting up the instance
 	 * DO NOT CHANGE ANYTHING!
 	 * */
+	
+	private final Main Plugin = Main.instance;
 	
 	public static QuestHandler getInstance() {
 		if (instance == null) {
@@ -49,9 +51,28 @@ public class QuestHandler {
             	for (World w : Bukkit.getServer().getWorlds()) {
         			Bukkit.broadcastMessage("Showing Questgivers for world = " + w.getName());
         			for (Entity e : w.getEntities()) {
-        				if (e.getType() == EntityType.PLAYER) Bukkit.broadcastMessage(" - " + e.getCustomName() + " #" + e.getEntityId() + " || " + e.getUniqueId() + " (" + e.getType() + ")");
+        				if (e.getType() == EntityType.PLAYER) {
+        					Bukkit.broadcastMessage(" - " + e.getCustomName() + " #" + e.getEntityId() + " || " + e.getUniqueId() + " (" + e.getType() + ")");
+        					Bukkit.broadcastMessage("Fetching Quests for: " + e.getUniqueId() + "...");
+        					Bukkit.broadcastMessage("");
+        					
+        					DatabaseHandler db = Plugin.getDatabaseHandler();
+        					
+        					List<Quest> quests = db.getQuestDataNEW(e.getUniqueId().toString());
+        					
+        					for (Quest q : quests) {
+        						Plugin.QuestData.insertQuest(q.getNpcID(), q.getID(), q);
+        						/*
+        						 * Debug Stuff
+        						 * Remove Later!
+        						 */
+        						String title = Plugin.QuestData.getQuestByID(q.getNpcID(), q.getID()).getTitle();
+        						String npc = Plugin.QuestData.getQuestByID(q.getNpcID(), q.getID()).getNpcID();			
+        						Bukkit.broadcastMessage("§c Quest: '" + title + "' from NPC " + npc);
+        					}
+        				}	
         			}
-        		}
+        		}            	
             }
         }, 50L);
 	}
@@ -64,6 +85,7 @@ public class QuestHandler {
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;	
 		
 		Entity npc = event.getRightClicked();
+		String npcUUID = npc.getUniqueId().toString();
 		Player player = event.getPlayer();
 
 		Bukkit.broadcastMessage("§6Player §2" + player.getName() + "§6 selected Entity §2" + npc.getUniqueId());
@@ -74,16 +96,22 @@ public class QuestHandler {
 			DatabaseHandler Database = Plugin.getDatabaseHandler();	
 			Bukkit.broadcastMessage("§6Checking for §2" + npc.getUniqueId().toString() + "§6...");
 			
-			if (Database.hasQuests(npc.getUniqueId().toString())) {
+			if (Plugin.QuestData.hasQuests(npcUUID)) {
 				
 				Bukkit.broadcastMessage("§2NPC Has Something. Let Me Fetch It For You...");
-				Quest q = Database.getQuestData(npc.getUniqueId().toString());
+				
+				List<HashMap<Integer, Quest>> quests = Plugin.QuestData.getAllQuestsFromNPC(npcUUID);
+				
+				Inventory gui = getQuestListInventory(quests, player, npcUUID);
+				player.openInventory(gui);
+				
+				/*Quest q = Database.getQuestData(npc.getUniqueId().toString());
 
 				if (q != null) {
 	
 					Inventory gui = getQuestSpecificInventory(q, player, npc.getUniqueId().toString(), npc.getName());
 					player.openInventory(gui);
-				}
+				}*/
 			} else {
 				Bukkit.broadcastMessage("§cNPC Hasn't Got Any Quest For You, Yet.");
 			}
@@ -92,6 +120,31 @@ public class QuestHandler {
 		System.out.println(Plugin.SelectedNPC);
 	}
 	
+	
+	private Inventory getQuestListInventory (List<HashMap<Integer, Quest>> quests, Player player, String uuid) {
+		
+		final String title = Plugin.getConfig().getString("Localization.Quests.Inventories.selector");
+		Integer size = 9;
+		if (quests.size() > 9) size = 27;
+		
+		Inventory gui = Bukkit.createInventory(Bukkit.getPlayer(uuid), size, title);
+		
+		for (HashMap<Integer, Quest> q : quests) {
+			
+			for (Entry<Integer, Quest> key : q.entrySet()) {
+				
+				Quest quest = key.getValue();
+				
+				gui.addItem(getGUIItem(quest.getIcon().getType(), 1, quest.getTitle(), quest.getShort()));
+				
+				Bukkit.broadcastMessage(key.getValue().getTitle());
+				
+			}
+			
+		}
+		
+		return gui;
+	}
 	
 	private Inventory getQuestSpecificInventory (Quest quest, Player player, String uuid, String title) {
 		Inventory gui = Bukkit.createInventory(Bukkit.getPlayer(uuid), 27, title);

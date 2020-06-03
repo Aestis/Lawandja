@@ -6,6 +6,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -34,9 +36,10 @@ public class DatabaseHandler {
 	}
 	
 	public void initializeDatabase() {
+		
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("CREATE TABLE `players` (" + 
+			stmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (" + 
 					"  `PlayerID` int(11) NOT NULL," + 
 					"  `PlayerName` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `PlayerFaction` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'FREE'," + 
@@ -68,10 +71,51 @@ public class DatabaseHandler {
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 			
 			stmt.executeUpdate();
+			Main.instance.getLogger().info("Required Table 'players' Successfully Created.");
+			
+			stmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `quests` (" + 
+					"  `QuestID` int(8) NOT NULL," + 
+					"  `NpcID` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestRequired` int(8) NOT NULL DEFAULT '0'," + 
+					"  `QuestFaction` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMinReputation` int(12) DEFAULT NULL," + 
+					"  `QuestTitle` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestDescription` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestTarget` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestShort` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMessageAccept` varchar(192) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMessageDecline` varchar(192) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMessageRunning` varchar(192) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMessageFail` varchar(192) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMessageSuccess` varchar(192) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestStarterItem` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestStarterItemAmount` int(3) NOT NULL DEFAULT '0'," + 
+					"  `QuestType` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestVariable` int(12) DEFAULT NULL," + 
+					"  `QuestItem` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestItemAmount` int(3) NOT NULL DEFAULT '0'," + 
+					"  `QuestDestination` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestRewardXP` int(16) NOT NULL DEFAULT '0'," + 
+					"  `QuestReputationGain` int(11) DEFAULT NULL," + 
+					"  `QuestBonusRewardType` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestBonusReward` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestBonusRewardAmount` int(3) DEFAULT '0'," + 
+					"  `QuestCompletionText` varchar(1024) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestDoesFollow` tinyint(1) NOT NULL DEFAULT '0'," + 
+					"  `QuestFollowID` int(8) DEFAULT '0'," + 
+					"  `QuestCreator` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestCreated` datetime DEFAULT NULL," + 
+					"  `DevQuestReportedStatus` int(11) DEFAULT '1'," + 
+					"  `DevQuestReportedAsignee` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `DevQuestReportedChange` date DEFAULT NULL," + 
+					"  `QuestActive` tinyint(1) NOT NULL DEFAULT '0'" + 
+					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");	
+			stmt.executeUpdate();
+			Main.instance.getLogger().info("Required Table 'quests' Successfully Created.");
+			
 			stmt.close();
-			Main.instance.getLogger().info("Required Tables Successfully Created.");
 		} catch (SQLException e) {
-			Main.instance.getLogger().info("Required Tables Could Not Be Created.");
+			Main.instance.getLogger().info("Required Tables Already Exist. Nothing Changed.");
 		}
 	}
 	
@@ -227,6 +271,7 @@ public class DatabaseHandler {
 		}
 	}
 	
+	// THIS IS OLD! REMOVE LATER
 	public Quest getQuestData(String uuid) {
 		PreparedStatement stmt;
 		try {
@@ -242,7 +287,36 @@ public class DatabaseHandler {
 			return null;
 		}
 	}
+	
+	// THIS IS NEW! KEEP THAT
+	public List<Quest> getQuestDataNEW(String uuid) {
+		PreparedStatement stmt;
+		try {
+			
+			List<Quest> list = new ArrayList<Quest>();
+			
+			stmt = con.prepareStatement("SELECT * FROM Quests WHERE NpcID = ?");
+			stmt.setString(1, uuid);
+			ResultSet rs = stmt.executeQuery();
+			
+			list.addAll(prepareQuestDataNEW(rs));
+			
+			for (Quest q : list) {
+				System.out.println("Quest #" + q.getID() + " (" + q.getTitle() + ") added to list!");
+			}
 
+			
+			rs.close();
+			stmt.close();
+			
+			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	// THIS IS OLD! REMOVE LATER
 	private Quest prepareQuestData(ResultSet rs) throws SQLException {
 		while (rs.next()) {
 			ItemStack itm = null;
@@ -293,6 +367,70 @@ public class DatabaseHandler {
 			return d;
 		}
 		return null;
+	}
+	
+	// THIS IS NEW! KEEP THAT
+	private List<Quest> prepareQuestDataNEW(ResultSet rs) throws SQLException {
+		
+		List<Quest> list = new ArrayList<Quest>();
+		
+		while (rs.next()) {
+			ItemStack itm = null;
+			Quest d = new Quest(rs.getInt("QuestID"));
+			d.setNpcID(rs.getString("NpcID"));
+			d.setRequired(rs.getInt("QuestRequired"));
+			d.setFaction(rs.getString("QuestFaction"));
+			d.setMinReputation(rs.getInt("QuestMinReputation"));
+			d.setTitle(rs.getString("QuestTitle"));
+			if (rs.getString("QuestIcon") != null) {
+				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestIcon")), 1);
+				d.setIcon(itm);
+			} else {
+				d.setIcon(null);
+			}	
+			d.setDescription(rs.getString("QuestDescription"));
+			d.setTarget(rs.getString("QuestTarget"));
+			d.setShort(rs.getString("QuestShort"));		
+			d.setMessageAccept(rs.getString("QuestMessageAccept"));
+			d.setMessageDecline(rs.getString("QuestMessageDecline"));
+			d.setMessageRunning(rs.getString("QuestMessageRunning"));
+			d.setMessageFail(rs.getString("QuestMessageFail"));
+			d.setMessageSuccess(rs.getString("QuestMessageSuccess"));
+			if (rs.getString("QuestStarterItem") != null) {
+				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestStarterItem")), rs.getInt("QuestStarterItemAmount"));
+				d.setStarterItem(itm);
+			} else {
+				d.setStarterItem(null);
+			}	
+			d.setType(rs.getString("QuestType"));
+			d.setVariable(rs.getInt("QuestVariable"));
+			if (rs.getString("QuestItem") != null) {
+				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestItem")), rs.getInt("QuestItemAmount"));
+				d.setItem(itm);
+			} else {
+				d.setItem(null);
+			}	
+		 	d.setDestination(rs.getString("QuestDestination"));
+		 	d.setRewardXP(rs.getInt("QuestRewardXP"));
+		 	d.setReputationGain(rs.getInt("QuestReputationGain"));
+		 	d.setBonusRewardType(rs.getString("QuestBonusRewardType"));
+		 	if (rs.getString("QuestBonusReward") != null) {
+		 		itm = new ItemStack(Material.matchMaterial(rs.getString("QuestBonusReward")), rs.getInt("QuestBonusRewardAmount"));
+		 		d.setBonusReward(itm);
+		 	} else {
+				d.setBonusReward(null);
+			}	
+		 	d.setCompletionText(rs.getString("QuestCompletionText"));
+		 	d.setDoesFollow(rs.getBoolean("QuestDoesFollow"));
+		 	d.setFollowID(rs.getInt("QuestFollowID"));
+		 	d.setCreator(rs.getString("QuestCreator"));
+		 	d.setCreated(rs.getDate("QuestCreated"));
+		 	d.setActive(rs.getBoolean("QuestActive"));
+			
+		 	list.add(d);
+		}
+		
+		return list;
 	}
 	
 	/*
