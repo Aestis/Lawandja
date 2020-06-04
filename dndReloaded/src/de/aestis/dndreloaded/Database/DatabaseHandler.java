@@ -270,26 +270,7 @@ public class DatabaseHandler {
 			return false;
 		}
 	}
-	
-	// THIS IS OLD! REMOVE LATER
-	@Deprecated
-	public Quest getQuestData(String uuid) {
-		PreparedStatement stmt;
-		try {
-			stmt = con.prepareStatement("SELECT * FROM Quests WHERE NpcID = ?");
-			stmt.setString(1, uuid);
-			ResultSet rs = stmt.executeQuery();
-			Quest questData = prepareQuestData(rs);
-			rs.close();
-			stmt.close();
-			return questData;
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
-	// THIS IS NEW! KEEP THAT
+		
 	public List<Quest> getQuestDataNEW(String uuid) {
 		PreparedStatement stmt;
 		try {
@@ -317,60 +298,6 @@ public class DatabaseHandler {
 		}
 	}
 	
-	@Deprecated
-	private Quest prepareQuestData(ResultSet rs) throws SQLException {
-		while (rs.next()) {
-			ItemStack itm = null;
-			Quest d = new Quest(rs.getInt("QuestID"));
-			d.setNpcID(rs.getString("NpcID"));
-			d.setRequired(rs.getInt("QuestRequired"));
-			d.setFaction(rs.getString("QuestFaction"));
-			d.setMinReputation(rs.getInt("QuestMinReputation"));
-			d.setTitle(rs.getString("QuestTitle"));
-			d.setDescription(rs.getString("QuestDescription"));
-			d.setTarget(rs.getString("QuestTarget"));
-			d.setShort(rs.getString("QuestShort"));		
-			d.setMessageAccept(rs.getString("QuestMessageAccept"));
-			d.setMessageDecline(rs.getString("QuestMessageDecline"));
-			d.setMessageRunning(rs.getString("QuestMessageRunning"));
-			d.setMessageFail(rs.getString("QuestMessageFail"));
-			d.setMessageSuccess(rs.getString("QuestMessageSuccess"));
-			if (rs.getString("QuestStarterItem") != null) {
-				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestStarterItem")), rs.getInt("QuestStarterItemAmount"));
-				d.setStarterItem(itm);
-			} else {
-				d.setStarterItem(null);
-			}	
-			d.setType(rs.getString("QuestType"));
-			d.setVariable(rs.getInt("QuestVariable"));
-			if (rs.getString("QuestItem") != null) {
-				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestItem")), rs.getInt("QuestItemAmount"));
-				d.setItem(itm);
-			} else {
-				d.setItem(null);
-			}	
-		 	d.setDestination(rs.getString("QuestDestination"));
-		 	d.setRewardXP(rs.getInt("QuestRewardXP"));
-		 	d.setReputationGain(rs.getInt("QuestReputationGain"));
-		 	d.setBonusRewardType(rs.getString("QuestBonusRewardType"));
-		 	if (rs.getString("QuestBonusReward") != null) {
-		 		itm = new ItemStack(Material.matchMaterial(rs.getString("QuestBonusReward")), rs.getInt("QuestBonusRewardAmount"));
-		 		d.setBonusReward(itm);
-		 	} else {
-				d.setBonusReward(null);
-			}	
-		 	d.setCompletionText(rs.getString("QuestCompletionText"));
-		 	d.setDoesFollow(rs.getBoolean("QuestDoesFollow"));
-		 	d.setFollowID(rs.getInt("QuestFollowID"));
-		 	d.setCreator(rs.getString("QuestCreator"));
-		 	d.setCreated(rs.getDate("QuestCreated"));
-		 	d.setActive(rs.getBoolean("QuestActive"));
-			return d;
-		}
-		return null;
-	}
-	
-	// THIS IS NEW! KEEP THAT
 	private List<Quest> prepareQuestDataNEW(ResultSet rs) throws SQLException {
 		
 		List<Quest> list = new ArrayList<Quest>();

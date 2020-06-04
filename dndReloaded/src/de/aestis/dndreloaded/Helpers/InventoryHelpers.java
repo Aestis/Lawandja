@@ -14,9 +14,7 @@ public class InventoryHelpers {
 	 * Setting up the instance
 	 * DO NOT CHANGE ANYTHING!
 	 * */
-	
-	private HashMap<Player, Inventory> PlayerInventories = new HashMap<Player, Inventory>();
-	
+		
 	public static InventoryHelpers getInstance() {
 		
 		if (instance == null) {
@@ -32,32 +30,5 @@ public class InventoryHelpers {
 		}
 		return true;
 	}
-	
-	
-	public Inventory getInventory(Player player) {
-		
-		if (PlayerInventories.containsKey(player)) {
-			return PlayerInventories.get(player);
-		} else {
-			return null;
-		}
-	}
-	
-	/*public Player getPlayer(Inventory inv) {
-		
-		for (Player e : PlayerInventories.keySet()) {
-			
-		}
-	}*/
-	
-	public void pushInventory(Player player, Inventory inv) {
-		
-		if (PlayerInventories.containsKey(player)) {
-			PlayerInventories.replace(player, inv);
-		} else {
-			PlayerInventories.put(player, inv);
-		}
-		
-		System.out.println(PlayerInventories);
-	}
+
 }

@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -121,6 +122,15 @@ public class EventListener implements Listener {
 			return;
 		}
 		
+	}
+	
+	
+	@EventHandler
+	public void inventoryMenuClickEvent(InventoryClickEvent event) {
+		Player player = (Player) event.getWhoClicked();
+		ItemStack item = event.getCurrentItem();
+		Inventory inv = event.getClickedInventory();
+		//if (inv.get)
 	}
 	
 	
