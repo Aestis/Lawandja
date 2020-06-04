@@ -17,6 +17,7 @@ import de.aestis.dndreloaded.Util.QuestMap;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Database.Mysql;
+import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
@@ -33,6 +34,7 @@ public class Main extends JavaPlugin {
 	private InventoryHelpers InventoryHelper;
 	private ScoreboardHelpers ScoreboardHelper;
 	private MathHelpers MathHelper;
+	private BookHelpers BookHelper;
 	private DatabaseHandler DatabaseHnd;
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
@@ -61,6 +63,10 @@ public class Main extends JavaPlugin {
 			 * */
 			
 			setupConfigs();
+			
+			/*FileConfiguration config = this.getConfig();
+	        config.options().copyDefaults(true);
+	        saveConfig();*/
 		} catch (Exception ex) {
 			getLogger().info("Error Whilst Setting Up Configs, Shutting Down...: " + ex);
 			Bukkit.getPluginManager().disablePlugin(this);
@@ -73,7 +79,7 @@ public class Main extends JavaPlugin {
 			 * Initialize Database connection (essential!)
 			 * */
 			
-			getLogger().info("No Mysql Connection, Shutting Down...");
+			getLogger().warning("No Mysql Connection, Shutting Down...");
 			Bukkit.getPluginManager().disablePlugin(this);
 		    return;
 		} else {
@@ -94,6 +100,7 @@ public class Main extends JavaPlugin {
 			setInventoryHelper();
 			setMathHelper();
 			setScoreboardHelper();
+			setBookHelper();
 			
 			//Handlers
 			setDatabaseHandler();
@@ -174,6 +181,7 @@ public class Main extends JavaPlugin {
 	private void setInventoryHelper() {this.InventoryHelper = InventoryHelpers.getInstance();}
 	private void setMathHelper() {this.MathHelper = MathHelpers.getInstance();}
 	private void setScoreboardHelper() {this.ScoreboardHelper = ScoreboardHelpers.getInstance();}
+	private void setBookHelper() {this.BookHelper = BookHelpers.getInstance();}
 	
 	//Handlers
 	private void setDatabaseHandler() {this.DatabaseHnd = DatabaseHandler.getInstance();}
@@ -192,6 +200,7 @@ public class Main extends JavaPlugin {
 	public InventoryHelpers getInventoryHelper() {return this.InventoryHelper;}
 	public MathHelpers getMathHelper() {return this.MathHelper;}
 	public ScoreboardHelpers getScoreboardHelper() {return this.ScoreboardHelper;}
+	public BookHelpers getBookHelper() {return this.BookHelper;}
 	
 	//Handlers
 	public DatabaseHandler getDatabaseHandler() {return this.DatabaseHnd;}
@@ -240,7 +249,7 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Professions.alchemist")) {config.set("Localization.Professions.alchemist", "Alchemist");}
         if (!config.isSet("Localization.Professions.farmer")) {config.set("Localization.Professions.farmer", "Bauer");}
         
-        if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest auswählen");}
+        if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest aus");}
         
         saveConfig();
     }

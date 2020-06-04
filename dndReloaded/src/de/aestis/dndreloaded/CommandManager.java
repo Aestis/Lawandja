@@ -1,5 +1,8 @@
 package de.aestis.dndreloaded;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,6 +13,8 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 
 public class CommandManager implements CommandExecutor {
 
+	private final Main Plugin = Main.instance;
+	
 	public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] argArr) {
 
 		Player player = Bukkit.getPlayer(sender.getName());
@@ -21,6 +26,20 @@ public class CommandManager implements CommandExecutor {
 				player.openWorkbench(player.getLocation(), true);
 				
 				sender.sendMessage("Hello World :)");
+				return true;
+			}
+			
+			
+			if (argArr[0].equalsIgnoreCase("book")) {
+				
+				sender.sendMessage("Erstelle Questlog...");
+				
+				List<String> text = new ArrayList<String>();
+				text.add("§d[1. Abmeddeln]");
+				text.add("Der Drachenlord ist sehr dankbar für deine Dienste! Gut gemacht! Und jetzt ab zum nächsten Kaschber, sonder schmaßt dir der Ongl Alfred am Mondach noch die Anzeigne naus!");
+				
+				player.getInventory().addItem(Plugin.getBookHelper().createNewBook("Questlog von" + player.getName(), "Jenominers.de", text));
+				
 				return true;
 			}
 			

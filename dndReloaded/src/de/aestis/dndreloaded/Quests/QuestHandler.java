@@ -20,6 +20,7 @@ import org.bukkit.util.ChatPaginator;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
+import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 
 public class QuestHandler {
 	
@@ -93,7 +94,6 @@ public class QuestHandler {
 	
 		if (npc.getCustomName() != null) {
 			
-			DatabaseHandler Database = Plugin.getDatabaseHandler();	
 			Bukkit.broadcastMessage("§6Checking for §2" + npc.getUniqueId().toString() + "§6...");
 			
 			if (Plugin.QuestData.hasQuests(npcUUID)) {
@@ -101,8 +101,10 @@ public class QuestHandler {
 				Bukkit.broadcastMessage("§2NPC Has Something. Let Me Fetch It For You...");
 				
 				List<HashMap<Integer, Quest>> quests = Plugin.QuestData.getAllQuestsFromNPC(npcUUID);
+				InventoryHelpers inv = Plugin.getInventoryHelper();
 				
 				Inventory gui = getQuestListInventory(quests, player, npcUUID);
+				inv.pushInventory(player, gui);
 				player.openInventory(gui);
 				
 				/*Quest q = Database.getQuestData(npc.getUniqueId().toString());

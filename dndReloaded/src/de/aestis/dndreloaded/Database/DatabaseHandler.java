@@ -272,6 +272,7 @@ public class DatabaseHandler {
 	}
 	
 	// THIS IS OLD! REMOVE LATER
+	@Deprecated
 	public Quest getQuestData(String uuid) {
 		PreparedStatement stmt;
 		try {
@@ -316,7 +317,7 @@ public class DatabaseHandler {
 		}
 	}
 	
-	// THIS IS OLD! REMOVE LATER
+	@Deprecated
 	private Quest prepareQuestData(ResultSet rs) throws SQLException {
 		while (rs.next()) {
 			ItemStack itm = null;
