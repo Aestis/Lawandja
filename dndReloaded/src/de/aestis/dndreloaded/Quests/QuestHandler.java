@@ -8,11 +8,13 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
+import de.aestis.dndreloaded.Util.QuestMap;
 import de.aestis.dndreloaded.Util.QuestSelectorMenu;
 
 import oxolotel.inventoryMenuManager.InventoryMenuManager;
@@ -62,8 +64,12 @@ public class QuestHandler {
         						 * Debug Stuff
         						 * Remove Later!
         						 */
-        						String title = Plugin.QuestData.getQuestByID(q.getNpcID(), q.getID()).getTitle();
-        						String npc = Plugin.QuestData.getQuestByID(q.getNpcID(), q.getID()).getNpcID();			
+        						String title = Plugin.QuestData.getNpcQuestByID(q.getNpcID(), q.getID()).getTitle();
+        						String npc = Plugin.QuestData.getNpcQuestByID(q.getNpcID(), q.getID()).getNpcID();			
+        						Bukkit.broadcastMessage("§c Quest: '" + title + "' from NPC " + npc);
+        						
+        						Bukkit.broadcastMessage("§c Loading Quest (3)...");
+        						q = Plugin.QuestData.getQuestByID(3);
         						Bukkit.broadcastMessage("§c Quest: '" + title + "' from NPC " + npc);
         					}
         				}	
@@ -72,12 +78,81 @@ public class QuestHandler {
             }
         }, 50L);
 	}
+		
+	public Quest getPlayerQuestPrimary (Player player) {
+		
+		//TODO
+		return null;
+	}
+	
+	public Quest getPlayerQuestSecondary (Player player) {
+		
+		//TODO
+		return null;
+	}
+	
+	private boolean setPlayerQuestPrimary (Player player, Quest quest) {
+		
+		//TODO
+		return false;
+	}
+	
+	private boolean setPlayerQuestSecondary (Player player, Quest quest) {
+		
+		//TODO
+		return false;
+	}
+	
+	public boolean setPlayerQuest (Player player, Quest quest) {
+		
+		/*
+		 * Logic for inserting Quest
+		 * Into Quest-Slot 1 & 2
+		 */
+		if (getPlayerQuestPrimary(player) == null) {
+			setPlayerQuestPrimary(player, quest);
+			return true;
+		} else if (getPlayerQuestSecondary(player) == null) {
+			setPlayerQuestSecondary(player, quest);
+			return true;
+		}	
+		
+		return false;
+	}
+	
+	public void handleQuestEvents (Player player, Event event) {
+		
+		if (Plugin.Players.get(player).getQuestActive1() != null
+			|| Plugin.Players.get(player).getQuestActive2() != null) {
+			
+			switch (event.getEventName()) {
+			
+				case "PlayerInteractEntity":
+					//TODO
+					
+					/*
+					 * Register custom EventListener 
+					 */
+					
+					//event.getHandlers().register(listener);
+					break;
+			}
+		} else {
+			
+			return;
+		}
+	}
 	
 	
 	//EventListener
 	
 	public void handleQuestgiverInteraction (PlayerInteractEntityEvent event) {
-
+		
+		/*
+		 * Block second trigger (OFF_HAND)
+		 * Without Event would be triggered twice
+		 */
+		
 		if (event.getHand() == EquipmentSlot.OFF_HAND) return;	
 		
 		Entity npc = event.getRightClicked();
@@ -85,6 +160,8 @@ public class QuestHandler {
 		Player player = event.getPlayer();
 
 		Bukkit.broadcastMessage("§6Player §2" + player.getName() + "§6 selected Entity §2" + npc.getUniqueId());
+		
+		//Put this NPC into memory
 		Plugin.SelectedNPC.put(player, npc.getUniqueId().toString());
 	
 		if (npc.getCustomName() != null) {

@@ -40,8 +40,19 @@ public class QuestMap {
     	return list;
     }
 
-    public Quest getQuestByID(String UUID, Integer QuestID) {
+    public Quest getNpcQuestByID(String UUID, Integer QuestID) {
     	
         return map.get(UUID).get(QuestID);
+    }
+    
+    public Quest getQuestByID(Integer QuestID) {
+
+    	for (HashMap<Integer, Quest> m : map.values()) {
+    		for (Integer e : m.keySet()) {
+    			if (e == QuestID) return m.get(e);
+    		}
+    	}
+    	
+    	return null;
     }
 }

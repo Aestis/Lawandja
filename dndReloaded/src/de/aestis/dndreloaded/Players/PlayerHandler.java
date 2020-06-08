@@ -77,4 +77,11 @@ public class PlayerHandler {
 		}	
 	}
 	
+	public boolean hasProfession(PlayerData playerData, String profession) {
+		
+		if (playerData.getProfessionPrimary().getName().equalsIgnoreCase(profession)
+			|| playerData.getProfessionSecondary().getName().equalsIgnoreCase(profession)) return true;
+		return false;
+	}
+	
 }

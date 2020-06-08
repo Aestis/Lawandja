@@ -10,6 +10,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Util.Misc.GUIItem;
 import oxolotel.inventoryMenuManager.menus.Closeable;
@@ -20,6 +21,8 @@ import oxolotel.utils.DoubleWrapper;
 public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 	
 	private Quest q;
+	
+	private final Main Plugin = Main.instance;
 	
 	public QuestMenu(Quest quest) {
 		super(27);
@@ -72,8 +75,8 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 				rtn.put(i, dw);
 			}
 			if (i == 18) {
-				dw = new DoubleWrapper<>(gui.getGUIItem(Material.LIME_BANNER, 1, "§2Quest annehmen!", "§6Starte die Quest §2" + q.getTitle() + "§6!"), ()->{
-					System.out.println("CODE TO START QUEST (" + q.getID() + ") = " + q.getTitle());
+				dw = new DoubleWrapper<>(gui.getGUIItem(Material.LIME_BANNER, 1, "§2Quest annehmen!", "§6Starte die Quest §2" + q.getTitle() + "§6!"), ()-> {
+					//
 				});
 				rtn.put(i, dw);
 			}
@@ -90,6 +93,18 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 		}
 				
 		return rtn;
+	}
+	
+	interface QuestAccept {
+		void accept(Player player, Quest quest);
+	}
+	
+	
+	private void onQuestAccept(Player player, Quest quest) {
+		
+		player.sendMessage(quest.getMessageDecline());
+		Plugin.Players.get(player).setQuestActive1(quest.getID());
+		
 	}
 
 

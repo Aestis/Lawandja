@@ -38,4 +38,10 @@ public class GameTicks {
 		}, 500, 500);
 	}
 	
+	public BukkitTask getSyncTask() {
+		
+		if (syncTaskID != null) return syncTaskID;
+		return null;
+	}
+	
 }

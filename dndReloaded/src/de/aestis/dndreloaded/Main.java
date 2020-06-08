@@ -26,7 +26,7 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.9.43";
+	public static String Version = "0.11.10";
 	
 	public static Main instance;
 	
@@ -68,7 +68,7 @@ public class Main extends JavaPlugin {
 	        config.options().copyDefaults(true);
 	        saveConfig();*/
 		} catch (Exception ex) {
-			getLogger().info("Error Whilst Setting Up Configs, Shutting Down...: " + ex);
+			getLogger().severe("Error Whilst Setting Up Configs, Shutting Down...: " + ex);
 			Bukkit.getPluginManager().disablePlugin(this);
 		}
 		
@@ -79,11 +79,11 @@ public class Main extends JavaPlugin {
 			 * Initialize Database connection (essential!)
 			 * */
 			
-			getLogger().warning("No Mysql Connection, Shutting Down...");
+			getLogger().severe("No Mysql Connection, Shutting Down...");
 			Bukkit.getPluginManager().disablePlugin(this);
 		    return;
 		} else {
-			getLogger().info("Successfully set Up MySQL Connection.");
+			getLogger().fine("Successfully set Up MySQL Connection.");
 		}
 		
 		try {
@@ -118,7 +118,7 @@ public class Main extends JavaPlugin {
 			
 			getLogger().info("Sucessfully Enabled All Addons.");
 		} catch (Exception ex) {
-			getLogger().info("Error Whilst Initializing Addons: " + ex);
+			getLogger().severe("Error Whilst Initializing Addons: " + ex);
 			return;
 		}
 		
@@ -134,7 +134,7 @@ public class Main extends JavaPlugin {
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
 		} catch (Exception ex) {
-			getLogger().info("Error whilst enabling EventListener/CommandExecutor: " + ex);
+			getLogger().severe("Error whilst enabling EventListener/CommandExecutor: " + ex);
 			return;
 		}
 		
@@ -152,14 +152,14 @@ public class Main extends JavaPlugin {
 			GameTcs.startSyncTask();
 			
 		} catch (Exception ex) {
-			getLogger().info("Could Not Load Player Data: " + ex);
+			getLogger().severe("Could Not Load Player Data: " + ex);
 		}
 		
-		getLogger().info("dndReloaded v" + Version + " successfully enabled!");
+		getLogger().fine("dndReloaded v" + Version + " successfully enabled!");
 	}
 	
 	public void onDisable() {
-		getLogger().log(Level.SEVERE, "DND ### dndReloaded v " + Version + " shutting down...");
+		getLogger().severe("Lawandja CORE v " + Version + " shutting down...");
 	}
 	
 	/*

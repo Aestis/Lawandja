@@ -43,6 +43,23 @@ public class CommandManager implements CommandExecutor {
 				return true;
 			}
 			
+			if (argArr[0].equalsIgnoreCase("questreload")) {
+				
+				sender.sendMessage("Lade Quests neu...");
+				
+				if (Plugin.getGameTicks().getSyncTask() != null) {
+					Plugin.getGameTicks().getSyncTask().cancel();
+					Plugin.getQuestHandler().initialize();
+					Plugin.getGameTicks().startSyncTask();
+				} else {
+					sender.sendMessage("Quests konnten nicht neu geladen werden!");
+				}
+				
+				sender.sendMessage("Quests neu geladen!");
+				
+				return true;
+			}
+			
 			
 			if (argArr[0].equalsIgnoreCase("createquest")) {
 				

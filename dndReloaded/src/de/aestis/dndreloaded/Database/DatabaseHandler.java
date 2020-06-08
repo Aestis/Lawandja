@@ -39,7 +39,7 @@ public class DatabaseHandler {
 		
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `players` (" + 
+			stmt = con.prepareStatement("CREATE TABLE `players` (" + 
 					"  `PlayerID` int(11) NOT NULL," + 
 					"  `PlayerName` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `PlayerFaction` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'FREE'," + 
@@ -68,12 +68,13 @@ public class DatabaseHandler {
 					"  `PlayerDeaths` int(11) NOT NULL DEFAULT '0'," + 
 					"  `PlayerPunishment` int(11) NOT NULL DEFAULT '0'," + 
 					"  `PlayerJoined` datetime DEFAULT NULL" + 
+					"  PRIMARY KEY (PlayerID)" + 
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 			
 			stmt.executeUpdate();
-			Main.instance.getLogger().info("Required Table 'players' Successfully Created.");
+			Main.instance.getLogger().fine("Required Table 'players' Successfully Created.");
 			
-			stmt = con.prepareStatement("CREATE TABLE IF NOT EXISTS `quests` (" + 
+			stmt = con.prepareStatement("CREATE TABLE `quests` (" + 
 					"  `QuestID` int(8) NOT NULL," + 
 					"  `NpcID` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `QuestRequired` int(8) NOT NULL DEFAULT '0'," + 
@@ -109,9 +110,10 @@ public class DatabaseHandler {
 					"  `DevQuestReportedAsignee` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `DevQuestReportedChange` date DEFAULT NULL," + 
 					"  `QuestActive` tinyint(1) NOT NULL DEFAULT '0'" + 
+					"  PRIMARY KEY (QuestID)" + 
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");	
 			stmt.executeUpdate();
-			Main.instance.getLogger().info("Required Table 'quests' Successfully Created.");
+			Main.instance.getLogger().fine("Required Table 'quests' Successfully Created.");
 			
 			stmt.close();
 		} catch (SQLException e) {
