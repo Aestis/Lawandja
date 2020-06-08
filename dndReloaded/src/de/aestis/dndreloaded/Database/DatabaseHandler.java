@@ -58,6 +58,7 @@ public class DatabaseHandler {
 					"  `PlayerProfessionInscriber` int(16) NOT NULL DEFAULT '-1'," + 
 					"  `PlayerProfessionAlchemist` int(16) NOT NULL DEFAULT '-1'," + 
 					"  `PlayerProfessionFarmer` int(16) NOT NULL DEFAULT '-1'," + 
+					"  `PlayerProfessionTanner` int(16) NOT NULL DEFAULT '-1'," + 
 					"  `PlayerKillsFriendly` int(11) NOT NULL DEFAULT '0'," + 
 					"  `PlayerKillsEnemy` int(11) NOT NULL DEFAULT '0'," + 
 					"  `PlayerQuestActive1` int(8) DEFAULT NULL," + 

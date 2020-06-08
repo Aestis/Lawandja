@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -13,12 +12,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Util.QuestMap;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
+import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerHerbalist;
+import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerWoodcutter;
 import de.aestis.dndreloaded.Database.Mysql;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
@@ -29,7 +29,7 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.11.10";
+	public static String Version = "0.12.45";
 	
 	public static Main instance;
 	
@@ -41,6 +41,7 @@ public class Main extends JavaPlugin {
 	private DatabaseHandler DatabaseHnd;
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
+	private ProfessionHandler ProfessionHnd;
 	private DataSync DataSn;
 	private GameTicks GameTcs;
 	
@@ -109,6 +110,7 @@ public class Main extends JavaPlugin {
 			setDatabaseHandler();
 			setQuestHandler();
 			setPlayerHandler();
+			setProfessionHandler();
 			
 			//Main Components
 			setDataSync();
@@ -140,6 +142,8 @@ public class Main extends JavaPlugin {
 			 * based EventListeners
 			 */
 			
+			getServer().getPluginManager().registerEvents((Listener) new ListenerWoodcutter(), this);
+			//...
 			getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
 			
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
@@ -198,6 +202,7 @@ public class Main extends JavaPlugin {
 	private void setDatabaseHandler() {this.DatabaseHnd = DatabaseHandler.getInstance();}
 	private void setQuestHandler() {this.QuestHnd = QuestHandler.getInstance();}
 	private void setPlayerHandler() {this.PlayerHnd = PlayerHandler.getInstance();}
+	private void setProfessionHandler() {this.ProfessionHnd = ProfessionHandler.getInstance();}
 	
 	//Main Components
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}
@@ -217,6 +222,7 @@ public class Main extends JavaPlugin {
 	public DatabaseHandler getDatabaseHandler() {return this.DatabaseHnd;}
 	public QuestHandler getQuestHandler() {return this.QuestHnd;}
 	public PlayerHandler getPlayerHandler() {return this.PlayerHnd;}
+	public ProfessionHandler getProfessionHandler() {return this.ProfessionHnd;}
 	
 	//Main Components
 	public DataSync getDataSync() {return this.DataSn;}
@@ -252,62 +258,134 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Block.Drop.Wood.Amount.min")) {config.set("Block.Drop.Wood.Amount.min", 1);}
         if (!config.isSet("Block.Drop.Wood.Amount.max")) {config.set("Block.Drop.Wood.Amount.max", 3);}
         
+        //TODO
+        
         /*
-         * Setup Blocks / Recipes
+         * Setup Blocks / Recipes / Stuff
          * for specific Professions (Woodcutter)
+         * 
+         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         * !!! IMPLEMENT XP GAIN BLACKLIST TO AVOID ABUSE !!!
+         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         * 
          */
         
-        List<String> woodcutter = new ArrayList<>();
-        woodcutter.add("minecraft:oak_log");
-        woodcutter.add("minecraft:spruce_log");
-        woodcutter.add("minecraft:birch_log");
-        woodcutter.add("minecraft:jungle_log");
-        woodcutter.add("minecraft:acacia_log");
-        woodcutter.add("minecraft:dark_oak_log");
-        woodcutter.add("minecraft:stripped_oak_log");
-        woodcutter.add("minecraft:stripped_spruce_log");
-        woodcutter.add("minecraft:stripped_birch_log");
-        woodcutter.add("minecraft:stripped_jungle_log");
-        woodcutter.add("minecraft:stripped_acacia_log");
-        woodcutter.add("minecraft:stripped_dark_oak_log");
-        woodcutter.add("minecraft:stripped_oak_wood");
-        woodcutter.add("minecraft:stripped_spruce_wood");
-        woodcutter.add("minecraft:stripped_birch_wood");
-        woodcutter.add("minecraft:stripped_jungle_wood");
-        woodcutter.add("minecraft:stripped_acacia_wood");
-        woodcutter.add("minecraft:stripped_dark_oak_wood");
-        if (!config.isSet("Profession.Woodcutter.blocks")) {config.set("Profession.Woodcutter.blocks", woodcutter);}
+        if (!config.isSet("Profession.Woodcutter.Experience.Pickup.min")) {config.set("Profession.Woodcutter.Experience.Pickup.min", 1);}
+        if (!config.isSet("Profession.Woodcutter.Experience.Pickup.max")) {config.set("Profession.Woodcutter.Experience.Pickup.max", 2);}
+        if (!config.isSet("Profession.Woodcutter.Experience.Crafting.min")) {config.set("Profession.Woodcutter.Experience.Crafting.min", 5);}
+        if (!config.isSet("Profession.Woodcutter.Experience.Crafting.max")) {config.set("Profession.Woodcutter.Experience.Crafting.max", 9);}
+        
+        List<String> woodcutterBlocks = new ArrayList<>();
+        woodcutterBlocks.add("minecraft:oak_log");
+        woodcutterBlocks.add("minecraft:spruce_log");
+        woodcutterBlocks.add("minecraft:birch_log");
+        woodcutterBlocks.add("minecraft:jungle_log");
+        woodcutterBlocks.add("minecraft:acacia_log");
+        woodcutterBlocks.add("minecraft:dark_oak_log");
+        woodcutterBlocks.add("minecraft:stripped_oak_log");
+        woodcutterBlocks.add("minecraft:stripped_spruce_log");
+        woodcutterBlocks.add("minecraft:stripped_birch_log");
+        woodcutterBlocks.add("minecraft:stripped_jungle_log");
+        woodcutterBlocks.add("minecraft:stripped_acacia_log");
+        woodcutterBlocks.add("minecraft:stripped_dark_oak_log");
+        woodcutterBlocks.add("minecraft:stripped_oak_wood");
+        woodcutterBlocks.add("minecraft:stripped_spruce_wood");
+        woodcutterBlocks.add("minecraft:stripped_birch_wood");
+        woodcutterBlocks.add("minecraft:stripped_jungle_wood");
+        woodcutterBlocks.add("minecraft:stripped_acacia_wood");
+        woodcutterBlocks.add("minecraft:stripped_dark_oak_wood");
+        if (!config.isSet("Profession.Woodcutter.blocks")) {config.set("Profession.Woodcutter.blocks", woodcutterBlocks);}
+        
+        List<String> woodcutterCrafting = new ArrayList<>();
+        woodcutterBlocks.add("minecraft:oak_slab");
+        woodcutterBlocks.add("minecraft:spruce_slab");
+        woodcutterBlocks.add("minecraft:birch_slab");
+        woodcutterBlocks.add("minecraft:jungle_slab");
+        woodcutterBlocks.add("minecraft:acacia_slab");
+        woodcutterBlocks.add("minecraft:dark_oak_slab");
+        woodcutterBlocks.add("minecraft:oak_stairs");
+        woodcutterBlocks.add("minecraft:spruce_stairs");
+        woodcutterBlocks.add("minecraft:birch_stairs");
+        woodcutterBlocks.add("minecraft:jungle_stairs");
+        woodcutterBlocks.add("minecraft:acacia_stairs");
+        woodcutterBlocks.add("minecraft:dark_oak_stairs"); 
+        woodcutterBlocks.add("minecraft:oak_fence");
+        woodcutterBlocks.add("minecraft:spruce_fence");
+        woodcutterBlocks.add("minecraft:birch_fence");
+        woodcutterBlocks.add("minecraft:jungle_fence");
+        woodcutterBlocks.add("minecraft:acacia_fence");
+        woodcutterBlocks.add("minecraft:dark_oak_fence");
+        woodcutterBlocks.add("minecraft:oak_sign");
+        woodcutterBlocks.add("minecraft:spruce_sign");
+        woodcutterBlocks.add("minecraft:birch_sign");
+        woodcutterBlocks.add("minecraft:jungle_sign");
+        woodcutterBlocks.add("minecraft:acacia_sign");
+        woodcutterBlocks.add("minecraft:dark_oak_sign");
+        if (!config.isSet("Profession.Woodcutter.crafting")) {config.set("Profession.Woodcutter.crafting", woodcutterCrafting);}
+        
+        /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Blacksmith)
+         */
+        
+        if (!config.isSet("Profession.Blacksmith.Experience.Pickup.min")) {config.set("Profession.Blacksmith.Experience.Pickup.min", 0);}
+        if (!config.isSet("Profession.Blacksmith.Experience.Pickup.max")) {config.set("Profession.Blacksmith.Experience.Pickup.max", 0);}
+        if (!config.isSet("Profession.Blacksmith.Experience.Crafting.min")) {config.set("Profession.Blacksmith.Experience.Crafting.min", 6);}
+        if (!config.isSet("Profession.Blacksmith.Experience.Crafting.max")) {config.set("Profession.Blacksmith.Experience.Crafting.max", 11);}
+        
+        List<String> blacksmithBlocks = new ArrayList<>();
+        blacksmithBlocks.add("minecraft:gold_block");
+        blacksmithBlocks.add("minecraft:iron_block");
+        blacksmithBlocks.add("minecraft:diamond_block");
+        blacksmithBlocks.add("minecraft:coal_block");      
+        blacksmithBlocks.add("minecraft:iron_bars");
+        blacksmithBlocks.add("minecraft:anvil");
+        blacksmithBlocks.add("minecraft:chipped_anvil");
+        blacksmithBlocks.add("minecraft:damaged_anvil");
+        blacksmithBlocks.add("minecraft:smoker");
+        blacksmithBlocks.add("minecraft:blast_furnace");     
+        blacksmithBlocks.add("minecraft:grindstone");
+        blacksmithBlocks.add("minecraft:smithing_table");
+        blacksmithBlocks.add("minecraft:stonecutter");
+        blacksmithBlocks.add("minecraft:bell");        
+        blacksmithBlocks.add("minecraft:lantern");
+        if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", blacksmithBlocks);}
         
         /*
          * Setup Blocks / Recipes
          * for specific Professions (Herbalist)
          */
         
-        List<String> herbalist = new ArrayList<>();
-        herbalist.add("minecraft:dandelion");
-        herbalist.add("minecraft:poppy");
-        herbalist.add("minecraft:blue_orchid");
-        herbalist.add("minecraft:allium");
-        herbalist.add("minecraft:azure_bluet");
-        herbalist.add("minecraft:red_tulip");
-        herbalist.add("minecraft:orange_tulip");
-        herbalist.add("minecraft:white_tulip");
-        herbalist.add("minecraft:pink_tulip");
-        herbalist.add("minecraft:oxeye_daisy");
-        herbalist.add("minecraft:cornflower");
-        herbalist.add("minecraft:lily_of_the_valley");
-        herbalist.add("minecraft:wither_rose");
-        herbalist.add("minecraft:brown_mushroom");
-        herbalist.add("minecraft:red_mushroom");
-        herbalist.add("minecraft:chorus_plant");
-        herbalist.add("minecraft:chorus_flower");
-        herbalist.add("minecraft:cactus");
-        herbalist.add("minecraft:lily_pad");
-        herbalist.add("minecraft:sunflower");
-        herbalist.add("minecraft:lilac");
-        herbalist.add("minecraft:rose_bush");
-        herbalist.add("minecraft:peony");
-        if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", herbalist);}
+        if (!config.isSet("Profession.Herbalist.Experience.Pickup.min")) {config.set("Profession.Herbalist.Experience.Pickup.min", 2);}
+        if (!config.isSet("Profession.Herbalist.Experience.Pickup.max")) {config.set("Profession.Herbalist.Experience.Pickup.max", 5);}
+        if (!config.isSet("Profession.Herbalist.Experience.Crafting.min")) {config.set("Profession.Herbalist.Experience.Crafting.min", 4);}
+        if (!config.isSet("Profession.Herbalist.Experience.Crafting.max")) {config.set("Profession.Herbalist.Experience.Crafting.max", 6);}
+        
+        List<String> herbalistBlocks = new ArrayList<>();
+        herbalistBlocks.add("minecraft:dandelion");
+        herbalistBlocks.add("minecraft:poppy");
+        herbalistBlocks.add("minecraft:blue_orchid");
+        herbalistBlocks.add("minecraft:allium");
+        herbalistBlocks.add("minecraft:azure_bluet");
+        herbalistBlocks.add("minecraft:red_tulip");
+        herbalistBlocks.add("minecraft:orange_tulip");
+        herbalistBlocks.add("minecraft:white_tulip");
+        herbalistBlocks.add("minecraft:pink_tulip");
+        herbalistBlocks.add("minecraft:oxeye_daisy");
+        herbalistBlocks.add("minecraft:cornflower");
+        herbalistBlocks.add("minecraft:lily_of_the_valley");
+        herbalistBlocks.add("minecraft:wither_rose");
+        herbalistBlocks.add("minecraft:brown_mushroom");
+        herbalistBlocks.add("minecraft:red_mushroom");
+        herbalistBlocks.add("minecraft:chorus_plant");
+        herbalistBlocks.add("minecraft:chorus_flower");
+        herbalistBlocks.add("minecraft:cactus");
+        herbalistBlocks.add("minecraft:lily_pad");
+        herbalistBlocks.add("minecraft:sunflower");
+        herbalistBlocks.add("minecraft:lilac");
+        herbalistBlocks.add("minecraft:rose_bush");
+        herbalistBlocks.add("minecraft:peony");
+        if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", herbalistBlocks);}
         
         if (!config.isSet("Localization.Professions.woodcutter")) {config.set("Localization.Professions.woodcutter", "Holzf‰ller");}
         if (!config.isSet("Localization.Professions.blacksmith")) {config.set("Localization.Professions.blacksmith", "Waffenschmied");}
@@ -316,6 +394,8 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Professions.inscriber")) {config.set("Localization.Professions.inscriber", "Gelehrter");}
         if (!config.isSet("Localization.Professions.alchemist")) {config.set("Localization.Professions.alchemist", "Alchemist");}
         if (!config.isSet("Localization.Professions.farmer")) {config.set("Localization.Professions.farmer", "Bauer");}
+        
+        if (!config.isSet("Localization.Professions.General.notallowed")) {config.set("Localization.Professions.General.notallowed", "ßcDu weiﬂt nicht, wie das geht!");}
         
         if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest ausw‰hlen");}
         

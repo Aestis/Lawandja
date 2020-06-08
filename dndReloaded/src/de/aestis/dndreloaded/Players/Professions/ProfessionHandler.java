@@ -1,5 +1,6 @@
 package de.aestis.dndreloaded.Players.Professions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import de.aestis.dndreloaded.Main;
@@ -32,6 +33,8 @@ public class ProfessionHandler {
 		
 		if (playerHandler.hasProfession(playerData, profession.getName())) {
 			profession.setCurrentExperience(profession.getCurrentExperience() + xp);
+			
+			Bukkit.broadcastMessage("Increased XP of " + player.getName() + " in Profession " + profession.getName() + " by " + xp + " XP!");
 		}
 	}
 	

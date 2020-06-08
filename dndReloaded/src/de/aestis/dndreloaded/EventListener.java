@@ -58,10 +58,10 @@ public class EventListener implements Listener {
 			return;
 		}
 		
-		if (BlockBreakOverride.blockBreakCustomDurability(event)) {
+		/*if (BlockBreakOverride.blockBreakCustomDurability(event)) {
 			//Dura Check True
 			BlockBreakOverride.blockBreakCustomItems(event);
-		}	
+		}*/
 	}
 	
 	
@@ -85,11 +85,11 @@ public class EventListener implements Listener {
 		ScoreboardHelper.addToScoreboard(scb, "Testboard", " - §6§l" + pd.getFaction(), 8);
 		ScoreboardHelper.addToScoreboard(scb, "Testboard", " > §7" + pd.getReputation() + " Ruf", 7);
 		ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 6);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " - §6§lPrimärberuf:", 5);
 		if (pd.getProfessionPrimary() != null) {
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " > §7" + pd.getProfessionPrimary().getName() + " (" + pd.getProfessionPrimary().getCurrentExperience() + "xp", 4);
-		} else {
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " - §7 - Kein Beruf -", 4);
+			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionPrimary().getName() + " (" + pd.getProfessionPrimary().getCurrentExperience() + "/50 xp)", 5);
+		}	
+		if (pd.getProfessionSecondary() != null) {
+			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionSecondary().getName() + " (" + pd.getProfessionSecondary().getCurrentExperience() + "/50 xp)", 4);
 		}
 		
 		ScoreboardHelper.setScoreboard(event.getPlayer(), scb);
