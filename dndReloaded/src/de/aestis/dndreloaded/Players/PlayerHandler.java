@@ -60,6 +60,9 @@ public class PlayerHandler {
 			Integer value = entry.getValue();
 			
 			if (count == 0) {
+				
+				System.out.println("Prof 1: " + value);
+				
 				Profession prof = new Profession(playerData.getID() + 1000000000);
 				prof.setName(key);
 				prof.setCurrentExperience(value);
