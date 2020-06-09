@@ -1,11 +1,11 @@
 name: dndReloaded
 main: de.aestis.dndreloaded.Main
 description: Faction Based Minigame for JenoMiners.de
-version: 0.9.43
+version: 0.12.45
 author: Guerkchen385
 api-version: 1.15
-depend: [Citizens]
-loadbefore: [Citizens]
+depend: [Citizens, InventoryMenuManager, GriefPrevention]
+loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
 commands:
    dnd:
       description: Main Command for this Plugin

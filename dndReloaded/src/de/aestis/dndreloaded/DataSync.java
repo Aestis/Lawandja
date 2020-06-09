@@ -29,34 +29,36 @@ public class DataSync {
 		
 		DatabaseHandler Database = Plugin.getDatabaseHandler();
 		
-		if (Database.playerRegistered(player.getName())) {
+		if (Database.playerRegistered(player.getName()))
+		{
 			Bukkit.broadcastMessage("§2Spielerdaten von " + player.getName() + " existieren.");
 			Bukkit.broadcastMessage("§6Spielerdaten von " + player.getName() + " werden geladen...");
 			
 			Main.instance.Players.put(player, Database.getPlayerData(player.getName()));
 			
 			Bukkit.broadcastMessage("§2Spielerdaten von " + player.getName() + " wurden erfolgreich geladen!");
-			
-			PlayerData pd = Main.instance.Players.get(player);
-			
-			Bukkit.broadcastMessage("Player   = " + pd.getName());
-			Bukkit.broadcastMessage("Faction  = " + pd.getFaction());
-			Bukkit.broadcastMessage("Title    = " + pd.getTitle());
-		} else {
+		} else
+		{
 			Bukkit.broadcastMessage("§cSpielerdaten von " + player.getName() + " nicht gefunden.");
 			Bukkit.broadcastMessage("§6Registriere " + player.getName() + "...");
-			if (Database.registerPlayer(player.getName())) {
-				Bukkit.broadcastMessage("§2Spieler " + player.getName() + " erfolgreich registriert!");
-			} else {
-				Bukkit.broadcastMessage("§cSpielerdaten konnten nicht geschrieben werden.");
+			
+			if (Database.registerPlayer(player.getName()))
+			{
+				Plugin.getLogger().fine("Player '" + player.getName() + "' successfully added to Database!");
+			} else
+			{
+				Plugin.getLogger().warning("Player '" + player.getName() + "' couldnt be added to Database!");
 			}
 		}
 	}
 	
 	public void savePlayerData(Player player) {
 		
-		//TODO
+		DatabaseHandler Database = Plugin.getDatabaseHandler();
+		PlayerData pd = Plugin.Players.get(player);
 		
+		Database.savePlayerData(player.getName(), pd);
+		Plugin.getLogger().info("Synchronizing '" + player.getName() + "' PlayerData to Database...");
 	}
 	
 }

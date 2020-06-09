@@ -27,6 +27,7 @@ public class PlayerData {
 	private Integer ProfessionInscriber;
 	private Integer ProfessionAlchemist;
 	private Integer ProfessionFarmer;
+	private Integer ProfessionTanner;
 	
 	private Profession ProfessionPrimary;
 	private Profession ProfessionSecondary;
@@ -99,6 +100,8 @@ public class PlayerData {
 	public Integer getProfessionFarmer() {return this.ProfessionFarmer;}
 	public void setProfessionFarmer(Integer ProfessionFarmer) {this.ProfessionFarmer = ProfessionFarmer;}
 	
+	public Integer getProfessionTanner() {return this.ProfessionTanner;}
+	public void setProfessionTanner(Integer ProfessionTanner) {this.ProfessionTanner = ProfessionTanner;}
 	
 	public Profession getProfessionPrimary() {return this.ProfessionPrimary;}
 	public void setProfessionPrimary(Profession ProfessionPrimary) {this.ProfessionPrimary = ProfessionPrimary;}

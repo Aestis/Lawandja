@@ -4,8 +4,10 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
+import de.aestis.dndreloaded.Helpers.ScoreboardUtil.CustomScoreboards;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
+import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -75,23 +77,8 @@ public class EventListener implements Listener {
 		QuestHnd.handleQuestgiverInteraction(event);
 		
 		//TEST!!!
-		Scoreboard scb = ScoreboardHelper.prepareScoreboard(event.getPlayer(), "Testboard", "Willkommen in Lawandja!", DisplaySlot.SIDEBAR);
-		PlayerData pd = Plugin.Players.get(event.getPlayer());
 		
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 12);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " - §6§lDein Titel:", 11);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " > §7" + pd.getName() + ", " + pd.getTitle(), 10);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 9);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " - §6§l" + pd.getFaction(), 8);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " > §7" + pd.getReputation() + " Ruf", 7);
-		ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 6);
-		if (pd.getProfessionPrimary() != null) {
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionPrimary().getName() + " (" + pd.getProfessionPrimary().getCurrentExperience() + "/50 xp)", 5);
-		}	
-		if (pd.getProfessionSecondary() != null) {
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionSecondary().getName() + " (" + pd.getProfessionSecondary().getCurrentExperience() + "/50 xp)", 4);
-		}
-		
+		Scoreboard scb = CustomScoreboards.getInstance().getMainPlayerScoreboard(event.getPlayer());
 		ScoreboardHelper.setScoreboard(event.getPlayer(), scb);
 	}
 
@@ -126,15 +113,6 @@ public class EventListener implements Listener {
 	
 	
 	@EventHandler
-	public void inventoryMenuClickEvent(InventoryClickEvent event) {
-		Player player = (Player) event.getWhoClicked();
-		ItemStack item = event.getCurrentItem();
-		Inventory inv = event.getClickedInventory();
-		//if (inv.get)
-	}
-	
-	
-	@EventHandler
 	public void onPlayerDisconnect(PlayerQuitEvent event) {
 		
 		Plugin.Players.remove(event.getPlayer());
@@ -163,6 +141,8 @@ public class EventListener implements Listener {
 			Bukkit.broadcastMessage("§2Spielerdaten von " + playerName + " wurden erfolgreich geladen!");
 			
 			PlayerData pd = Main.instance.Players.get(event.getPlayer());
+			PlayerHandler ph = Main.instance.getPlayerHandler();
+			ph.setupPlayerProfessions(pd);
 			
 			Bukkit.broadcastMessage("Player   = " + pd.getName());
 			Bukkit.broadcastMessage("Faction  = " + pd.getFaction());
@@ -176,6 +156,8 @@ public class EventListener implements Listener {
 				Bukkit.broadcastMessage("§6Spielerdaten von " + playerName + " werden geladen...");
 				
 				Main.instance.Players.put(event.getPlayer(), Database.getPlayerData(playerName));
+				PlayerHandler ph = Main.instance.getPlayerHandler();
+				ph.setupPlayerProfessions(Plugin.Players.get(event.getPlayer()));
 				
 				Bukkit.broadcastMessage("§2Spielerdaten von " + playerName + " wurden erfolgreich geladen!");
 			} else {

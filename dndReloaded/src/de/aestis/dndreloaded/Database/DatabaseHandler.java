@@ -130,7 +130,7 @@ public class DatabaseHandler {
 		
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("SELECT * FROM players WHERE PlayerName = ?");
+			stmt = con.prepareStatement("SELECT * FROM `players` WHERE PlayerName = ?");
 			stmt.setString(1, player);
 			ResultSet rs = stmt.executeQuery();
 			
@@ -153,13 +153,83 @@ public class DatabaseHandler {
 		
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("INSERT INTO players (PlayerName, PlayerJoined) VALUES (?, ?)");
+			stmt = con.prepareStatement("INSERT INTO `players` (PlayerName, PlayerJoined) VALUES (?, ?)");
 			stmt.setString(1, player);
 			stmt.setString(2, this.getDatetime());
 			stmt.executeUpdate();
 			stmt.close();
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean savePlayerData (String player, PlayerData pd) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			stmt = con.prepareStatement("UPDATE `players` SET " +
+										"`PlayerFaction` = ?, " +
+										"`PlayerReputation` = ?, " +
+										"`PlayerTitle` = ?, " +
+										"`PlayerRoleArcher` = ?, " +
+										"`PlayerRoleKnight` = ?, " +
+										"`PlayerRoleBerserk` = ?, " +
+										"`PlayerRoleShield` = ?, " +
+										"`PlayerRoleTank` = ?, " +
+										"`PlayerRoleHealer` = ?, " +
+										"`PlayerProfessionWoodcutter` = ?, " +
+										"`PlayerProfessionBlacksmith` = ?, " +
+										"`PlayerProfessionStonecutter` = ?, " +
+										"`PlayerProfessionHerbalist` = ?, " +
+										"`PlayerProfessionInscriber` = ?, " +
+										"`PlayerProfessionAlchemist` = ?, " +
+										"`PlayerProfessionFarmer` = ?, " +
+										"`PlayerProfessionTanner` = ?, " +
+										"`PlayerKillsFriendly` = ?, " +
+										"`PlayerKillsEnemy` = ?, " +
+										"`PlayerQuestActive1` = ?, " +
+										"`PlayerQuestActive2` = ?, " +
+										"`PlayerQuestVariable1` = ?, " +
+										"`PlayerQuestVariable2` = ?, " +
+										"`PlayerQuestsCompleted` = ?, " +
+										"`PlayerDeaths` = ?, " +
+										"`PlayerPunishment` = ? " +
+										"WHERE PlayerID = ?");
+			stmt.setString(1, pd.getFaction());
+			stmt.setInt(2, pd.getReputation());
+			stmt.setString(3, pd.getTitle());
+			stmt.setInt(4, pd.getRoleArcher());
+			stmt.setInt(5, pd.getRoleKnight());
+			stmt.setInt(6, pd.getRoleBerserk());
+			stmt.setInt(7, pd.getRoleShield());
+			stmt.setInt(8, pd.getRoleTank());
+			stmt.setInt(9, pd.getRoleHealer());
+			stmt.setInt(10, pd.getProfessionWoodcutter());
+			stmt.setInt(11, pd.getProfessionBlacksmith());
+			stmt.setInt(12, pd.getProfessionStonecutter());
+			stmt.setInt(13, pd.getProfessionHerbalist());
+			stmt.setInt(14, pd.getProfessionInscriber());
+			stmt.setInt(15, pd.getProfessionAlchemist());
+			stmt.setInt(16, pd.getProfessionFarmer());
+			stmt.setInt(17, pd.getProfessionTanner());
+			stmt.setInt(18, pd.getKillsFriendly());
+			stmt.setInt(19, pd.getKillsEnemy());
+			stmt.setInt(20, pd.getQuestActive1());
+			stmt.setInt(21, pd.getQuestActive2());
+			stmt.setInt(22, pd.getQuestVariable1());
+			stmt.setInt(23, pd.getQuestVariable2());
+			stmt.setString(24, pd.getQuestsCompleted());
+			stmt.setInt(25, pd.getDeaths());
+			stmt.setInt(26, pd.getPunishment());
+			stmt.setInt(27, pd.getID());
+			stmt.executeUpdate();
+			stmt.close();
+			return true;
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
@@ -174,7 +244,7 @@ public class DatabaseHandler {
 	public PlayerData getPlayerData(String player) {
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("SELECT * FROM players WHERE PlayerName = ?");
+			stmt = con.prepareStatement("SELECT * FROM `players` WHERE PlayerName = ?");
 			stmt.setString(1, player);
 			ResultSet rs = stmt.executeQuery();
 			PlayerData playerData = preparePlayerData(rs);
@@ -207,6 +277,7 @@ public class DatabaseHandler {
 			d.setProfessionInscriber(rs.getInt("PlayerProfessionInscriber"));
 			d.setProfessionAlchemist(rs.getInt("PlayerProfessionAlchemist"));
 			d.setProfessionFarmer(rs.getInt("PlayerProfessionFarmer"));	
+			d.setProfessionTanner(rs.getInt("PlayerProfessionTanner"));
 			d.setKillsFriendly(rs.getInt("PlayerKillsFriendly"));
 			d.setKillsEnemy(rs.getInt("PlayerKillsEnemy"));
 			d.setQuestActive1(rs.getInt("PlayerQuestActive1"));

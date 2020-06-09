@@ -20,7 +20,7 @@ public class MathHelpers {
 
 	public int getRndInt(int min, int max) {
 		if (min >= max) {
-			throw new IllegalArgumentException("Maximum value must be greater than minimum!");
+			return max;
 		}
 		Random r = new Random();
 		return r.nextInt((max - min) + 1) + min;

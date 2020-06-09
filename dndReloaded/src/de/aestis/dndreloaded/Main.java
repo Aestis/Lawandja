@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
 	public QuestMap QuestData = new QuestMap();
-	
+
 	/*
 	 * Enable the whole plugin
 	 * (Here we go!)
@@ -165,6 +165,7 @@ public class Main extends JavaPlugin {
 			}
 			
 			GameTcs.startSyncTask();
+			GameTcs.startRefreshScoreboardsTask();
 			
 		} catch (Exception ex) {
 			getLogger().severe("Could Not Load Player Data: " + ex);
@@ -321,8 +322,6 @@ public class Main extends JavaPlugin {
         woodcutterCrafting.add("minecraft:jungle_sign");
         woodcutterCrafting.add("minecraft:acacia_sign");
         woodcutterCrafting.add("minecraft:dark_oak_sign");
-        
-        //TODO
         if (!config.isSet("Profession.Woodcutter.crafting")) {config.set("Profession.Woodcutter.crafting", woodcutterCrafting);}
         
         /*
@@ -392,7 +391,7 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Profession.Stonecutter.Experience.Pickup.max")) {config.set("Profession.Stonecutter.Experience.Pickup.max", 3);}
         if (!config.isSet("Profession.Stonecutter.Experience.Crafting.min")) {config.set("Profession.Stonecutter.Experience.Crafting.min", 4);}
         if (!config.isSet("Profession.Stonecutter.Experience.Crafting.max")) {config.set("Profession.Stonecutter.Experience.Crafting.max", 10);}
-        
+
         List<String> stonecutterBlocks = new ArrayList<>();
         stonecutterBlocks.add("minecraft:stone");
         stonecutterBlocks.add("minecraft:granite");
@@ -418,7 +417,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:chiseled_stone_bricks");
         stonecutterBlocks.add("minecraft:smooth_stone");
         stonecutterBlocks.add("minecraft:clay");
-      
+
         stonecutterBlocks.add("minecraft:stone_slab");
         stonecutterBlocks.add("minecraft:smooth_stone_slab");
         stonecutterBlocks.add("minecraft:cobblestone_slab");
@@ -438,7 +437,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:andesite_slab");
         stonecutterBlocks.add("minecraft:polished_andesite_slab");
         stonecutterBlocks.add("minecraft:diorite_slab");
-        
+
         stonecutterBlocks.add("minecraft:cobblestone_stairs");
         stonecutterBlocks.add("minecraft:brick_stairs");
         stonecutterBlocks.add("minecraft:stone_brick_stairs");
@@ -454,7 +453,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:andesite_stairs");
         stonecutterBlocks.add("minecraft:polished_andesite_stairs");
         stonecutterBlocks.add("minecraft:diorite_stairs");
-        
+
         stonecutterBlocks.add("minecraft:cobblestone_wall");
         stonecutterBlocks.add("minecraft:mossy_cobblestone_wall");
         stonecutterBlocks.add("minecraft:brick_wall");
@@ -466,7 +465,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:sandstone_wall");
         stonecutterBlocks.add("minecraft:diorite_wall");
         if (!config.isSet("Profession.Stonecutter.blocks")) {config.set("Profession.Stonecutter.blocks", stonecutterBlocks);}
-        
+
         List<String> stonecutterCrafting = new ArrayList<>();
         stonecutterCrafting.add("minecraft:stone");
         stonecutterCrafting.add("minecraft:polished_granite");
@@ -486,7 +485,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:cracked_stone_bricks");
         stonecutterCrafting.add("minecraft:chiseled_stone_bricks");
         stonecutterCrafting.add("minecraft:smooth_stone");
-      
+
         stonecutterCrafting.add("minecraft:stone_slab");
         stonecutterCrafting.add("minecraft:smooth_stone_slab");
         stonecutterCrafting.add("minecraft:cobblestone_slab");
@@ -506,7 +505,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:andesite_slab");
         stonecutterCrafting.add("minecraft:polished_andesite_slab");
         stonecutterCrafting.add("minecraft:diorite_slab");
-        
+
         stonecutterCrafting.add("minecraft:cobblestone_stairs");
         stonecutterCrafting.add("minecraft:brick_stairs");
         stonecutterCrafting.add("minecraft:stone_brick_stairs");
@@ -522,7 +521,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:andesite_stairs");
         stonecutterCrafting.add("minecraft:polished_andesite_stairs");
         stonecutterCrafting.add("minecraft:diorite_stairs");
-        
+
         stonecutterCrafting.add("minecraft:cobblestone_wall");
         stonecutterCrafting.add("minecraft:mossy_cobblestone_wall");
         stonecutterCrafting.add("minecraft:brick_wall");
@@ -534,6 +533,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:sandstone_wall");
         stonecutterCrafting.add("minecraft:diorite_wall");
         if (!config.isSet("Profession.Stonecutter.crafting")) {config.set("Profession.Stonecutter.crafting", stonecutterCrafting);}
+        
         /*
          * Setup Blocks / Recipes
          * for specific Professions (Herbalist)
