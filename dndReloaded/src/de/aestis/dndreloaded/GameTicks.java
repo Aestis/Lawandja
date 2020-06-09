@@ -32,6 +32,8 @@ public class GameTicks {
 				
 				Bukkit.broadcastMessage("§cSynchronizing Local Data With Database...");
 				
+				//TODO
+				
 				System.out.println(Plugin.Players);
 			}
 			

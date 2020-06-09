@@ -352,6 +352,13 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", blacksmithBlocks);}
         
         /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Stonecutter)
+         */
+        
+        //TODO
+        
+        /*
          * Setup Blocks / Recipes
          * for specific Professions (Herbalist)
          */
@@ -386,6 +393,34 @@ public class Main extends JavaPlugin {
         herbalistBlocks.add("minecraft:rose_bush");
         herbalistBlocks.add("minecraft:peony");
         if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", herbalistBlocks);}
+        
+        /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Inscriber)
+         */
+        
+        //TODO
+        
+        /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Alchemist)
+         */
+        
+        //TODO
+        
+        /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Farmer)
+         */
+        
+        //TODO
+        
+        /*
+         * Setup Blocks / Recipes / Stuff
+         * for specific Professions (Tanner)
+         */
+        
+        //TODO
         
         if (!config.isSet("Localization.Professions.woodcutter")) {config.set("Localization.Professions.woodcutter", "Holzfäller");}
         if (!config.isSet("Localization.Professions.blacksmith")) {config.set("Localization.Professions.blacksmith", "Waffenschmied");}

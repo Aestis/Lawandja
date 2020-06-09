@@ -53,4 +53,10 @@ public class DataSync {
 		}
 	}
 	
+	public void savePlayerData(Player player) {
+		
+		//TODO
+		
+	}
+	
 }

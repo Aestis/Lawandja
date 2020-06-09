@@ -25,7 +25,7 @@ public class ListenerHerbalist implements Listener {
 	private void killBlockBreak(BlockBreakEvent event) {
 		
 		event.setDropItems(false);
-		event.getPlayer().sendMessage(Plugin.getConfig().getString("Localization.Profession.General.notallowed"));
+		event.getPlayer().sendMessage(Plugin.getConfig().getString("Localization.Professions.General.notallowed"));
 	}
 	
 	
