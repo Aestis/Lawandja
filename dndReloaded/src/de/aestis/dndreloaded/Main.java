@@ -297,30 +297,32 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Profession.Woodcutter.blocks")) {config.set("Profession.Woodcutter.blocks", woodcutterBlocks);}
         
         List<String> woodcutterCrafting = new ArrayList<>();
-        woodcutterBlocks.add("minecraft:oak_slab");
-        woodcutterBlocks.add("minecraft:spruce_slab");
-        woodcutterBlocks.add("minecraft:birch_slab");
-        woodcutterBlocks.add("minecraft:jungle_slab");
-        woodcutterBlocks.add("minecraft:acacia_slab");
-        woodcutterBlocks.add("minecraft:dark_oak_slab");
-        woodcutterBlocks.add("minecraft:oak_stairs");
-        woodcutterBlocks.add("minecraft:spruce_stairs");
-        woodcutterBlocks.add("minecraft:birch_stairs");
-        woodcutterBlocks.add("minecraft:jungle_stairs");
-        woodcutterBlocks.add("minecraft:acacia_stairs");
-        woodcutterBlocks.add("minecraft:dark_oak_stairs"); 
-        woodcutterBlocks.add("minecraft:oak_fence");
-        woodcutterBlocks.add("minecraft:spruce_fence");
-        woodcutterBlocks.add("minecraft:birch_fence");
-        woodcutterBlocks.add("minecraft:jungle_fence");
-        woodcutterBlocks.add("minecraft:acacia_fence");
-        woodcutterBlocks.add("minecraft:dark_oak_fence");
-        woodcutterBlocks.add("minecraft:oak_sign");
-        woodcutterBlocks.add("minecraft:spruce_sign");
-        woodcutterBlocks.add("minecraft:birch_sign");
-        woodcutterBlocks.add("minecraft:jungle_sign");
-        woodcutterBlocks.add("minecraft:acacia_sign");
-        woodcutterBlocks.add("minecraft:dark_oak_sign");
+        woodcutterCrafting.add("minecraft:oak_slab");
+        woodcutterCrafting.add("minecraft:spruce_slab");
+        woodcutterCrafting.add("minecraft:birch_slab");
+        woodcutterCrafting.add("minecraft:jungle_slab");
+        woodcutterCrafting.add("minecraft:acacia_slab");
+        woodcutterCrafting.add("minecraft:dark_oak_slab");
+        woodcutterCrafting.add("minecraft:oak_stairs");
+        woodcutterCrafting.add("minecraft:spruce_stairs");
+        woodcutterCrafting.add("minecraft:birch_stairs");
+        woodcutterCrafting.add("minecraft:jungle_stairs");
+        woodcutterCrafting.add("minecraft:acacia_stairs");
+        woodcutterCrafting.add("minecraft:dark_oak_stairs"); 
+        woodcutterCrafting.add("minecraft:oak_fence");
+        woodcutterCrafting.add("minecraft:spruce_fence");
+        woodcutterCrafting.add("minecraft:birch_fence");
+        woodcutterCrafting.add("minecraft:jungle_fence");
+        woodcutterCrafting.add("minecraft:acacia_fence");
+        woodcutterCrafting.add("minecraft:dark_oak_fence");
+        woodcutterCrafting.add("minecraft:oak_sign");
+        woodcutterCrafting.add("minecraft:spruce_sign");
+        woodcutterCrafting.add("minecraft:birch_sign");
+        woodcutterCrafting.add("minecraft:jungle_sign");
+        woodcutterCrafting.add("minecraft:acacia_sign");
+        woodcutterCrafting.add("minecraft:dark_oak_sign");
+        
+        //TODO
         if (!config.isSet("Profession.Woodcutter.crafting")) {config.set("Profession.Woodcutter.crafting", woodcutterCrafting);}
         
         /*
@@ -349,15 +351,189 @@ public class Main extends JavaPlugin {
         blacksmithBlocks.add("minecraft:stonecutter");
         blacksmithBlocks.add("minecraft:bell");        
         blacksmithBlocks.add("minecraft:lantern");
-        if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", blacksmithBlocks);}
+        if (!config.isSet("Profession.Blacksmith.blocks")) {config.set("Profession.Blacksmith.blocks", blacksmithBlocks);}
+        
+        List<String> blacksmithCrafting = new ArrayList<>();
+        blacksmithCrafting.add("minecraft:iron_shovel");
+        blacksmithCrafting.add("minecraft:iron_pickaxe");
+        blacksmithCrafting.add("minecraft:iron_axe");
+        blacksmithCrafting.add("minecraft:iron_hoe");
+        blacksmithCrafting.add("minecraft:diamond_shovel");
+        blacksmithCrafting.add("minecraft:diamond_pickaxe");
+        blacksmithCrafting.add("minecraft:diamond_axe");
+        blacksmithCrafting.add("minecraft:diamond_hoe");
+        blacksmithCrafting.add("minecraft:gold_shovel");
+        blacksmithCrafting.add("minecraft:gold_pickaxe");
+        blacksmithCrafting.add("minecraft:gold_axe");
+        blacksmithCrafting.add("minecraft:gold_hoe");
+        blacksmithCrafting.add("minecraft:iron_sword");
+        blacksmithCrafting.add("minecraft:iron_helmet");
+        blacksmithCrafting.add("minecraft:iron_chestplate");
+        blacksmithCrafting.add("minecraft:iron_leggings");
+        blacksmithCrafting.add("minecraft:iron_boots");
+        blacksmithCrafting.add("minecraft:diamond_sword");
+        blacksmithCrafting.add("minecraft:diamond_helmet");
+        blacksmithCrafting.add("minecraft:diamond_chestplate");
+        blacksmithCrafting.add("minecraft:diamond_leggings");
+        blacksmithCrafting.add("minecraft:diamond_boots");
+        blacksmithCrafting.add("minecraft:gold_sword");
+        blacksmithCrafting.add("minecraft:gold_helmet");
+        blacksmithCrafting.add("minecraft:gold_chestplate");
+        blacksmithCrafting.add("minecraft:gold_leggings");
+        blacksmithCrafting.add("minecraft:gold_boots");
+        if (!config.isSet("Profession.Blacksmith.crafting")) {config.set("Profession.Blacksmith.crafting", blacksmithCrafting);}
         
         /*
          * Setup Blocks / Recipes / Stuff
          * for specific Professions (Stonecutter)
          */
         
-        //TODO
+        if (!config.isSet("Profession.Stonecutter.Experience.Pickup.min")) {config.set("Profession.Stonecutter.Experience.Pickup.min", 2);}
+        if (!config.isSet("Profession.Stonecutter.Experience.Pickup.max")) {config.set("Profession.Stonecutter.Experience.Pickup.max", 3);}
+        if (!config.isSet("Profession.Stonecutter.Experience.Crafting.min")) {config.set("Profession.Stonecutter.Experience.Crafting.min", 4);}
+        if (!config.isSet("Profession.Stonecutter.Experience.Crafting.max")) {config.set("Profession.Stonecutter.Experience.Crafting.max", 10);}
         
+        List<String> stonecutterBlocks = new ArrayList<>();
+        stonecutterBlocks.add("minecraft:stone");
+        stonecutterBlocks.add("minecraft:granite");
+        stonecutterBlocks.add("minecraft:diorite");
+        stonecutterBlocks.add("minecraft:andesite");
+        stonecutterBlocks.add("minecraft:polished_granite");
+        stonecutterBlocks.add("minecraft:polished_diorite");
+        stonecutterBlocks.add("minecraft:polished_andesite");
+        stonecutterBlocks.add("minecraft:sandstone");  
+        stonecutterBlocks.add("minecraft:chiseled_sandstone");  
+        stonecutterBlocks.add("minecraft:cut_sandstone"); 
+        stonecutterBlocks.add("minecraft:smooth_red_sandstone");  
+        stonecutterBlocks.add("minecraft:smooth_sandstone"); 
+        stonecutterBlocks.add("minecraft:red_sandstone");  
+        stonecutterBlocks.add("minecraft:chiseled_red_sandstone");  
+        stonecutterBlocks.add("minecraft:cut_red_sandstone");
+        stonecutterBlocks.add("minecraft:cobblestone");  
+        stonecutterBlocks.add("minecraft:mossy_cobblestone");  
+        stonecutterBlocks.add("minecraft:bricks");  
+        stonecutterBlocks.add("minecraft:stone_bricks"); 
+        stonecutterBlocks.add("minecraft:mossy_stone_bricks");  
+        stonecutterBlocks.add("minecraft:cracked_stone_bricks");
+        stonecutterBlocks.add("minecraft:chiseled_stone_bricks");
+        stonecutterBlocks.add("minecraft:smooth_stone");
+        stonecutterBlocks.add("minecraft:clay");
+      
+        stonecutterBlocks.add("minecraft:stone_slab");
+        stonecutterBlocks.add("minecraft:smooth_stone_slab");
+        stonecutterBlocks.add("minecraft:cobblestone_slab");
+        stonecutterBlocks.add("minecraft:stone_brick_slab");
+        stonecutterBlocks.add("minecraft:mossy_stone_brick_slab");
+        stonecutterBlocks.add("minecraft:sandstone_slab");
+        stonecutterBlocks.add("minecraft:cut_sandstone_slab");
+        stonecutterBlocks.add("minecraft:brick_slab");
+        stonecutterBlocks.add("minecraft:red_sandstone_slab");
+        stonecutterBlocks.add("minecraft:cut_red_sandstone_slab");
+        stonecutterBlocks.add("minecraft:polished_granite_slab");
+        stonecutterBlocks.add("minecraft:smooth_red_sandstone_slab");
+        stonecutterBlocks.add("minecraft:polished_diorite_slab");
+        stonecutterBlocks.add("minecraft:mossy_cobblestone_slab");
+        stonecutterBlocks.add("minecraft:granite_slab");
+        stonecutterBlocks.add("minecraft:smooth_sandstone_slab");
+        stonecutterBlocks.add("minecraft:andesite_slab");
+        stonecutterBlocks.add("minecraft:polished_andesite_slab");
+        stonecutterBlocks.add("minecraft:diorite_slab");
+        
+        stonecutterBlocks.add("minecraft:cobblestone_stairs");
+        stonecutterBlocks.add("minecraft:brick_stairs");
+        stonecutterBlocks.add("minecraft:stone_brick_stairs");
+        stonecutterBlocks.add("minecraft:sandstone_stairs");
+        stonecutterBlocks.add("minecraft:polished_granite_stairs");
+        stonecutterBlocks.add("minecraft:smooth_red_sandstone_stairs");
+        stonecutterBlocks.add("minecraft:red_sandstone_stairs");
+        stonecutterBlocks.add("minecraft:mossy_stone_brick_stairs");
+        stonecutterBlocks.add("minecraft:polished_diorite_stairs");
+        stonecutterBlocks.add("minecraft:stone_stairs");
+        stonecutterBlocks.add("minecraft:smooth_sandstone_stairs");
+        stonecutterBlocks.add("minecraft:granite_stairs");
+        stonecutterBlocks.add("minecraft:andesite_stairs");
+        stonecutterBlocks.add("minecraft:polished_andesite_stairs");
+        stonecutterBlocks.add("minecraft:diorite_stairs");
+        
+        stonecutterBlocks.add("minecraft:cobblestone_wall");
+        stonecutterBlocks.add("minecraft:mossy_cobblestone_wall");
+        stonecutterBlocks.add("minecraft:brick_wall");
+        stonecutterBlocks.add("minecraft:red_sandstone_wall");
+        stonecutterBlocks.add("minecraft:mossy_stone_brick_wall");
+        stonecutterBlocks.add("minecraft:granite_wall");
+        stonecutterBlocks.add("minecraft:stone_brick_wall");
+        stonecutterBlocks.add("minecraft:andesite_wall");
+        stonecutterBlocks.add("minecraft:sandstone_wall");
+        stonecutterBlocks.add("minecraft:diorite_wall");
+        if (!config.isSet("Profession.Stonecutter.blocks")) {config.set("Profession.Stonecutter.blocks", stonecutterBlocks);}
+        
+        List<String> stonecutterCrafting = new ArrayList<>();
+        stonecutterCrafting.add("minecraft:stone");
+        stonecutterCrafting.add("minecraft:polished_granite");
+        stonecutterCrafting.add("minecraft:polished_diorite");
+        stonecutterCrafting.add("minecraft:polished_andesite");
+        stonecutterCrafting.add("minecraft:chiseled_sandstone");  
+        stonecutterCrafting.add("minecraft:cut_sandstone"); 
+        stonecutterCrafting.add("minecraft:smooth_red_sandstone");  
+        stonecutterCrafting.add("minecraft:smooth_sandstone"); 
+        stonecutterCrafting.add("minecraft:red_sandstone");  
+        stonecutterCrafting.add("minecraft:chiseled_red_sandstone");  
+        stonecutterCrafting.add("minecraft:cut_red_sandstone");
+        stonecutterCrafting.add("minecraft:mossy_cobblestone");  
+        stonecutterCrafting.add("minecraft:bricks");  
+        stonecutterCrafting.add("minecraft:stone_bricks"); 
+        stonecutterCrafting.add("minecraft:mossy_stone_bricks");  
+        stonecutterCrafting.add("minecraft:cracked_stone_bricks");
+        stonecutterCrafting.add("minecraft:chiseled_stone_bricks");
+        stonecutterCrafting.add("minecraft:smooth_stone");
+      
+        stonecutterCrafting.add("minecraft:stone_slab");
+        stonecutterCrafting.add("minecraft:smooth_stone_slab");
+        stonecutterCrafting.add("minecraft:cobblestone_slab");
+        stonecutterCrafting.add("minecraft:stone_brick_slab");
+        stonecutterCrafting.add("minecraft:mossy_stone_brick_slab");
+        stonecutterCrafting.add("minecraft:sandstone_slab");
+        stonecutterCrafting.add("minecraft:cut_sandstone_slab");
+        stonecutterCrafting.add("minecraft:brick_slab");
+        stonecutterCrafting.add("minecraft:red_sandstone_slab");
+        stonecutterCrafting.add("minecraft:cut_red_sandstone_slab");
+        stonecutterCrafting.add("minecraft:polished_granite_slab");
+        stonecutterCrafting.add("minecraft:smooth_red_sandstone_slab");
+        stonecutterCrafting.add("minecraft:polished_diorite_slab");
+        stonecutterCrafting.add("minecraft:mossy_cobblestone_slab");
+        stonecutterCrafting.add("minecraft:granite_slab");
+        stonecutterCrafting.add("minecraft:smooth_sandstone_slab");
+        stonecutterCrafting.add("minecraft:andesite_slab");
+        stonecutterCrafting.add("minecraft:polished_andesite_slab");
+        stonecutterCrafting.add("minecraft:diorite_slab");
+        
+        stonecutterCrafting.add("minecraft:cobblestone_stairs");
+        stonecutterCrafting.add("minecraft:brick_stairs");
+        stonecutterCrafting.add("minecraft:stone_brick_stairs");
+        stonecutterCrafting.add("minecraft:sandstone_stairs");
+        stonecutterCrafting.add("minecraft:polished_granite_stairs");
+        stonecutterCrafting.add("minecraft:smooth_red_sandstone_stairs");
+        stonecutterCrafting.add("minecraft:red_sandstone_stairs");
+        stonecutterCrafting.add("minecraft:mossy_stone_brick_stairs");
+        stonecutterCrafting.add("minecraft:polished_diorite_stairs");
+        stonecutterCrafting.add("minecraft:stone_stairs");
+        stonecutterCrafting.add("minecraft:smooth_sandstone_stairs");
+        stonecutterCrafting.add("minecraft:granite_stairs");
+        stonecutterCrafting.add("minecraft:andesite_stairs");
+        stonecutterCrafting.add("minecraft:polished_andesite_stairs");
+        stonecutterCrafting.add("minecraft:diorite_stairs");
+        
+        stonecutterCrafting.add("minecraft:cobblestone_wall");
+        stonecutterCrafting.add("minecraft:mossy_cobblestone_wall");
+        stonecutterCrafting.add("minecraft:brick_wall");
+        stonecutterCrafting.add("minecraft:red_sandstone_wall");
+        stonecutterCrafting.add("minecraft:mossy_stone_brick_wall");
+        stonecutterCrafting.add("minecraft:granite_wall");
+        stonecutterCrafting.add("minecraft:stone_brick_wall");
+        stonecutterCrafting.add("minecraft:andesite_wall");
+        stonecutterCrafting.add("minecraft:sandstone_wall");
+        stonecutterCrafting.add("minecraft:diorite_wall");
+        if (!config.isSet("Profession.Stonecutter.crafting")) {config.set("Profession.Stonecutter.crafting", stonecutterCrafting);}
         /*
          * Setup Blocks / Recipes
          * for specific Professions (Herbalist)
