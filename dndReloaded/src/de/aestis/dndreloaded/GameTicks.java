@@ -48,7 +48,7 @@ public class GameTicks {
 				System.out.println(Plugin.Players);
 			}
 			
-		}, 500, 500);
+		}, 1000, 500);
 	}
 	
 	public void startRefreshScoreboardsTask() {
@@ -70,7 +70,7 @@ public class GameTicks {
 				System.out.println(Plugin.Players);
 			}
 			
-		}, 200, 200);
+		}, 1000, 20);
 	}
 	
 	public BukkitTask getSyncTask() {

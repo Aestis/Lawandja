@@ -14,7 +14,6 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
-import de.aestis.dndreloaded.Util.QuestMap;
 import de.aestis.dndreloaded.Util.QuestSelectorMenu;
 
 import oxolotel.inventoryMenuManager.InventoryMenuManager;

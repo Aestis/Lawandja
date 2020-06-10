@@ -13,7 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.aestis.dndreloaded.Quests.QuestHandler;
-import de.aestis.dndreloaded.Util.QuestMap;
+import de.aestis.dndreloaded.Quests.QuestMap;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
@@ -24,6 +24,10 @@ import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
+import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
 
@@ -136,6 +140,11 @@ public class Main extends JavaPlugin {
 			DatabaseHnd.initializeDatabase();
 			
 			getServer().getPluginManager().registerEvents((Listener) new EventListener(), this);
+			//...
+			//getServer().getPluginManager().registerEvents((Listener) new PlayerInteractEntityEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new EntityDamageByEntityEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerLoginEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerQuitEventHandler(), this);
 			
 			/*
 			 * Register all Profession

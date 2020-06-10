@@ -1,5 +1,7 @@
 package de.aestis.dndreloaded.Listeners;
 
-public class PlayerInteractEntityEventHandler {
+import org.bukkit.event.Listener;
+
+public class PlayerInteractEntityEventHandler implements Listener {
 
 }
