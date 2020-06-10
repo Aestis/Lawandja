@@ -10,4 +10,10 @@ public class RecipeMap {
     	
         map = new HashMap<String, HashMap<Integer, CustomRecipe>>();
     }
+	
+	public void insertRecipe(String profession, Integer recipeID, CustomRecipe recipe){
+    	
+        if(map.get(profession) == null) map.put(profession, new HashMap<Integer, CustomRecipe>());
+        map.get(profession).put(recipeID, recipe);
+    }
 }
