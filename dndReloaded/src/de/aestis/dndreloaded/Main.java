@@ -598,6 +598,17 @@ public class Main extends JavaPlugin {
          * for specific Professions (Farmer)
          */
         
+        List<String> farmerBlocks = new ArrayList<>();
+        farmerBlocks.add("minecraft:podzol");
+        farmerBlocks.add("minecraft:pumpkin");
+        farmerBlocks.add("minecraft:dried_kelp_block");
+        farmerBlocks.add("minecraft:bee_nest");
+        farmerBlocks.add("minecraft:beehive");
+        farmerBlocks.add("minecraft:wheat");
+        farmerBlocks.add("minecraft:potatoes");
+        farmerBlocks.add("minecraft:carrots");
+        farmerBlocks.add("minecraft:beetroots");
+        
         //TODO
         
         /*
@@ -616,6 +627,8 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Professions.farmer")) {config.set("Localization.Professions.farmer", "Bauer");}
         
         if (!config.isSet("Localization.Professions.General.notallowed")) {config.set("Localization.Professions.General.notallowed", "ßcDu weiﬂt nicht, wie das geht!");}
+        
+        if (!config.isSet("Localization.Quests.Inventories.Messages.fulljournal")) {config.set("Localization.Quests.Inventories.Messages.fulljournal", "ßcDu kannst nicht mehr Quests gleichzeitig verfolgen!");}
         
         if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest ausw‰hlen");}
         

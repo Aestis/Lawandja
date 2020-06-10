@@ -183,4 +183,8 @@ public class ListenerHerbalist implements Listener {
 		//TODO
 	}
 	
+	public void doHerbalistSpellEvent() {
+		//TODO
+	}
+	
 }

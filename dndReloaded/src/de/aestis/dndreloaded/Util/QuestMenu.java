@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Quests.Quest;
+import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Util.Misc.GUIItem;
 import oxolotel.inventoryMenuManager.menus.Closeable;
 import oxolotel.inventoryMenuManager.menus.CustomMenu;
@@ -76,7 +77,10 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 			}
 			if (i == 18) {
 				dw = new DoubleWrapper<>(gui.getGUIItem(Material.LIME_BANNER, 1, "§2Quest annehmen!", "§6Starte die Quest §2" + q.getTitle() + "§6!"), ()-> {
-					//
+					
+					this.onQuestAccept(player, q);
+					
+					System.out.println("CODE TO DECLINE QUEST (" + q.getID() + ") = " + q.getTitle());
 				});
 				rtn.put(i, dw);
 			}
@@ -86,7 +90,10 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 			}
 			if (i == 26) {
 				dw = new DoubleWrapper<>(gui.getGUIItem(Material.RED_BANNER, 1, "§cAbbrechen", "§6Ich habs mir anders überlegt!"), ()->{
-					System.out.println("CODE TO START QUEST (" + q.getID() + ") = " + q.getTitle());
+					
+					this.onQuestDecline(player, q);
+					
+					System.out.println("CODE TO DECLINE QUEST (" + q.getID() + ") = " + q.getTitle());
 				});
 				rtn.put(i, dw);
 			}
@@ -95,16 +102,24 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 		return rtn;
 	}
 	
-	interface QuestAccept {
-		void accept(Player player, Quest quest);
+	
+	public void onQuestAccept(Player player, Quest quest) {
+		
+		QuestHandler qh = Plugin.getQuestHandler();
+		
+		if (qh.setPlayerQuest(player, quest))
+		{
+			player.sendMessage(quest.getMessageAccept());
+		} else
+		{
+			player.sendMessage(Plugin.getConfig().getString("Localization.Quests.Inventories.Messages.fulljournal"));
+			return;
+		}
 	}
 	
-	
-	private void onQuestAccept(Player player, Quest quest) {
+	private void onQuestDecline(Player player, Quest quest) {
 		
-		player.sendMessage(quest.getMessageDecline());
-		Plugin.Players.get(player).setQuestActive1(quest.getID());
-		
+		player.sendMessage(quest.getMessageDecline());	
 	}
 
 

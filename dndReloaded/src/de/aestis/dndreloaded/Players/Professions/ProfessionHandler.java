@@ -30,6 +30,8 @@ public class ProfessionHandler {
 	
 	public void addProfessionXP (Player player, Profession profession, Integer xp) {
 		
+		if (xp == 0) return;
+		
 		PlayerData playerData = Plugin.Players.get(player);
 		PlayerHandler playerHandler = Plugin.getPlayerHandler();
 		

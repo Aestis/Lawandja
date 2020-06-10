@@ -80,25 +80,49 @@ public class QuestHandler {
 		
 	public Quest getPlayerQuestPrimary (Player player) {
 		
-		//TODO
+		if (Plugin.Players.get(player) != null)
+		{
+			Integer questID = Plugin.Players.get(player).getQuestActive1();
+			Quest quest = Plugin.QuestData.getQuestByID(questID);
+			
+			if (quest != null)
+			{
+				return quest;
+			}
+		}
 		return null;
 	}
 	
 	public Quest getPlayerQuestSecondary (Player player) {
 		
-		//TODO
+		if (Plugin.Players.get(player) != null)
+		{
+			Integer questID = Plugin.Players.get(player).getQuestActive2();
+			Quest quest = Plugin.QuestData.getQuestByID(questID);
+			
+			if (quest != null)
+			{
+				return quest;
+			}
+		}
 		return null;
 	}
 	
 	private boolean setPlayerQuestPrimary (Player player, Quest quest) {
 		
-		//TODO
+		if (Plugin.Players.get(player) != null)
+		{
+			Plugin.Players.get(player).setQuestActive1(quest.getID());
+		}
 		return false;
 	}
 	
 	private boolean setPlayerQuestSecondary (Player player, Quest quest) {
 		
-		//TODO
+		if (Plugin.Players.get(player) != null)
+		{
+			Plugin.Players.get(player).setQuestActive2(quest.getID());
+		}
 		return false;
 	}
 	
@@ -108,13 +132,15 @@ public class QuestHandler {
 		 * Logic for inserting Quest
 		 * Into Quest-Slot 1 & 2
 		 */
-		if (getPlayerQuestPrimary(player) == null) {
+		if (getPlayerQuestPrimary(player) == null)
+		{
 			setPlayerQuestPrimary(player, quest);
 			return true;
-		} else if (getPlayerQuestSecondary(player) == null) {
+		} else if (getPlayerQuestSecondary(player) == null)
+		{
 			setPlayerQuestSecondary(player, quest);
 			return true;
-		}	
+		}
 		
 		return false;
 	}
