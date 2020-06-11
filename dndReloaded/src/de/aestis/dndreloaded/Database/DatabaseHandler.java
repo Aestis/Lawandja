@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
+import de.aestis.dndreloaded.Quests.QuestHandler;
 
 public class DatabaseHandler {
 	
@@ -97,6 +99,8 @@ public class DatabaseHandler {
 					"  `QuestItem` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `QuestItemAmount` int(3) NOT NULL DEFAULT '0'," + 
 					"  `QuestDestination` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMobType` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
+					"  `QuestBlockMaterial` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
 					"  `QuestRewardXP` int(16) NOT NULL DEFAULT '0'," + 
 					"  `QuestReputationGain` int(11) DEFAULT NULL," + 
 					"  `QuestBonusRewardType` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
@@ -217,8 +221,23 @@ public class DatabaseHandler {
 			stmt.setInt(17, pd.getProfessionTanner());
 			stmt.setInt(18, pd.getKillsFriendly());
 			stmt.setInt(19, pd.getKillsEnemy());
-			stmt.setInt(20, pd.getQuestActive1());
-			stmt.setInt(21, pd.getQuestActive2());
+			
+			if (pd.getQuestActive1() != null)
+			{
+				stmt.setInt(20, pd.getQuestActive1().getID());
+			} else
+			{
+				stmt.setInt(20, -1);
+			}
+			
+			if (pd.getQuestActive2() != null)
+			{
+				stmt.setInt(21, pd.getQuestActive2().getID());
+			} else
+			{
+				stmt.setInt(21, -1);
+			}
+			
 			stmt.setInt(22, pd.getQuestVariable1());
 			stmt.setInt(23, pd.getQuestVariable2());
 			stmt.setString(24, pd.getQuestsCompleted());
@@ -280,8 +299,25 @@ public class DatabaseHandler {
 			d.setProfessionTanner(rs.getInt("PlayerProfessionTanner"));
 			d.setKillsFriendly(rs.getInt("PlayerKillsFriendly"));
 			d.setKillsEnemy(rs.getInt("PlayerKillsEnemy"));
-			d.setQuestActive1(rs.getInt("PlayerQuestActive1"));
-			d.setQuestActive2(rs.getInt("PlayerQuestActive2"));
+			
+			if (rs.getInt("PlayerQuestActive1") == -1 ||
+				rs.getInt("PlayerQuestActive1") == 0)
+			{
+				d.setQuestActive1(null);
+			} else {
+				Quest questActive1 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive1"));
+				d.setQuestActive1(questActive1);
+			}
+				
+			if (rs.getInt("PlayerQuestActive2") == -1 ||
+				rs.getInt("PlayerQuestActive2") == 0)
+			{
+				d.setQuestActive2(null);
+			} else {
+				Quest questActive2 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive2"));
+				d.setQuestActive2(questActive2);
+			}
+			
 			d.setQuestVariable1(rs.getInt("PlayerQuestVariable1"));
 			d.setQuestVariable2(rs.getInt("PlayerQuestVariable2"));
 			d.setQuestsCompleted(rs.getString("PlayerQuestsCompleted"));
@@ -355,7 +391,7 @@ public class DatabaseHandler {
 			stmt.setString(1, uuid);
 			ResultSet rs = stmt.executeQuery();
 			
-			list.addAll(prepareQuestDataNEW(rs));
+			list.addAll(prepareQuestData(rs));
 			
 			for (Quest q : list) {
 				System.out.println("Quest #" + q.getID() + " (" + q.getTitle() + ") added to list!");
@@ -372,7 +408,7 @@ public class DatabaseHandler {
 		}
 	}
 	
-	private List<Quest> prepareQuestDataNEW(ResultSet rs) throws SQLException {
+	private List<Quest> prepareQuestData(ResultSet rs) throws SQLException {
 		
 		List<Quest> list = new ArrayList<Quest>();
 		
@@ -383,13 +419,15 @@ public class DatabaseHandler {
 			d.setRequired(rs.getInt("QuestRequired"));
 			d.setFaction(rs.getString("QuestFaction"));
 			d.setMinReputation(rs.getInt("QuestMinReputation"));
-			d.setTitle(rs.getString("QuestTitle"));
-			if (rs.getString("QuestIcon") != null) {
+			d.setTitle(rs.getString("QuestTitle"));		
+			if (rs.getString("QuestIcon") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestIcon")), 1);
 				d.setIcon(itm);
-			} else {
+			} else
+			{
 				d.setIcon(null);
-			}	
+			}		
 			d.setDescription(rs.getString("QuestDescription"));
 			d.setTarget(rs.getString("QuestTarget"));
 			d.setShort(rs.getString("QuestShort"));		
@@ -397,22 +435,40 @@ public class DatabaseHandler {
 			d.setMessageDecline(rs.getString("QuestMessageDecline"));
 			d.setMessageRunning(rs.getString("QuestMessageRunning"));
 			d.setMessageFail(rs.getString("QuestMessageFail"));
-			d.setMessageSuccess(rs.getString("QuestMessageSuccess"));
-			if (rs.getString("QuestStarterItem") != null) {
+			d.setMessageSuccess(rs.getString("QuestMessageSuccess"));	
+			if (rs.getString("QuestStarterItem") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestStarterItem")), rs.getInt("QuestStarterItemAmount"));
 				d.setStarterItem(itm);
-			} else {
+			} else
+			{
 				d.setStarterItem(null);
 			}	
 			d.setType(rs.getString("QuestType"));
-			d.setVariable(rs.getInt("QuestVariable"));
-			if (rs.getString("QuestItem") != null) {
+			d.setVariable(rs.getInt("QuestVariable"));	
+			if (rs.getString("QuestItem") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestItem")), rs.getInt("QuestItemAmount"));
 				d.setItem(itm);
-			} else {
+			} else
+			{
 				d.setItem(null);
 			}	
 		 	d.setDestination(rs.getString("QuestDestination"));
+		 	if (rs.getString("QuestMobType") != null)
+		 	{
+		 		d.setMobType(EntityType.valueOf(rs.getString("QuestMobType")));
+		 	} else
+		 	{
+		 		d.setMobType(null);
+		 	}
+		 	if (rs.getString("QuestBlockMaterial") != null)
+		 	{
+		 		d.setBlockMaterial(Material.matchMaterial(rs.getString("QuestBlockMaterial")));
+		 	} else
+		 	{
+		 		d.setBlockMaterial(null);
+		 	}
 		 	d.setRewardXP(rs.getInt("QuestRewardXP"));
 		 	d.setReputationGain(rs.getInt("QuestReputationGain"));
 		 	d.setBonusRewardType(rs.getString("QuestBonusRewardType"));

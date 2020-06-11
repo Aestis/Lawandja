@@ -48,7 +48,7 @@ public class GameTicks {
 				System.out.println(Plugin.Players);
 			}
 			
-		}, 1000, 500);
+		}, 500, 500);
 	}
 	
 	public void startRefreshScoreboardsTask() {
@@ -58,7 +58,7 @@ public class GameTicks {
 			@Override
 			public void run() {
 				
-				Bukkit.broadcastMessage("§cRefreshing Scoreboards for " + Bukkit.getServer().getOnlinePlayers().size() + " Players()...");
+				//Bukkit.broadcastMessage("§cRefreshing Scoreboards for " + Bukkit.getServer().getOnlinePlayers().size() + " Players()...");
 				
 				for (Player p : Bukkit.getServer().getOnlinePlayers())
 				{
@@ -66,11 +66,9 @@ public class GameTicks {
 					Scoreboard scb = CustomScoreboards.getInstance().getMainPlayerScoreboard(p);
 					ScoreboardHelper.setScoreboard(p, scb);
 				}
-				
-				System.out.println(Plugin.Players);
 			}
 			
-		}, 1000, 20);
+		}, 100, 20);
 	}
 	
 	public BukkitTask getSyncTask() {

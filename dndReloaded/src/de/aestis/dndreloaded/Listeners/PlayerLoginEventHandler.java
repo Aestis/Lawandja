@@ -25,7 +25,17 @@ public class PlayerLoginEventHandler implements Listener {
 	
 	@EventHandler
 	public void playerBeforeJoinEvent(PlayerLoginEvent event) {
-				
+		
+		/*
+		 * Check if Quests have been
+		 * loaded first to avoid errors!
+		 */
+		
+		if (Plugin.QuestData == null)
+		{
+			event.getPlayer().kickPlayer(Config.getString("Localization.General.Events.Join.beforeload"));
+		}
+		
 		/*
 		 * OUTSOURCE!
 		 * */

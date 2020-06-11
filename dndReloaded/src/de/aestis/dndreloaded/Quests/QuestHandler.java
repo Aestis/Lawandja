@@ -14,6 +14,7 @@ import org.bukkit.inventory.EquipmentSlot;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
+import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Util.QuestSelectorMenu;
 
 import oxolotel.inventoryMenuManager.InventoryMenuManager;
@@ -82,8 +83,7 @@ public class QuestHandler {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Integer questID = Plugin.Players.get(player).getQuestActive1();
-			Quest quest = Plugin.QuestData.getQuestByID(questID);
+			Quest quest = Plugin.Players.get(player).getQuestActive1();
 			
 			if (quest != null)
 			{
@@ -97,8 +97,7 @@ public class QuestHandler {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Integer questID = Plugin.Players.get(player).getQuestActive2();
-			Quest quest = Plugin.QuestData.getQuestByID(questID);
+			Quest quest = Plugin.Players.get(player).getQuestActive2();
 			
 			if (quest != null)
 			{
@@ -112,7 +111,7 @@ public class QuestHandler {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Plugin.Players.get(player).setQuestActive1(quest.getID());
+			Plugin.Players.get(player).setQuestActive1(quest);
 		}
 		return false;
 	}
@@ -121,7 +120,7 @@ public class QuestHandler {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Plugin.Players.get(player).setQuestActive2(quest.getID());
+			Plugin.Players.get(player).setQuestActive2(quest);
 		}
 		return false;
 	}
@@ -169,7 +168,19 @@ public class QuestHandler {
 	}
 	
 	
+	public String getNPCDenyMessage() {
+		
+		@SuppressWarnings("unchecked")
+		List<String> messages = (List<String>) Plugin.getConfig().getList("Localization.Quests.General.Messages.missingrequiredquests");
+		
+		MathHelpers MathHelper = Plugin.getMathHelper();
+		
+		return messages.get(MathHelper.getRndInt(0, messages.size() - 1));
+	}
+	
+	
 	//EventListener
+	//OUTSOURCE
 	
 	public void handleQuestgiverInteraction (PlayerInteractEntityEvent event) {
 		
@@ -206,5 +217,9 @@ public class QuestHandler {
 		}
 		
 		System.out.println(Plugin.SelectedNPC);
+		
+		//ARGH
+		event.getPlayer().sendMessage(getNPCDenyMessage());
 	}
+	
 }

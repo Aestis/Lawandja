@@ -28,6 +28,7 @@ import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
+import de.aestis.dndreloaded.Quests.Listeners.TypeEntityKill;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
 
@@ -71,6 +72,12 @@ public class Main extends JavaPlugin {
 			 * */
 			
 			setupConfigs();
+			
+			/*
+			 * Clear local storage
+			 */
+			
+			Players.clear();
 			
 			/*FileConfiguration config = this.getConfig();
 	        config.options().copyDefaults(true);
@@ -155,6 +162,15 @@ public class Main extends JavaPlugin {
 			//...
 			getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
 			
+			
+			/*
+			 * Register all Quest
+			 * based EventListeners
+			 * 
+			 */
+			
+			getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
+			
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
 		} catch (Exception ex) {
@@ -168,7 +184,8 @@ public class Main extends JavaPlugin {
 			 * Load PlayerData initially and after reload
 			 * */
 			
-			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+			for (Player p : Bukkit.getServer().getOnlinePlayers())
+			{
 				DataSn.loadPlayerData(p);
 				PlayerHnd.setupPlayerProfessions(Players.get(p));
 			}
@@ -184,6 +201,13 @@ public class Main extends JavaPlugin {
 	}
 	
 	public void onDisable() {
+		
+		for (Player p : Bukkit.getServer().getOnlinePlayers())
+		{
+			DataSn.savePlayerData(p);
+			Players.remove(p);
+		}
+		
 		getLogger().severe("Lawandja CORE v " + Version + " shutting down...");
 	}
 	
@@ -631,6 +655,15 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Quests.Inventories.Messages.fulljournal")) {config.set("Localization.Quests.Inventories.Messages.fulljournal", "§cDu kannst nicht mehr Quests gleichzeitig verfolgen!");}
         
         if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest auswählen");}
+        
+        List<String> denyMessages = new ArrayList<>();
+        denyMessages.add("Komm später noch einmal vorbei!");
+        denyMessages.add("Ich habe gerade nichts für dich zu tun!");
+        denyMessages.add("Ich kann jetzt nicht!");
+        denyMessages.add("Siehst du nicht, dass ich gerade beschäftigt bin?");
+        denyMessages.add("Stör jemand Anderen!");
+        denyMessages.add("Hast du nicht etwas Anderes zu erledigen?");
+        if (!config.isSet("Localization.Quests.General.Messages.missingrequiredquests")) {config.set("Localization.Quests.General.Messages.missingrequiredquests", denyMessages);}
         
         saveConfig();
     }
