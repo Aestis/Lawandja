@@ -19,6 +19,7 @@ import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerHerbalist;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerWoodcutter;
+import de.aestis.dndreloaded.Players.Professions.Recipes.RecipeHandler;
 import de.aestis.dndreloaded.Database.Mysql;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
@@ -47,6 +48,7 @@ public class Main extends JavaPlugin {
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
 	private ProfessionHandler ProfessionHnd;
+	private RecipeHandler RecipeHnd;
 	private DataSync DataSn;
 	private GameTicks GameTcs;
 	
@@ -122,6 +124,7 @@ public class Main extends JavaPlugin {
 			setQuestHandler();
 			setPlayerHandler();
 			setProfessionHandler();
+			setRecipeHandler();
 			
 			//Main Components
 			setDataSync();
@@ -184,11 +187,25 @@ public class Main extends JavaPlugin {
 			 * Load PlayerData initially and after reload
 			 * */
 			
-			for (Player p : Bukkit.getServer().getOnlinePlayers())
-			{
-				DataSn.loadPlayerData(p);
-				PlayerHnd.setupPlayerProfessions(Players.get(p));
-			}
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+
+				@Override
+				public void run() {	
+
+					for (Player p : Bukkit.getServer().getOnlinePlayers())
+					{
+						DataSn.loadPlayerData(p);
+						PlayerHnd.setupPlayerProfessions(Players.get(p));
+					}
+				}
+				
+			}, 40L);
+			
+			/*
+			 * Load Custom Recipes
+			 */
+			
+			RecipeHnd.loadCustomRecipes();
 			
 			GameTcs.startSyncTask();
 			GameTcs.startRefreshScoreboardsTask();
@@ -202,13 +219,40 @@ public class Main extends JavaPlugin {
 	
 	public void onDisable() {
 		
+		/*
+		 * Synchronize PlayerData to
+		 * prevent Data loss
+		 */
+		
 		for (Player p : Bukkit.getServer().getOnlinePlayers())
 		{
 			DataSn.savePlayerData(p);
 			Players.remove(p);
 		}
 		
-		getLogger().severe("Lawandja CORE v " + Version + " shutting down...");
+		getLogger().info("Lawandja CORE v " + Version + " shutting down...");
+		
+		/*
+		 * Resetting all local variables
+		 * to prevent memory leaks
+		 */
+		
+		this.BlockBreakOverride = null;
+		this.InventoryHelper = null;
+		this.MathHelper = null;
+		this.ScoreboardHelper = null;
+		this.MathHelper = null;
+		this.ScoreboardHelper = null;
+		this.BookHelper = null;
+		this.DatabaseHnd = null;
+		this.QuestHnd = null;
+		this.PlayerHnd = null;
+		this.ProfessionHnd = null;
+		this.RecipeHnd = null;
+		this.DataSn = null;
+		this.GameTcs = null;
+		
+		Main.instance = null;
 	}
 	
 	/*
@@ -237,6 +281,7 @@ public class Main extends JavaPlugin {
 	private void setQuestHandler() {this.QuestHnd = QuestHandler.getInstance();}
 	private void setPlayerHandler() {this.PlayerHnd = PlayerHandler.getInstance();}
 	private void setProfessionHandler() {this.ProfessionHnd = ProfessionHandler.getInstance();}
+	private void setRecipeHandler() {this.RecipeHnd = RecipeHandler.getInstance();}
 	
 	//Main Components
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}
@@ -257,6 +302,7 @@ public class Main extends JavaPlugin {
 	public QuestHandler getQuestHandler() {return this.QuestHnd;}
 	public PlayerHandler getPlayerHandler() {return this.PlayerHnd;}
 	public ProfessionHandler getProfessionHandler() {return this.ProfessionHnd;}
+	public RecipeHandler getRecipeHandler() {return this.RecipeHnd;}
 	
 	//Main Components
 	public DataSync getDataSync() {return this.DataSn;}
@@ -603,6 +649,15 @@ public class Main extends JavaPlugin {
         herbalistBlocks.add("minecraft:peony");
         if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", herbalistBlocks);}
         
+        //TODO
+        //FOR TESTING PURPOSE ONLY... POTIONS DONT BELONG TO HERBALIST PROFESSION!
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.name")) {config.set("Profession.Herbalist.Recipes.Absorption_I.name", "Trank der Absorption I");}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.skill")) {config.set("Profession.Herbalist.Recipes.Absorption_I.skill", 500);}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.sequence")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.sequence", false);}
+
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material1.material")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material1.material", "minecraft:potion");}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material2.material")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material2.material", "minecraft:cornflower");}
+        
         /*
          * Setup Blocks / Recipes / Stuff
          * for specific Professions (Inscriber)
@@ -655,6 +710,9 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Localization.Quests.Inventories.Messages.fulljournal")) {config.set("Localization.Quests.Inventories.Messages.fulljournal", "§cDu kannst nicht mehr Quests gleichzeitig verfolgen!");}
         
         if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest auswählen");}
+        
+        if (!config.isSet("Localization.Players.Welcome.returning")) {config.set("Localization.Players.Welcome.returning", "Willkommen zurück in der Welt von Lawandja!");}
+        if (!config.isSet("Localization.Players.Welcome.new")) {config.set("Localization.Players.Welcome.new", "Herzlich Willkommen in der Welt von Lawandja! Ein großes Abenteuer wartet auf dich!");}
         
         List<String> denyMessages = new ArrayList<>();
         denyMessages.add("Komm später noch einmal vorbei!");

@@ -5,6 +5,7 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Scoreboard;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Players.PlayerData;
 
@@ -29,6 +30,7 @@ public class CustomScoreboards {
 	public Scoreboard getMainPlayerScoreboard(Player player) {
 		
 		ScoreboardHelpers ScoreboardHelper = Plugin.getScoreboardHelper();
+		MathHelpers MathHelper = Plugin.getMathHelper();
 		Scoreboard scb = ScoreboardHelper.prepareScoreboard(player, "Testboard", "Willkommen in Lawandja!", DisplaySlot.SIDEBAR);
 		PlayerData pd = Plugin.Players.get(player.getPlayer());
 		
@@ -41,7 +43,8 @@ public class CustomScoreboards {
 		
 		if (pd.getProfessionPrimary() != null)
 		{
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionPrimary().getName() + " (" + pd.getProfessionPrimary().getCurrentExperience() + "/50 xp)", 14);
+			String skillpoints = MathHelper.shortifyNumber(pd.getProfessionPrimary().getCurrentExperience()) + "k";
+			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionPrimary().getName() + " (" + skillpoints + "/50 xp)", 14);
 		}	
 		if (pd.getProfessionSecondary() != null)
 		{

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import de.aestis.dndreloaded.Main;
+
 public class QuestMap {
 	
 	private HashMap<String, HashMap<Integer, Quest>> map;
@@ -29,10 +31,27 @@ public class QuestMap {
     	
     	List<HashMap<Integer, Quest>> list = new ArrayList<HashMap<Integer, Quest>>();
     	
-    	for (Integer key : map.get(UUID).keySet()) {
+    	for (Integer key : map.get(UUID).keySet())
+    	{
     		HashMap<Integer, Quest> buffer = new HashMap<Integer, Quest>();
-    		buffer.put(key, map.get(UUID).get(key));
-    		list.add(buffer);
+    		
+    		/*
+    		 * Check for incomplete
+    		 * Quests first!
+    		 */
+    		
+    		Quest q = map.get(UUID).get(key);
+    		
+    		if (isCompleteQuest(q))
+    		{
+    			Main.instance.getLogger().fine("Skipped incomplete Quest {" + q.getID() + "}!");
+    			
+    			buffer.put(key, q);
+        		list.add(buffer);
+    		} else
+    		{
+    			Main.instance.getLogger().warning("Skipped incomplete Quest {" + q.getID() + "}!");
+    		}
     	}
     	System.out.println("Quest List Size: " + list.size());
     	return list;
@@ -53,4 +72,21 @@ public class QuestMap {
     	
     	return null;
     }
+    
+    private boolean isCompleteQuest(Quest quest) {
+		
+		if (quest.getNpcID() == null) return false;
+		if (quest.getFaction() == null) return false;
+		if (quest.getTitle() == null) return false;
+		if (quest.getIcon() == null) return false;
+		if (quest.getDescription() == null) return false;
+		if (quest.getShort() == null) return false;
+		if (quest.getMessageAccept() == null) return false;
+		if (quest.getMessageDecline() == null) return false;
+		if (quest.getMessageFail() == null) return false;
+		if (quest.getMessageSuccess() == null) return false;
+		if (quest.getType() == null) return false;
+		
+		return true;
+	}
 }

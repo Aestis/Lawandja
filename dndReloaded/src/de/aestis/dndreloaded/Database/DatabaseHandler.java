@@ -306,7 +306,14 @@ public class DatabaseHandler {
 				d.setQuestActive1(null);
 			} else {
 				Quest questActive1 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive1"));
-				d.setQuestActive1(questActive1);
+				
+				if (questActive1 != null)
+				{
+					d.setQuestActive1(questActive1);
+				} else
+				{
+					Plugin.getLogger().severe("QUEST DATA {SLOT_1} CORRUPTED!");
+				}
 			}
 				
 			if (rs.getInt("PlayerQuestActive2") == -1 ||
@@ -315,6 +322,14 @@ public class DatabaseHandler {
 				d.setQuestActive2(null);
 			} else {
 				Quest questActive2 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive2"));
+				
+				if (questActive2 != null)
+				{
+					d.setQuestActive2(questActive2);
+				} else
+				{
+					Plugin.getLogger().severe("QUEST DATA {SLOT_2] CORRUPTED!");
+				}
 				d.setQuestActive2(questActive2);
 			}
 			

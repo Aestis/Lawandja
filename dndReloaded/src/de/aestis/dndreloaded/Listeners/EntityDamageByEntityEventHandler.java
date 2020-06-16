@@ -20,6 +20,11 @@ public class EntityDamageByEntityEventHandler implements Listener {
 	@EventHandler
 	public void playerHitEntityEvent(EntityDamageByEntityEvent event) {
 
+		/*
+		 * Show Enemy HealthBar
+		 * to Player after hitting
+		 */
+		
 		if (event.getDamager() instanceof Player)
 		{
 			Player player = (Player) event.getDamager();

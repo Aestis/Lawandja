@@ -18,9 +18,12 @@ public class PlayerLoginEventHandler implements Listener {
 	private final FileConfiguration Config = Plugin.getConfig();
 	
 	@EventHandler
-	public void x(PlayerJoinEvent event) {
+	public void setPlayerJoinMessage(PlayerJoinEvent event) {
 		
-		event.setJoinMessage("{PLAYER}, {TITLE} joined Lawandja!");
+		/*
+		 * Cancel Join Message
+		 */
+		event.setJoinMessage(null);
 	}
 	
 	@EventHandler
@@ -71,10 +74,24 @@ public class PlayerLoginEventHandler implements Listener {
 				PlayerHandler ph = Main.instance.getPlayerHandler();
 				ph.setupPlayerProfessions(Plugin.Players.get(event.getPlayer()));
 				
-				Bukkit.broadcastMessage("§2Spielerdaten von " + playerName + " wurden erfolgreich geladen!");
-			} else {
+				Bukkit.broadcastMessage("§2Spielerdaten von " + playerName + " wurden erfolgreich geladen!");				
+			} else
+			{
 				Bukkit.broadcastMessage("§cSpielerdaten konnten nicht geschrieben werden.");
+				return;
 			}
 		}
+		
+		/*
+		 * Real Join Messages
+		 * comes here!
+		 */
+		
+		//TODO
+		//Regex
+		
+		PlayerData pd = Plugin.Players.get(event.getPlayer());
+		
+		Bukkit.broadcastMessage("§6" + pd.getName() + "§7, " + pd.getTitle() + " §f ist Lawandja beigetreten!");
 	}
 }

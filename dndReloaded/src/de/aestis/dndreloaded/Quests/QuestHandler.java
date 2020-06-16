@@ -76,7 +76,7 @@ public class QuestHandler {
         			}
         		}            	
             }
-        }, 50L);
+        }, 20L);
 	}
 		
 	public Quest getPlayerQuestPrimary (Player player) {
