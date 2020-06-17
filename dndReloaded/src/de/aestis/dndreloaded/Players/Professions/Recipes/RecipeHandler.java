@@ -1,23 +1,14 @@
 package de.aestis.dndreloaded.Players.Professions.Recipes;
 
 import java.util.List;
+import java.util.Set;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.CraftingInventory;
 import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.Professions.Profession;
-
-enum Professions {
-	WOODCUTTER,
-	BLACKSMITH,
-	STONECUTTER,
-	HERBALIST,
-	INSCRIBER,
-	ALCHEMIST,
-	FARMER,
-	TANNER
-}
 
 public class RecipeHandler {
 
@@ -41,7 +32,15 @@ public class RecipeHandler {
 		
 		//TODO
 		
-		for (Professions p : Professions.values())
+		Set<String> professions = Plugin.getConfig().getConfigurationSection("Profession").getKeys(true);
+		
+		for (String p : professions) {
+			System.out.println("PROFESSION FOUND: " + p);
+		}
+		
+		//String[] professions = "Woodcutter", "Stonecutter", "Stonecutter", "Herbalist", "Inscriber", "Alchemist", "Farmer", "Tanner";
+		
+		/*for (String p : professions)
 		{
 			
 			Plugin.getLogger().info("Trying to load Recipes for Profession '" + p.name() + "'...");
@@ -59,7 +58,7 @@ public class RecipeHandler {
 			{
 				Plugin.getLogger().fine(recipes.size() + "Recipes for Profession '" + p.name() + "' initialized!");
 			}
-		}
+		}*/
 		
 	}
 	

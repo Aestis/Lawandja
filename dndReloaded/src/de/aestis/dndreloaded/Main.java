@@ -29,6 +29,7 @@ import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerRegionEnterEvent;
 import de.aestis.dndreloaded.Quests.Listeners.TypeEntityKill;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
@@ -155,6 +156,7 @@ public class Main extends JavaPlugin {
 			getServer().getPluginManager().registerEvents((Listener) new EntityDamageByEntityEventHandler(), this);
 			getServer().getPluginManager().registerEvents((Listener) new PlayerLoginEventHandler(), this);
 			getServer().getPluginManager().registerEvents((Listener) new PlayerQuitEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerRegionEnterEvent(), this);
 			
 			/*
 			 * Register all Profession

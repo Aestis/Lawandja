@@ -4,7 +4,7 @@ description: High Fantasy MMORPG WoW-like Framework for JenoMiners.de
 version: 0.2.9
 author: Guerkchen385
 api-version: 1.15
-depend: [Citizens, InventoryMenuManager, GriefPrevention]
+depend: [Citizens, InventoryMenuManager, GriefPrevention, WorldGuard]
 loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
 commands:
    dnd:
