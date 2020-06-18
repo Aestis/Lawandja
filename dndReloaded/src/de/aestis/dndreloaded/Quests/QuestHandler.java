@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -43,34 +44,65 @@ public class QuestHandler {
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable(){
 
             @Override
-            public void run(){
-            	Bukkit.getServer().broadcastMessage("Fetching Questgivers...");
-            	Bukkit.broadcastMessage("");
-            	for (World w : Bukkit.getServer().getWorlds()) {
-        			Bukkit.broadcastMessage("Showing Questgivers for world = " + w.getName());
-        			for (Entity e : w.getEntities()) {
-        				if (e.getType() == EntityType.PLAYER) {
-        					Bukkit.broadcastMessage(" - " + e.getCustomName() + " #" + e.getEntityId() + " || " + e.getUniqueId() + " (" + e.getType() + ")");
-        					Bukkit.broadcastMessage("Fetching Quests for: " + e.getUniqueId() + "...");
-        					Bukkit.broadcastMessage("");
+            public void run() {
+            	
+            	Integer worldCount = Bukkit.getServer().getWorlds().size();
+            	
+            	/*
+            	 * Prevent crashes and bugs on weird
+            	 * MultiWorld/MultiVerse configurations
+            	 */
+            	if (worldCount == 0)
+            	{
+            		Plugin.getLogger().warning("Server doesn't contain any useable worlds! Stopping the Plugin...");
+            		Plugin.getPluginLoader().disablePlugin(null);
+            		return;
+            	}
+            	
+            	Plugin.getLogger().info("Checking for potential Questgiver NPCs on " + worldCount + " worlds...");
+
+            	for (World w : Bukkit.getServer().getWorlds())
+            	{
+            		Plugin.getLogger().info("Found World '" + w.getName() + "'! Fetching Entities...");
+            		
+        			for (Entity e : w.getEntities())
+        			{
+        				
+        				/*
+        				 * Exclude hostile Mobs and other, common MobTypes
+        				 * Currently available:
+        				 * PLAYER, ARMOR_STAND, CAT, WOLF, IRON_GOLEM, ITEM_FRAME,
+        				 * SKELETON, VILLAGER, WANDERING_TRADER
+        				 */
+        				if (e.getType() == EntityType.PLAYER ||
+    						e.getType() == EntityType.ARMOR_STAND ||
+    						e.getType() == EntityType.CAT ||
+    						e.getType() == EntityType.WOLF ||
+    						e.getType() == EntityType.IRON_GOLEM ||
+    						e.getType() == EntityType.ITEM_FRAME ||
+    						e.getType() == EntityType.SKELETON ||
+    						e.getType() == EntityType.VILLAGER ||
+    						e.getType() == EntityType.WANDERING_TRADER) {
+        					
+        					Plugin.getLogger().info("Fetching Quests for '" + e.getUniqueId() + "'...");
         					
         					DatabaseHandler db = Plugin.getDatabaseHandler();
+        					List<Quest> quests = db.getQuestData(e.getUniqueId().toString());
         					
-        					List<Quest> quests = db.getQuestDataNEW(e.getUniqueId().toString());
+        					if (quests.size() == 0)
+        					{
+        						Plugin.getLogger().fine("No Quests found for '" + e.getUniqueId() + "'! Continuing...");
+        						continue;
+        					}
         					
-        					for (Quest q : quests) {
-        						Plugin.QuestData.insertQuest(q.getNpcID(), q.getID(), q);
+        					for (Quest q : quests)
+        					{
         						/*
-        						 * Debug Stuff
-        						 * Remove Later!
+        						 * Inserting quest into local storage
+        						 * to prevent further Database access
         						 */
-        						String title = Plugin.QuestData.getNpcQuestByID(q.getNpcID(), q.getID()).getTitle();
-        						String npc = Plugin.QuestData.getNpcQuestByID(q.getNpcID(), q.getID()).getNpcID();			
-        						Bukkit.broadcastMessage("§c Quest: '" + title + "' from NPC " + npc);
-        						
-        						Bukkit.broadcastMessage("§c Loading Quest (3)...");
-        						q = Plugin.QuestData.getQuestByID(3);
-        						Bukkit.broadcastMessage("§c Quest: '" + title + "' from NPC " + npc);
+        						Plugin.QuestData.insertQuest(q.getNpcID(), q.getID(), q);
+        						Plugin.getLogger().info(" > Loaded Quest {" + q.getID() + "} '" + q.getTitle() + "' for this NPC.");
         					}
         				}	
         			}
@@ -78,7 +110,12 @@ public class QuestHandler {
             }
         }, 20L);
 	}
-		
+	
+	/**
+	 * Mainly Error handler for Slots 1 and 2
+	 * @param player (Players Name)
+	 * @return Quest or NULL
+	 */
 	public Quest getPlayerQuestPrimary (Player player) {
 		
 		if (Plugin.Players.get(player) != null)
@@ -90,9 +127,15 @@ public class QuestHandler {
 				return quest;
 			}
 		}
+		
 		return null;
 	}
 	
+	/**
+	 * Mainly Error handler for Slots 1 and 2
+	 * @param player (Players Name)
+	 * @return Quest or NULL
+	 */
 	public Quest getPlayerQuestSecondary (Player player) {
 		
 		if (Plugin.Players.get(player) != null)
@@ -104,33 +147,119 @@ public class QuestHandler {
 				return quest;
 			}
 		}
+		
 		return null;
 	}
 	
+	/**
+	 * Prevents overwriting a currently
+	 * active Quest from Player for Slot 1 and 2
+	 * DON'T USE TO UNSET PRIMARY QUEST!
+	 * @param player (Players Name)
+	 * @param quest (Quest 1 from Player)
+	 * @return true/false
+	 */
 	private boolean setPlayerQuestPrimary (Player player, Quest quest) {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Plugin.Players.get(player).setQuestActive1(quest);
+			
+			if (Plugin.Players.get(player).getQuestActive1() == null)
+			{
+				Plugin.Players.get(player).setQuestActive1(quest);
+				return true;
+			} else
+			{
+				return false;
+			}
 		}
+		
 		return false;
 	}
 	
+	/**
+	 * Prevents overwriting a currently
+	 * active Quest from Player for Slot 1 and 2
+	 * DON'T USE TO UNSET SECONDARY QUEST!
+	 * @param player (Players Name)
+	 * @param quest (Quest 2 from Player)
+	 * @return true/false
+	 */
 	private boolean setPlayerQuestSecondary (Player player, Quest quest) {
 		
 		if (Plugin.Players.get(player) != null)
 		{
-			Plugin.Players.get(player).setQuestActive2(quest);
+			
+			if (Plugin.Players.get(player).getQuestActive2() == null)
+			{
+				Plugin.Players.get(player).setQuestActive2(quest);
+				return true;
+			} else
+			{
+				return false;
+			}
 		}
+		
 		return false;
 	}
 	
+	/**
+	 * Unsets Players Quest Slot 1 if
+	 * there's anything to unset
+	 * @param player (Players Name)
+	 * @return true/false
+	 */
+	public boolean unsetPlayerQuestPrimary (Player player) {
+		
+		if (Plugin.Players.get(player) != null)
+		{
+			
+			if (Plugin.Players.get(player).getQuestActive1() == null)
+			{
+				return false;
+			} else
+			{
+				Plugin.Players.get(player).setQuestActive1(null);
+				Plugin.Players.get(player).setQuestVariable1(0);
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Unsets Players Quest Slot 2 if
+	 * there's anything to unset
+	 * @param player (Players Name)
+	 * @return true/false
+	 */
+	public boolean unsetPlayerQuestSecondary (Player player) {
+		
+		if (Plugin.Players.get(player) != null)
+		{
+			
+			if (Plugin.Players.get(player).getQuestActive2() == null)
+			{
+				return false;
+			} else
+			{
+				Plugin.Players.get(player).setQuestActive2(null);
+				Plugin.Players.get(player).setQuestVariable2(0);
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Automatically handles inserting Quests
+	 * into primary or secondary Slot
+	 * @param player (Players Name)
+	 * @param quest (Quest to insert)
+	 * @return true/false
+	 */
 	public boolean setPlayerQuest (Player player, Quest quest) {
 		
-		/*
-		 * Logic for inserting Quest
-		 * Into Quest-Slot 1 & 2
-		 */
 		if (getPlayerQuestPrimary(player) == null)
 		{
 			setPlayerQuestPrimary(player, quest);
@@ -167,17 +296,28 @@ public class QuestHandler {
 		}
 	}
 	
-	
+	/**
+	 * Fetches random message from NPC when not
+	 * having completed the required Quest(line) before
+	 * @return Message
+	 */
 	public String getNPCDenyMessage() {
 		
-		@SuppressWarnings("unchecked")
-		List<String> messages = (List<String>) Plugin.getConfig().getList("Localization.Quests.General.Messages.missingrequiredquests");
-		
-		MathHelpers MathHelper = Plugin.getMathHelper();
-		
-		return messages.get(MathHelper.getRndInt(0, messages.size() - 1));
-	}
-	
+		if (Plugin.getConfig().isSet("Localization.Quests.General.Messages.missingrequiredquests"))
+		{
+			@SuppressWarnings("unchecked")
+			List<String> messages = (List<String>) Plugin.getConfig().getList("Localization.Quests.General.Messages.missingrequiredquests");
+			
+			MathHelpers MathHelper = Plugin.getMathHelper();
+			
+			return messages.get(MathHelper.getRndInt(0, messages.size() - 1));
+		} else
+		{
+			Plugin.getLogger().warning("Messages for 'Localization.Quests.General.Messages.missingrequiredquests' not set up yet!");
+			
+			return null;
+		}
+	}	
 	
 	//EventListener
 	//OUTSOURCE
@@ -195,30 +335,60 @@ public class QuestHandler {
 		String npcUUID = npc.getUniqueId().toString();
 		Player player = event.getPlayer();
 
-		Bukkit.broadcastMessage("§6Player §2" + player.getName() + "§6 selected Entity §2" + npc.getUniqueId());
+		if (player.isOp())
+		{
+			player.sendMessage("§6Player §2" + player.getName() + "§6 selected Entity §2" + npc.getUniqueId());
+		}
 		
-		//Put this NPC into memory
+		/*
+		 * Store this NPC into local memory
+		 * for further operation
+		 */
 		Plugin.SelectedNPC.put(player, npc.getUniqueId().toString());
 	
-		if (npc.getCustomName() != null) {
+		if (npc.getCustomName() != null)
+		{
+			/*
+			 * Quest givers can't exist without a custom Name!
+			 * Checking them is not necessary
+			 */
 			
-			Bukkit.broadcastMessage("§6Checking for §2" + npc.getUniqueId().toString() + "§6...");
+			if (player.isOp())
+			{
+				player.sendMessage("§6Checking for §2" + npc.getUniqueId().toString() + "§6...");
+			}
 			
-			if (Plugin.QuestData.hasQuests(npcUUID)) {
+			//TODO
+			/*
+			 * Checking via DB is extremely inefficient!
+			 * Use already built-in QuestMap instead! @oxo :P
+			 */
+			if (Plugin.QuestData.hasQuests(npcUUID))
+			{
+				if (player.isOp())
+				{
+					player.sendMessage("§2NPC Has Something. Let Me Fetch It For You...");
+				}
 				
-				Bukkit.broadcastMessage("§2NPC Has Something. Let Me Fetch It For You...");
-				
+				/*
+				 * Play sound to Player to mimic "speaking" to the selected NPC.
+				 * Open up Quest-Selection-Menu afterwards
+				 */
+				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_YES, 1, 1);
+
 				List<HashMap<Integer, Quest>> quests = Plugin.QuestData.getAllQuestsFromNPC(npcUUID);
 				InventoryMenuManager.getInstance().openMenu(player, new QuestSelectorMenu(quests));
-				
-			} else {
-				Bukkit.broadcastMessage("§cNPC Hasn't Got Any Quest For You, Yet.");
+			} else
+			{
+				if (player.isOp())
+				{
+					player.sendMessage("§cNPC Hasn't Got Any Quest For You, Yet.");
+				}
 			}
 		}
 		
-		System.out.println(Plugin.SelectedNPC);
-		
-		//ARGH
+		//TODO
+		//REMOVE AFTER IMPLEMENTING AT THE RIGHT LOCATION!
 		event.getPlayer().sendMessage(getNPCDenyMessage());
 	}
 	
