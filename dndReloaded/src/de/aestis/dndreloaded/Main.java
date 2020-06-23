@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestMap;
+import de.aestis.dndreloaded.Chat.ChatHandler;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
@@ -167,6 +168,9 @@ public class Main extends JavaPlugin {
 			//...
 			getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
 			
+			//ChatHandler
+			
+			getServer().getPluginManager().registerEvents((Listener) new ChatHandler(), this);
 			
 			/*
 			 * Register all Quest
@@ -715,6 +719,21 @@ public class Main extends JavaPlugin {
         
         if (!config.isSet("Localization.Players.Welcome.returning")) {config.set("Localization.Players.Welcome.returning", "Willkommen zurück in der Welt von Lawandja!");}
         if (!config.isSet("Localization.Players.Welcome.new")) {config.set("Localization.Players.Welcome.new", "Herzlich Willkommen in der Welt von Lawandja! Ein großes Abenteuer wartet auf dich!");}
+        
+        
+        if (!config.isSet("Chat.enabled")) {config.set("Chat.enabled", true);}
+        if (!config.isSet("Chat.Channels.1.enabled")) {config.set("Chat.Channels.1.enabled", true);}
+        if (!config.isSet("Chat.Channels.1.formatting")) {config.set("Chat.Channels.1.formatting", "§a[1. Global][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.1.name")) {config.set("Chat.Channels.1.name", "[1. Global]");}
+        if (!config.isSet("Chat.Channels.2.enabled")) {config.set("Chat.Channels.2.enabled", true);}
+        if (!config.isSet("Chat.Channels.2.formatting")) {config.set("Chat.Channels.2.formatting", "§a[2. Lawandja][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.2.name")) {config.set("Chat.Channels.2.name", "[2. Lawandja]");}
+        if (!config.isSet("Chat.Channels.3.enabled")) {config.set("Chat.Channels.3.enabled", true);}
+        if (!config.isSet("Chat.Channels.3.formatting")) {config.set("Chat.Channels.3.formatting", "§6[3. {REGION_NAME}][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.3.name")) {config.set("Chat.Channels.3.name", "[3. Region]");}
+        if (!config.isSet("Chat.Channels.4.enabled")) {config.set("Chat.Channels.4.enabled", true);}
+        if (!config.isSet("Chat.Channels.4.formatting")) {config.set("Chat.Channels.4.formatting", "[{PLAYER_NAME}]");}
+        if (!config.isSet("Chat.Channels.4.name")) {config.set("Chat.Channels.4.name", "[4. Lokal]");}
         
         List<String> denyMessages = new ArrayList<>();
         denyMessages.add("Komm später noch einmal vorbei!");

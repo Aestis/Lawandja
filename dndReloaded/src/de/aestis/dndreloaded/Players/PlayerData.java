@@ -141,4 +141,12 @@ public class PlayerData {
 	public Date getJoined() {return this.Joined;}
 	public void setJoined(Date Joined) {this.Joined = Joined;}
 	
+	public void playerDataChangeEvent() {
+		//TODO
+		
+		/*
+		 * Implements EventListener on PlayerData change
+		 * to tidy up Display on Scoreboards for example
+		 */
+	}
 }
