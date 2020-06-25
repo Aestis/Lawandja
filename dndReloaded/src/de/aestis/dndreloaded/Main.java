@@ -407,7 +407,6 @@ public class Main extends JavaPlugin {
         woodcutterCrafting.add("minecraft:jungle_sign");
         woodcutterCrafting.add("minecraft:acacia_sign");
         woodcutterCrafting.add("minecraft:dark_oak_sign");
-        woodcutterCrafting.add("minecraft:stone");
         if (!config.isSet("Profession.Woodcutter.crafting")) {config.set("Profession.Woodcutter.crafting", woodcutterCrafting);}
         
         /*
