@@ -13,17 +13,25 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import de.aestis.dndreloaded.Quests.QuestHandler;
-import de.aestis.dndreloaded.Util.QuestMap;
+import de.aestis.dndreloaded.Quests.QuestMap;
+import de.aestis.dndreloaded.Chat.ChatHandler;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerHerbalist;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerWoodcutter;
+import de.aestis.dndreloaded.Players.Professions.Recipes.RecipeHandler;
 import de.aestis.dndreloaded.Database.Mysql;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
+import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
+import de.aestis.dndreloaded.Listeners.PlayerRegionEnterEvent;
+import de.aestis.dndreloaded.Quests.Listeners.TypeEntityKill;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
 
@@ -42,6 +50,7 @@ public class Main extends JavaPlugin {
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
 	private ProfessionHandler ProfessionHnd;
+	private RecipeHandler RecipeHnd;
 	private DataSync DataSn;
 	private GameTicks GameTcs;
 	
@@ -50,7 +59,7 @@ public class Main extends JavaPlugin {
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
 	public QuestMap QuestData = new QuestMap();
-	
+
 	/*
 	 * Enable the whole plugin
 	 * (Here we go!)
@@ -67,6 +76,12 @@ public class Main extends JavaPlugin {
 			 * */
 			
 			setupConfigs();
+			
+			/*
+			 * Clear local storage
+			 */
+			
+			Players.clear();
 			
 			/*FileConfiguration config = this.getConfig();
 	        config.options().copyDefaults(true);
@@ -111,6 +126,7 @@ public class Main extends JavaPlugin {
 			setQuestHandler();
 			setPlayerHandler();
 			setProfessionHandler();
+			setRecipeHandler();
 			
 			//Main Components
 			setDataSync();
@@ -136,6 +152,12 @@ public class Main extends JavaPlugin {
 			DatabaseHnd.initializeDatabase();
 			
 			getServer().getPluginManager().registerEvents((Listener) new EventListener(), this);
+			//...
+			//getServer().getPluginManager().registerEvents((Listener) new PlayerInteractEntityEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new EntityDamageByEntityEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerLoginEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerQuitEventHandler(), this);
+			getServer().getPluginManager().registerEvents((Listener) new PlayerRegionEnterEvent(), this);
 			
 			/*
 			 * Register all Profession
@@ -145,6 +167,18 @@ public class Main extends JavaPlugin {
 			getServer().getPluginManager().registerEvents((Listener) new ListenerWoodcutter(), this);
 			//...
 			getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
+			
+			//ChatHandler
+			
+			getServer().getPluginManager().registerEvents((Listener) new ChatHandler(), this);
+			
+			/*
+			 * Register all Quest
+			 * based EventListeners
+			 * 
+			 */
+			
+			getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
 			
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
@@ -159,12 +193,28 @@ public class Main extends JavaPlugin {
 			 * Load PlayerData initially and after reload
 			 * */
 			
-			for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-				DataSn.loadPlayerData(p);
-				PlayerHnd.setupPlayerProfessions(Players.get(p));
-			}
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+
+				@Override
+				public void run() {	
+
+					for (Player p : Bukkit.getServer().getOnlinePlayers())
+					{
+						DataSn.loadPlayerData(p);
+						PlayerHnd.setupPlayerProfessions(Players.get(p));
+					}
+				}
+				
+			}, 40L);
+			
+			/*
+			 * Load Custom Recipes
+			 */
+			
+			RecipeHnd.loadCustomRecipes();
 			
 			GameTcs.startSyncTask();
+			GameTcs.startRefreshScoreboardsTask();
 			
 		} catch (Exception ex) {
 			getLogger().severe("Could Not Load Player Data: " + ex);
@@ -174,7 +224,41 @@ public class Main extends JavaPlugin {
 	}
 	
 	public void onDisable() {
-		getLogger().severe("Lawandja CORE v " + Version + " shutting down...");
+		
+		/*
+		 * Synchronize PlayerData to
+		 * prevent Data loss
+		 */
+		
+		for (Player p : Bukkit.getServer().getOnlinePlayers())
+		{
+			DataSn.savePlayerData(p);
+			Players.remove(p);
+		}
+		
+		getLogger().info("Lawandja CORE v " + Version + " shutting down...");
+		
+		/*
+		 * Resetting all local variables
+		 * to prevent memory leaks
+		 */
+		
+		this.BlockBreakOverride = null;
+		this.InventoryHelper = null;
+		this.MathHelper = null;
+		this.ScoreboardHelper = null;
+		this.MathHelper = null;
+		this.ScoreboardHelper = null;
+		this.BookHelper = null;
+		this.DatabaseHnd = null;
+		this.QuestHnd = null;
+		this.PlayerHnd = null;
+		this.ProfessionHnd = null;
+		this.RecipeHnd = null;
+		this.DataSn = null;
+		this.GameTcs = null;
+		
+		Main.instance = null;
 	}
 	
 	/*
@@ -203,6 +287,7 @@ public class Main extends JavaPlugin {
 	private void setQuestHandler() {this.QuestHnd = QuestHandler.getInstance();}
 	private void setPlayerHandler() {this.PlayerHnd = PlayerHandler.getInstance();}
 	private void setProfessionHandler() {this.ProfessionHnd = ProfessionHandler.getInstance();}
+	private void setRecipeHandler() {this.RecipeHnd = RecipeHandler.getInstance();}
 	
 	//Main Components
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}
@@ -223,6 +308,7 @@ public class Main extends JavaPlugin {
 	public QuestHandler getQuestHandler() {return this.QuestHnd;}
 	public PlayerHandler getPlayerHandler() {return this.PlayerHnd;}
 	public ProfessionHandler getProfessionHandler() {return this.ProfessionHnd;}
+	public RecipeHandler getRecipeHandler() {return this.RecipeHnd;}
 	
 	//Main Components
 	public DataSync getDataSync() {return this.DataSn;}
@@ -321,8 +407,6 @@ public class Main extends JavaPlugin {
         woodcutterCrafting.add("minecraft:jungle_sign");
         woodcutterCrafting.add("minecraft:acacia_sign");
         woodcutterCrafting.add("minecraft:dark_oak_sign");
-        
-        //TODO
         if (!config.isSet("Profession.Woodcutter.crafting")) {config.set("Profession.Woodcutter.crafting", woodcutterCrafting);}
         
         /*
@@ -392,7 +476,7 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Profession.Stonecutter.Experience.Pickup.max")) {config.set("Profession.Stonecutter.Experience.Pickup.max", 3);}
         if (!config.isSet("Profession.Stonecutter.Experience.Crafting.min")) {config.set("Profession.Stonecutter.Experience.Crafting.min", 4);}
         if (!config.isSet("Profession.Stonecutter.Experience.Crafting.max")) {config.set("Profession.Stonecutter.Experience.Crafting.max", 10);}
-        
+
         List<String> stonecutterBlocks = new ArrayList<>();
         stonecutterBlocks.add("minecraft:stone");
         stonecutterBlocks.add("minecraft:granite");
@@ -418,7 +502,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:chiseled_stone_bricks");
         stonecutterBlocks.add("minecraft:smooth_stone");
         stonecutterBlocks.add("minecraft:clay");
-      
+
         stonecutterBlocks.add("minecraft:stone_slab");
         stonecutterBlocks.add("minecraft:smooth_stone_slab");
         stonecutterBlocks.add("minecraft:cobblestone_slab");
@@ -438,7 +522,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:andesite_slab");
         stonecutterBlocks.add("minecraft:polished_andesite_slab");
         stonecutterBlocks.add("minecraft:diorite_slab");
-        
+
         stonecutterBlocks.add("minecraft:cobblestone_stairs");
         stonecutterBlocks.add("minecraft:brick_stairs");
         stonecutterBlocks.add("minecraft:stone_brick_stairs");
@@ -454,7 +538,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:andesite_stairs");
         stonecutterBlocks.add("minecraft:polished_andesite_stairs");
         stonecutterBlocks.add("minecraft:diorite_stairs");
-        
+
         stonecutterBlocks.add("minecraft:cobblestone_wall");
         stonecutterBlocks.add("minecraft:mossy_cobblestone_wall");
         stonecutterBlocks.add("minecraft:brick_wall");
@@ -466,7 +550,7 @@ public class Main extends JavaPlugin {
         stonecutterBlocks.add("minecraft:sandstone_wall");
         stonecutterBlocks.add("minecraft:diorite_wall");
         if (!config.isSet("Profession.Stonecutter.blocks")) {config.set("Profession.Stonecutter.blocks", stonecutterBlocks);}
-        
+
         List<String> stonecutterCrafting = new ArrayList<>();
         stonecutterCrafting.add("minecraft:stone");
         stonecutterCrafting.add("minecraft:polished_granite");
@@ -486,7 +570,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:cracked_stone_bricks");
         stonecutterCrafting.add("minecraft:chiseled_stone_bricks");
         stonecutterCrafting.add("minecraft:smooth_stone");
-      
+
         stonecutterCrafting.add("minecraft:stone_slab");
         stonecutterCrafting.add("minecraft:smooth_stone_slab");
         stonecutterCrafting.add("minecraft:cobblestone_slab");
@@ -506,7 +590,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:andesite_slab");
         stonecutterCrafting.add("minecraft:polished_andesite_slab");
         stonecutterCrafting.add("minecraft:diorite_slab");
-        
+
         stonecutterCrafting.add("minecraft:cobblestone_stairs");
         stonecutterCrafting.add("minecraft:brick_stairs");
         stonecutterCrafting.add("minecraft:stone_brick_stairs");
@@ -522,7 +606,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:andesite_stairs");
         stonecutterCrafting.add("minecraft:polished_andesite_stairs");
         stonecutterCrafting.add("minecraft:diorite_stairs");
-        
+
         stonecutterCrafting.add("minecraft:cobblestone_wall");
         stonecutterCrafting.add("minecraft:mossy_cobblestone_wall");
         stonecutterCrafting.add("minecraft:brick_wall");
@@ -534,6 +618,7 @@ public class Main extends JavaPlugin {
         stonecutterCrafting.add("minecraft:sandstone_wall");
         stonecutterCrafting.add("minecraft:diorite_wall");
         if (!config.isSet("Profession.Stonecutter.crafting")) {config.set("Profession.Stonecutter.crafting", stonecutterCrafting);}
+        
         /*
          * Setup Blocks / Recipes
          * for specific Professions (Herbalist)
@@ -570,6 +655,15 @@ public class Main extends JavaPlugin {
         herbalistBlocks.add("minecraft:peony");
         if (!config.isSet("Profession.Herbalist.blocks")) {config.set("Profession.Herbalist.blocks", herbalistBlocks);}
         
+        //TODO
+        //FOR TESTING PURPOSE ONLY... POTIONS DONT BELONG TO HERBALIST PROFESSION!
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.name")) {config.set("Profession.Herbalist.Recipes.Absorption_I.name", "Trank der Absorption I");}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.skill")) {config.set("Profession.Herbalist.Recipes.Absorption_I.skill", 500);}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.sequence")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.sequence", false);}
+
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material1.material")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material1.material", "minecraft:potion");}
+        if (!config.isSet("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material2.material")) {config.set("Profession.Herbalist.Recipes.Absorption_I.Crafting.Materials.Material2.material", "minecraft:cornflower");}
+        
         /*
          * Setup Blocks / Recipes / Stuff
          * for specific Professions (Inscriber)
@@ -588,6 +682,17 @@ public class Main extends JavaPlugin {
          * Setup Blocks / Recipes / Stuff
          * for specific Professions (Farmer)
          */
+        
+        List<String> farmerBlocks = new ArrayList<>();
+        farmerBlocks.add("minecraft:podzol");
+        farmerBlocks.add("minecraft:pumpkin");
+        farmerBlocks.add("minecraft:dried_kelp_block");
+        farmerBlocks.add("minecraft:bee_nest");
+        farmerBlocks.add("minecraft:beehive");
+        farmerBlocks.add("minecraft:wheat");
+        farmerBlocks.add("minecraft:potatoes");
+        farmerBlocks.add("minecraft:carrots");
+        farmerBlocks.add("minecraft:beetroots");
         
         //TODO
         
@@ -608,7 +713,36 @@ public class Main extends JavaPlugin {
         
         if (!config.isSet("Localization.Professions.General.notallowed")) {config.set("Localization.Professions.General.notallowed", "§cDu weißt nicht, wie das geht!");}
         
+        if (!config.isSet("Localization.Quests.Inventories.Messages.fulljournal")) {config.set("Localization.Quests.Inventories.Messages.fulljournal", "§cDu kannst nicht mehr Quests gleichzeitig verfolgen!");}
+        
         if (!config.isSet("Localization.Quests.Inventories.selector")) {config.set("Localization.Quests.Inventories.selector", "Quest auswählen");}
+        
+        if (!config.isSet("Localization.Players.Welcome.returning")) {config.set("Localization.Players.Welcome.returning", "Willkommen zurück in der Welt von Lawandja!");}
+        if (!config.isSet("Localization.Players.Welcome.new")) {config.set("Localization.Players.Welcome.new", "Herzlich Willkommen in der Welt von Lawandja! Ein großes Abenteuer wartet auf dich!");}
+        
+        
+        if (!config.isSet("Chat.enabled")) {config.set("Chat.enabled", true);}
+        if (!config.isSet("Chat.Channels.1.enabled")) {config.set("Chat.Channels.1.enabled", true);}
+        if (!config.isSet("Chat.Channels.1.formatting")) {config.set("Chat.Channels.1.formatting", "§a[1. Global][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.1.name")) {config.set("Chat.Channels.1.name", "[1. Global]");}
+        if (!config.isSet("Chat.Channels.2.enabled")) {config.set("Chat.Channels.2.enabled", true);}
+        if (!config.isSet("Chat.Channels.2.formatting")) {config.set("Chat.Channels.2.formatting", "§a[2. Lawandja][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.2.name")) {config.set("Chat.Channels.2.name", "[2. Lawandja]");}
+        if (!config.isSet("Chat.Channels.3.enabled")) {config.set("Chat.Channels.3.enabled", true);}
+        if (!config.isSet("Chat.Channels.3.formatting")) {config.set("Chat.Channels.3.formatting", "§6[3. {REGION_NAME}][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.3.name")) {config.set("Chat.Channels.3.name", "[3. Region]");}
+        if (!config.isSet("Chat.Channels.4.enabled")) {config.set("Chat.Channels.4.enabled", true);}
+        if (!config.isSet("Chat.Channels.4.formatting")) {config.set("Chat.Channels.4.formatting", "[{PLAYER_NAME}]");}
+        if (!config.isSet("Chat.Channels.4.name")) {config.set("Chat.Channels.4.name", "[4. Lokal]");}
+        
+        List<String> denyMessages = new ArrayList<>();
+        denyMessages.add("Komm später noch einmal vorbei!");
+        denyMessages.add("Ich habe gerade nichts für dich zu tun!");
+        denyMessages.add("Ich kann jetzt nicht!");
+        denyMessages.add("Siehst du nicht, dass ich gerade beschäftigt bin?");
+        denyMessages.add("Stör jemand Anderen!");
+        denyMessages.add("Hast du nicht etwas Anderes zu erledigen?");
+        if (!config.isSet("Localization.Quests.General.Messages.missingrequiredquests")) {config.set("Localization.Quests.General.Messages.missingrequiredquests", denyMessages);}
         
         saveConfig();
     }

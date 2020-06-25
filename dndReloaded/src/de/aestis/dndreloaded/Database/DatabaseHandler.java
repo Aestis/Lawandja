@@ -10,11 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
+import de.aestis.dndreloaded.Quests.QuestHandler;
 
 public class DatabaseHandler {
 	
@@ -35,10 +37,15 @@ public class DatabaseHandler {
 		return instance;
 	}
 	
+	/**
+	 * Initialize Database on startup
+	 * (if not exists)
+	 */
 	public void initializeDatabase() {
 		
 		PreparedStatement stmt;
-		try {
+		try
+		{
 			stmt = con.prepareStatement("CREATE TABLE `players` (" + 
 					"  `PlayerID` int(11) NOT NULL," + 
 					"  `PlayerName` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
@@ -73,7 +80,7 @@ public class DatabaseHandler {
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 			
 			stmt.executeUpdate();
-			Main.instance.getLogger().fine("Required Table 'players' Successfully Created.");
+			Main.instance.getLogger().info("Required Table 'players' Successfully Created.");
 			
 			stmt = con.prepareStatement("CREATE TABLE `quests` (" + 
 					"  `QuestID` int(8) NOT NULL," + 
@@ -97,6 +104,8 @@ public class DatabaseHandler {
 					"  `QuestItem` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `QuestItemAmount` int(3) NOT NULL DEFAULT '0'," + 
 					"  `QuestDestination` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestMobType` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
+					"  `QuestBlockMaterial` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
 					"  `QuestRewardXP` int(16) NOT NULL DEFAULT '0'," + 
 					"  `QuestReputationGain` int(11) DEFAULT NULL," + 
 					"  `QuestBonusRewardType` varchar(16) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
@@ -114,81 +123,192 @@ public class DatabaseHandler {
 					"  PRIMARY KEY (QuestID)" + 
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");	
 			stmt.executeUpdate();
-			Main.instance.getLogger().fine("Required Table 'quests' Successfully Created.");
+			Main.instance.getLogger().info("Required Table 'quests' Successfully Created.");
 			
 			stmt.close();
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			Main.instance.getLogger().info("Required Tables Already Exist. Nothing Changed.");
 		}
 	}
 	
-	/*
+	/**
 	 * Simple player related getters/setters
-	 * */
-	
+	 * Handling not required
+	 * @param player (Players Name)
+	 * @return true/false
+	 */
 	public boolean playerRegistered (String player) {
 		
 		PreparedStatement stmt;
 		try {
-			stmt = con.prepareStatement("SELECT * FROM players WHERE PlayerName = ?");
+			stmt = con.prepareStatement("SELECT * FROM `players` WHERE PlayerName = ?");
 			stmt.setString(1, player);
 			ResultSet rs = stmt.executeQuery();
 			
-			if (rs.next() == false) {
+			if (rs.next() == false)
+			{
 				rs.close();
 				stmt.close();
 				return false;
-			} else {
+			} else
+			{
 				rs.close();
 				stmt.close();
 				return true;
 			}
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
 	}
 	
+	/**
+	 * Registers player directly to
+	 * Database if not exists
+	 * @param player (Players Name)
+	 * @return true/false
+	 */
 	public boolean registerPlayer (String player) {
 		
 		PreparedStatement stmt;
-		try {
-			stmt = con.prepareStatement("INSERT INTO players (PlayerName, PlayerJoined) VALUES (?, ?)");
+		try
+		{
+			stmt = con.prepareStatement("INSERT INTO `players` (PlayerName, PlayerJoined) VALUES (?, ?)");
 			stmt.setString(1, player);
 			stmt.setString(2, this.getDatetime());
 			stmt.executeUpdate();
 			stmt.close();
 			return true;
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
 	}
 	
-	
-	/*
-	 * Player related initialization
-	 * Fetch -> Setup Class -> Pass
-	 * */
-	
-	public PlayerData getPlayerData(String player) {
+	/**
+	 * Saves PlayerData asynchronously to
+	 * Database (avoiding lags)
+	 * @param player (Players Name)
+	 * @param pd (Players PlayerData)
+	 * @return true/false
+	 */
+	public boolean savePlayerData (String player, PlayerData pd) {
+		
 		PreparedStatement stmt;
-		try {
-			stmt = con.prepareStatement("SELECT * FROM players WHERE PlayerName = ?");
+		try
+		{
+			stmt = con.prepareStatement("UPDATE `players` SET " +
+										"`PlayerFaction` = ?, " +
+										"`PlayerReputation` = ?, " +
+										"`PlayerTitle` = ?, " +
+										"`PlayerRoleArcher` = ?, " +
+										"`PlayerRoleKnight` = ?, " +
+										"`PlayerRoleBerserk` = ?, " +
+										"`PlayerRoleShield` = ?, " +
+										"`PlayerRoleTank` = ?, " +
+										"`PlayerRoleHealer` = ?, " +
+										"`PlayerProfessionWoodcutter` = ?, " +
+										"`PlayerProfessionBlacksmith` = ?, " +
+										"`PlayerProfessionStonecutter` = ?, " +
+										"`PlayerProfessionHerbalist` = ?, " +
+										"`PlayerProfessionInscriber` = ?, " +
+										"`PlayerProfessionAlchemist` = ?, " +
+										"`PlayerProfessionFarmer` = ?, " +
+										"`PlayerProfessionTanner` = ?, " +
+										"`PlayerKillsFriendly` = ?, " +
+										"`PlayerKillsEnemy` = ?, " +
+										"`PlayerQuestActive1` = ?, " +
+										"`PlayerQuestActive2` = ?, " +
+										"`PlayerQuestVariable1` = ?, " +
+										"`PlayerQuestVariable2` = ?, " +
+										"`PlayerQuestsCompleted` = ?, " +
+										"`PlayerDeaths` = ?, " +
+										"`PlayerPunishment` = ? " +
+										"WHERE PlayerID = ?");
+			stmt.setString(1, pd.getFaction());
+			stmt.setInt(2, pd.getReputation());
+			stmt.setString(3, pd.getTitle());
+			stmt.setInt(4, pd.getRoleArcher());
+			stmt.setInt(5, pd.getRoleKnight());
+			stmt.setInt(6, pd.getRoleBerserk());
+			stmt.setInt(7, pd.getRoleShield());
+			stmt.setInt(8, pd.getRoleTank());
+			stmt.setInt(9, pd.getRoleHealer());
+			stmt.setInt(10, pd.getProfessionWoodcutter());
+			stmt.setInt(11, pd.getProfessionBlacksmith());
+			stmt.setInt(12, pd.getProfessionStonecutter());
+			stmt.setInt(13, pd.getProfessionHerbalist());
+			stmt.setInt(14, pd.getProfessionInscriber());
+			stmt.setInt(15, pd.getProfessionAlchemist());
+			stmt.setInt(16, pd.getProfessionFarmer());
+			stmt.setInt(17, pd.getProfessionTanner());
+			stmt.setInt(18, pd.getKillsFriendly());
+			stmt.setInt(19, pd.getKillsEnemy());
+			
+			if (pd.getQuestActive1() != null)
+			{
+				stmt.setInt(20, pd.getQuestActive1().getID());
+			} else
+			{
+				stmt.setInt(20, -1);
+			}
+			
+			if (pd.getQuestActive2() != null)
+			{
+				stmt.setInt(21, pd.getQuestActive2().getID());
+			} else
+			{
+				stmt.setInt(21, -1);
+			}
+			
+			stmt.setInt(22, pd.getQuestVariable1());
+			stmt.setInt(23, pd.getQuestVariable2());
+			stmt.setString(24, pd.getQuestsCompleted());
+			stmt.setInt(25, pd.getDeaths());
+			stmt.setInt(26, pd.getPunishment());
+			stmt.setInt(27, pd.getID());
+			stmt.executeUpdate();
+			stmt.close();
+			return true;
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	/**
+	 * Gets PlayerData directly from
+	 * Database (prioritized!)
+	 * @param player (Players Name)
+	 * @return PlayerData
+	 */
+	public PlayerData getPlayerData(String player) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			stmt = con.prepareStatement("SELECT * FROM `players` WHERE PlayerName = ?");
 			stmt.setString(1, player);
 			ResultSet rs = stmt.executeQuery();
 			PlayerData playerData = preparePlayerData(rs);
 			rs.close();
 			stmt.close();
 			return playerData;
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return null;
 		}
 	}
 
 	private PlayerData preparePlayerData(ResultSet rs) throws SQLException {
-		while (rs.next()) {
+		
+		while (rs.next())
+		{
 			PlayerData d = new PlayerData(rs.getInt("PlayerID"));
 			d.setName(rs.getString("PlayerName"));
 			d.setFaction(rs.getString("PlayerFaction"));
@@ -207,10 +327,44 @@ public class DatabaseHandler {
 			d.setProfessionInscriber(rs.getInt("PlayerProfessionInscriber"));
 			d.setProfessionAlchemist(rs.getInt("PlayerProfessionAlchemist"));
 			d.setProfessionFarmer(rs.getInt("PlayerProfessionFarmer"));	
+			d.setProfessionTanner(rs.getInt("PlayerProfessionTanner"));
 			d.setKillsFriendly(rs.getInt("PlayerKillsFriendly"));
 			d.setKillsEnemy(rs.getInt("PlayerKillsEnemy"));
-			d.setQuestActive1(rs.getInt("PlayerQuestActive1"));
-			d.setQuestActive2(rs.getInt("PlayerQuestActive2"));
+			
+			if (rs.getInt("PlayerQuestActive1") == -1 ||
+				rs.getInt("PlayerQuestActive1") == 0)
+			{
+				d.setQuestActive1(null);
+			} else {
+				Quest questActive1 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive1"));
+				
+				if (questActive1 != null)
+				{
+					d.setQuestActive1(questActive1);
+				} else
+				{
+					Plugin.getLogger().severe("QUEST DATA {SLOT_1} CORRUPTED!");
+				}
+			}
+				
+			if (rs.getInt("PlayerQuestActive2") == -1 ||
+				rs.getInt("PlayerQuestActive2") == 0)
+			{
+				d.setQuestActive2(null);
+			} else {
+				Quest questActive2 = Plugin.QuestData.getQuestByID(rs.getInt("PlayerQuestActive2"));
+				
+				if (questActive2 != null)
+				{
+					d.setQuestActive2(questActive2);
+				} else
+				{
+					Plugin.getLogger().severe("QUEST DATA {SLOT_2] CORRUPTED!");
+				}
+				
+				d.setQuestActive2(questActive2);
+			}
+			
 			d.setQuestVariable1(rs.getInt("PlayerQuestVariable1"));
 			d.setQuestVariable2(rs.getInt("PlayerQuestVariable2"));
 			d.setQuestsCompleted(rs.getString("PlayerQuestsCompleted"));
@@ -222,44 +376,53 @@ public class DatabaseHandler {
 		return null;
 	}
 	
-	
-	/*
-	 * Simple quest related getters/setters
-	 * */
-	
+	/**
+	 * Checks if the selected NPC (uuid) has quests
+	 * directly from Database (not recommended in most usecases)
+	 * @param uuid (NPCs UUID)
+	 * @return true/false
+	 */
 	public boolean hasQuests (String uuid) {
 		
 		PreparedStatement stmt;
-		try {
+		try
+		{
 			stmt = con.prepareStatement("SELECT * FROM quests WHERE NpcID = ?");
 			stmt.setString(1, uuid);
 			ResultSet rs = stmt.executeQuery();
 			
-			if (rs.next() == false) {
+			if (rs.next() == false)
+			{
 				rs.close();
 				stmt.close();
 				return false;
-			} else {
+			} else
+			{
 				rs.close();
 				stmt.close();
 				return true;
 			}
-		} catch (SQLException e) {
+			
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
 	}
 	
-	
-	/*
-	 * Quest related initialization
-	 * Fetch -> Setup Class -> Pass
-	 * */
-	
+	/**
+	 * Registers new Quest directly to the
+	 * Database (prioritized!)
+	 * @param npc (NPCs UUID)
+	 * @param title (Title of the Quest)
+	 * @param creator (Creators Name)
+	 * @return true/false
+	 */
 	public boolean registerQuest (String npc, String title, String creator) {
 		
 		PreparedStatement stmt;
-		try {
+		try
+		{
 			stmt = con.prepareStatement("INSERT INTO quests (NpcID, QuestTitle, QuestCreator, QuestCreated) VALUES (?, ?, ?, ?)");
 			stmt.setString(1, npc);
 			stmt.setString(2, title);
@@ -268,44 +431,49 @@ public class DatabaseHandler {
 			stmt.executeUpdate();
 			stmt.close();
 			return true;
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return false;
 		}
 	}
 		
-	public List<Quest> getQuestDataNEW(String uuid) {
+	/**
+	 * Fetches all available Quests from the NPC
+	 * by using his UUID (prioritized!)
+	 * @param uuid (NPCs UUID)
+	 * @return QuestList
+	 */
+	public List<Quest> getQuestData(String uuid) {
+		
 		PreparedStatement stmt;
-		try {
-			
-			List<Quest> list = new ArrayList<Quest>();
-			
+		try
+		{
 			stmt = con.prepareStatement("SELECT * FROM Quests WHERE NpcID = ?");
 			stmt.setString(1, uuid);
 			ResultSet rs = stmt.executeQuery();
 			
-			list.addAll(prepareQuestDataNEW(rs));
-			
-			for (Quest q : list) {
-				System.out.println("Quest #" + q.getID() + " (" + q.getTitle() + ") added to list!");
-			}
-
+			List<Quest> list = new ArrayList<Quest>();
+			list.addAll(prepareQuestData(rs));	
+			for (Quest q : list) Plugin.getLogger().info("Quest {" + q.getID() + "} '" + q.getTitle() + "' added to list!");
 			
 			rs.close();
 			stmt.close();
 			
 			return list;
-		} catch (SQLException e) {
+		} catch (SQLException e)
+		{
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
-	private List<Quest> prepareQuestDataNEW(ResultSet rs) throws SQLException {
+	private List<Quest> prepareQuestData(ResultSet rs) throws SQLException {
 		
 		List<Quest> list = new ArrayList<Quest>();
 		
-		while (rs.next()) {
+		while (rs.next())
+		{
 			ItemStack itm = null;
 			Quest d = new Quest(rs.getInt("QuestID"));
 			d.setNpcID(rs.getString("NpcID"));
@@ -313,12 +481,16 @@ public class DatabaseHandler {
 			d.setFaction(rs.getString("QuestFaction"));
 			d.setMinReputation(rs.getInt("QuestMinReputation"));
 			d.setTitle(rs.getString("QuestTitle"));
-			if (rs.getString("QuestIcon") != null) {
+			
+			if (rs.getString("QuestIcon") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestIcon")), 1);
 				d.setIcon(itm);
-			} else {
+			} else
+			{
 				d.setIcon(null);
-			}	
+			}
+			
 			d.setDescription(rs.getString("QuestDescription"));
 			d.setTarget(rs.getString("QuestTarget"));
 			d.setShort(rs.getString("QuestShort"));		
@@ -327,30 +499,59 @@ public class DatabaseHandler {
 			d.setMessageRunning(rs.getString("QuestMessageRunning"));
 			d.setMessageFail(rs.getString("QuestMessageFail"));
 			d.setMessageSuccess(rs.getString("QuestMessageSuccess"));
-			if (rs.getString("QuestStarterItem") != null) {
+			
+			if (rs.getString("QuestStarterItem") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestStarterItem")), rs.getInt("QuestStarterItemAmount"));
 				d.setStarterItem(itm);
-			} else {
+			} else
+			{
 				d.setStarterItem(null);
-			}	
+			}
+			
 			d.setType(rs.getString("QuestType"));
 			d.setVariable(rs.getInt("QuestVariable"));
-			if (rs.getString("QuestItem") != null) {
+			
+			if (rs.getString("QuestItem") != null)
+			{
 				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestItem")), rs.getInt("QuestItemAmount"));
 				d.setItem(itm);
-			} else {
+			} else
+			{
 				d.setItem(null);
-			}	
+			}
+			
 		 	d.setDestination(rs.getString("QuestDestination"));
+		 	
+		 	if (rs.getString("QuestMobType") != null)
+		 	{
+		 		d.setMobType(EntityType.valueOf(rs.getString("QuestMobType")));
+		 	} else
+		 	{
+		 		d.setMobType(null);
+		 	}
+		 	
+		 	if (rs.getString("QuestBlockMaterial") != null)
+		 	{
+		 		d.setBlockMaterial(Material.matchMaterial(rs.getString("QuestBlockMaterial")));
+		 	} else
+		 	{
+		 		d.setBlockMaterial(null);
+		 	}
+		 	
 		 	d.setRewardXP(rs.getInt("QuestRewardXP"));
 		 	d.setReputationGain(rs.getInt("QuestReputationGain"));
 		 	d.setBonusRewardType(rs.getString("QuestBonusRewardType"));
-		 	if (rs.getString("QuestBonusReward") != null) {
+		 	
+		 	if (rs.getString("QuestBonusReward") != null)
+		 	{
 		 		itm = new ItemStack(Material.matchMaterial(rs.getString("QuestBonusReward")), rs.getInt("QuestBonusRewardAmount"));
 		 		d.setBonusReward(itm);
-		 	} else {
+		 	} else
+		 	{
 				d.setBonusReward(null);
-			}	
+			}
+		 	
 		 	d.setCompletionText(rs.getString("QuestCompletionText"));
 		 	d.setDoesFollow(rs.getBoolean("QuestDoesFollow"));
 		 	d.setFollowID(rs.getInt("QuestFollowID"));
@@ -364,10 +565,11 @@ public class DatabaseHandler {
 		return list;
 	}
 	
-	/*
-	 * Little helper(s) (might remove from here)
-	 * */
-	
+	/**
+	 * Little helper to use localized and
+	 * prettified timestamp (GER)
+	 * @return Prettified DateTime
+	 */
 	private String getDatetime() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 	   LocalDateTime now = LocalDateTime.now(); 

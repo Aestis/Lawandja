@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="dndReloaded/src"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/GriefPrevention.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/InventoryMenuManager.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/spigot-1.15.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldguard-bukkit-7.0.2.jar"/>
+	<classpathentry kind="output" path="dndReloaded/bin"/>
+</classpath>

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.aestis.dndreloaded.Database.DatabaseHandler;
+import de.aestis.dndreloaded.Messages.InfoHandler;
 
 public class CommandManager implements CommandExecutor {
 
@@ -60,6 +61,17 @@ public class CommandManager implements CommandExecutor {
 				return true;
 			}
 			
+			
+			if (argArr[0].equalsIgnoreCase("questinfo") && argArr.length > 1) {
+				
+				InfoHandler MsgInfo = new InfoHandler();
+				
+				for (String s : MsgInfo.getQuestInfo(Plugin.QuestData.getQuestByID(Integer.valueOf(argArr[1]))))
+				{
+					sender.sendMessage(s);
+				}
+				
+			}
 			
 			if (argArr[0].equalsIgnoreCase("createquest")) {
 				

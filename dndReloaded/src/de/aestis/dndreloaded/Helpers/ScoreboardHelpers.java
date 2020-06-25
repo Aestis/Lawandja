@@ -39,6 +39,12 @@ public class ScoreboardHelpers {
 	
 	public void addToScoreboard (final Scoreboard board, String objective, String text, Integer entry) {
 		Objective obj = board.getObjective(objective);
+		
+		if (obj.getScore(text).isScoreSet())
+		{
+			//TODO
+		}
+		
 		obj.getScore(text).setScore(entry);
 	}
 	
@@ -53,6 +59,12 @@ public class ScoreboardHelpers {
 	 * */
 	
 	public boolean checkForScoreboard (Player player, String objective) {
+		
+		if (player.getScoreboard().getObjective(objective) != null)
+		{
+			player.sendMessage("Hast schon...");
+		}
+		
 		return false;
 	}
 	

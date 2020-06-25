@@ -2,6 +2,8 @@ package de.aestis.dndreloaded.Quests;
 
 import java.util.Date;
 
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 public class Quest {
@@ -28,6 +30,8 @@ public class Quest {
 	private Integer Variable;
 	private ItemStack Item;
 	private String Destination;
+	private EntityType MobType;
+	private Material BlockMaterial;
 	private Integer RewardXP;
 	private Integer ReputationGain;
 	private String BonusRewardType;
@@ -101,6 +105,12 @@ public class Quest {
 	
 	public String getDestination() {return this.Destination;}
 	public void setDestination(String Destination) {this.Destination = Destination;}
+	
+	public EntityType getMobType() {return this.MobType;}
+	public void setMobType(EntityType MobType) {this.MobType = MobType;}
+	
+	public Material getBlockMaterial() {return this.BlockMaterial;}
+	public void setBlockMaterial(Material BlockMaterial) {this.BlockMaterial = BlockMaterial;}
 	
 	public Integer getRewardXP() {return this.RewardXP;}
 	public void setRewardXP(Integer RewardXP) {this.RewardXP = RewardXP;}

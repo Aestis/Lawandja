@@ -87,4 +87,35 @@ public class PlayerHandler {
 		return false;
 	}
 	
+	public boolean increaseQuestVariable(PlayerData playerData, Integer questSlot, Integer increment) {
+		
+		if (questSlot == 1)
+		{
+			if (playerData.getQuestActive1() != null)
+			{
+				Integer value = playerData.getQuestVariable1();
+				playerData.setQuestVariable1(value + increment);
+				return true;
+			} else
+			{
+				return false;
+			}
+		}
+		
+		if (questSlot == 2)
+		{
+			if (playerData.getQuestActive2() != null)
+			{
+				Integer value = playerData.getQuestVariable2();
+				playerData.setQuestVariable2(value + increment);
+				return true;
+			} else
+			{
+				return false;
+			}
+		}
+		
+		return false;
+	}
+	
 }

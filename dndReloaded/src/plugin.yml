@@ -1,0 +1,44 @@
+name: Lawandja
+main: de.aestis.dndreloaded.Main
+description: High Fantasy MMORPG WoW-like Framework for JenoMiners.de
+version: 0.2.13
+author: Guerkchen385
+api-version: 1.15
+depend: [Citizens, InventoryMenuManager, GriefPrevention, WorldGuard]
+loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
+commands:
+   dnd:
+      description: Main Command for this Plugin
+   listquests:
+      description: Lists all available Quests from the selected NPC.
+      usage: /listquests
+   selectquest:
+      description: Selects a Quest by ID. Required before editing.
+      usage: /selectquest <QuestID>
+   questcreate:
+      description: Creates a brand new Quest for the selected NPC.
+      usage: /questcreate <Title>
+   setquestrequired:
+      description: Insert required Quest, if Player shouln't be allowed to access this Quest from the beginning.
+      usage: /setquestrequired <QuestID>
+   setquestfaction:
+      description: Sets the Quests faction. (FREE, etc, etc)
+      usage: /setquestfaction <Faction>
+   setquestminreputation:
+      description: Sets the Players reputation threshhold if needed.
+      usage: /setquestminreputation <Value>
+   setquesttitle:
+      description: Use to edit the Quests Title/Name.
+      usage: /setquesttitle <Title>
+   setquesticon:
+      description: Sets the Quests icon. Argument HAND takes the item you're currently holding in your mainhand.
+      usage: /setquesticon <minecraft:item|HAND>
+   setquestdescription:
+      description: Sets the Quests main description.
+      usage: /setquestdescription <Description>
+   setquesttarget:
+      description: Use if Quests target differs from the original Questgiver.
+      usage: /setquesttarget
+   setquestshort:
+      description: Sets the shorter form of the Quests main description.
+      usage: /setquestshort <Description>

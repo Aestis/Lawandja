@@ -3,6 +3,7 @@ package de.aestis.dndreloaded.Players;
 import java.util.Date;
 
 import de.aestis.dndreloaded.Players.Professions.Profession;
+import de.aestis.dndreloaded.Quests.Quest;
 
 public class PlayerData {
 	
@@ -27,14 +28,15 @@ public class PlayerData {
 	private Integer ProfessionInscriber;
 	private Integer ProfessionAlchemist;
 	private Integer ProfessionFarmer;
+	private Integer ProfessionTanner;
 	
 	private Profession ProfessionPrimary;
 	private Profession ProfessionSecondary;
 	
 	private Integer KillsFriendly;
 	private Integer KillsEnemy;
-	private Integer QuestActive1;
-	private Integer QuestActive2;
+	private Quest QuestActive1;
+	private Quest QuestActive2;
 	private Integer QuestVariable1;
 	private Integer QuestVariable2;
 	private String QuestsCompleted;
@@ -99,6 +101,8 @@ public class PlayerData {
 	public Integer getProfessionFarmer() {return this.ProfessionFarmer;}
 	public void setProfessionFarmer(Integer ProfessionFarmer) {this.ProfessionFarmer = ProfessionFarmer;}
 	
+	public Integer getProfessionTanner() {return this.ProfessionTanner;}
+	public void setProfessionTanner(Integer ProfessionTanner) {this.ProfessionTanner = ProfessionTanner;}
 	
 	public Profession getProfessionPrimary() {return this.ProfessionPrimary;}
 	public void setProfessionPrimary(Profession ProfessionPrimary) {this.ProfessionPrimary = ProfessionPrimary;}
@@ -113,11 +117,11 @@ public class PlayerData {
 	public Integer getKillsEnemy() {return this.KillsEnemy;}
 	public void setKillsEnemy(Integer KillsEnemy) {this.KillsEnemy = KillsEnemy;}
 	
-	public Integer getQuestActive1() {return this.QuestActive1;}
-	public void setQuestActive1(Integer QuestActive1) {this.QuestActive1 = QuestActive1;}
+	public Quest getQuestActive1() {return this.QuestActive1;}
+	public void setQuestActive1(Quest QuestActive1) {this.QuestActive1 = QuestActive1;}
 	
-	public Integer getQuestActive2() {return this.QuestActive2;}
-	public void setQuestActive2(Integer QuestActive2) {this.QuestActive2 = QuestActive2;}
+	public Quest getQuestActive2() {return this.QuestActive2;}
+	public void setQuestActive2(Quest QuestActive2) {this.QuestActive2 = QuestActive2;}
 	
 	public Integer getQuestVariable1() {return this.QuestVariable1;}
 	public void setQuestVariable1(Integer QuestVariable1) {this.QuestVariable1 = QuestVariable1;}
@@ -137,4 +141,12 @@ public class PlayerData {
 	public Date getJoined() {return this.Joined;}
 	public void setJoined(Date Joined) {this.Joined = Joined;}
 	
+	public void playerDataChangeEvent() {
+		//TODO
+		
+		/*
+		 * Implements EventListener on PlayerData change
+		 * to tidy up Display on Scoreboards for example
+		 */
+	}
 }
