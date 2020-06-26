@@ -700,6 +700,28 @@ public class Main extends JavaPlugin {
          * Setup Blocks / Recipes / Stuff
          * for specific Professions (Tanner)
          */
+        if (!config.isSet("Profession.Tanner.Experience.Pickup.min")) {config.set("Profession.Tanner.Experience.Pickup.min", 0);}
+        if (!config.isSet("Profession.Tanner.Experience.Pickup.max")) {config.set("Profession.Tanner.Experience.Pickup.max", 0);}
+        if (!config.isSet("Profession.Tanner.Experience.Crafting.min")) {config.set("Profession.Tanner.Experience.Crafting.min", 6);}
+        if (!config.isSet("Profession.Tanner.Experience.Crafting.max")) {config.set("Profession.Tanner.Experience.Crafting.max", 11);}
+        
+        List<String> tannerBlocks = new ArrayList<>();
+        tannerBlocks.add("minecraft:leather");
+        tannerBlocks.add("minecraft:saddle");
+        tannerBlocks.add("leather_horse_armor");
+        tannerBlocks.add("minecraft:leather_helmet");
+        tannerBlocks.add("minecraft:leather_chestplate");
+        tannerBlocks.add("minecraft:leather_leggings");
+        tannerBlocks.add("minecraft:leather_boots");
+        if (!config.isSet("Profession.Tanner.blocks")) {config.set("Profession.Tanner.blocks", tannerBlocks);}
+       
+        List<String> tannerCrafting = new ArrayList<>();
+        tannerCrafting.add("minecraft:leather_helmet");
+        tannerCrafting.add("minecraft:leather_chestplate");
+        tannerCrafting.add("minecraft:leather_leggings");
+        tannerCrafting.add("minecraft:leather_boots");
+        tannerCrafting.add("leather_horse_armor");
+        if (!config.isSet("Profession.Tanner.crafting")) {config.set("Profession.Tanner.crafting", tannerCrafting);}
         
         //TODO
         
