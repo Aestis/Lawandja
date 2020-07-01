@@ -2,6 +2,7 @@ package de.aestis.dndreloaded.Players;
 
 import java.util.Date;
 
+import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.Professions.Profession;
 import de.aestis.dndreloaded.Quests.Quest;
 
@@ -148,5 +149,7 @@ public class PlayerData {
 		 * Implements EventListener on PlayerData change
 		 * to tidy up Display on Scoreboards for example
 		 */
+		
+		Main.instance.getServer().getPluginManager().callEvent(null);
 	}
 }

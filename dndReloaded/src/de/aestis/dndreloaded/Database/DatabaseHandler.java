@@ -384,6 +384,14 @@ public class DatabaseHandler {
 	 */
 	public boolean hasQuests (String uuid) {
 		
+		/*
+		 * Handle DB access here to prevent crashes
+		 * or lags on incorrect handling.
+		 * NOTE: Wrong access always returns FALSE!
+		 */
+		
+		if (Plugin.QuestData != null) return false;
+		
 		PreparedStatement stmt;
 		try
 		{

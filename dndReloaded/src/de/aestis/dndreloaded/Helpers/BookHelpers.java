@@ -22,7 +22,7 @@ public class BookHelpers {
 		return instance;
 	}
 	
-	public ItemStack createNewBook (String title, String author, List<String> content) {
+	public static ItemStack createNewBook (String title, String author, List<String> content) {
 		
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 		BookMeta meta = (BookMeta) book.getItemMeta();

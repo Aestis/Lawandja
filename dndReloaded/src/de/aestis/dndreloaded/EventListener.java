@@ -4,6 +4,7 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
+import de.aestis.dndreloaded.Helpers.External.WorldGuard.RegionEvent;
 import de.aestis.dndreloaded.Helpers.ScoreboardUtil.CustomScoreboards;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
@@ -80,6 +81,12 @@ public class EventListener implements Listener {
 		
 		Scoreboard scb = CustomScoreboards.getInstance().getMainPlayerScoreboard(event.getPlayer());
 		ScoreboardHelper.setScoreboard(event.getPlayer(), scb);
+	}
+	
+	@EventHandler
+	public void playerRegionEnterEvent(RegionEvent event) {
+		
+		Bukkit.broadcastMessage("REGION GEENTERT! ARRRRRRRRRRRRRRRRR");
 	}
 
 }

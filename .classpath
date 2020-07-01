@@ -6,5 +6,6 @@
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/InventoryMenuManager.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/spigot-1.15.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldguard-bukkit-7.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldedit-bukkit-7.1.0.jar"/>
 	<classpathentry kind="output" path="dndReloaded/bin"/>
 </classpath>

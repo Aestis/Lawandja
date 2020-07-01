@@ -26,6 +26,8 @@ import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
+import de.aestis.dndreloaded.Helpers.External.GriefPreventionHelper;
+import de.aestis.dndreloaded.Helpers.External.WorldGuardHelper;
 import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
@@ -54,6 +56,9 @@ public class Main extends JavaPlugin {
 	private DataSync DataSn;
 	private GameTicks GameTcs;
 	
+	private GriefPreventionHelper GPHelper;
+	private WorldGuardHelper WGHelper;
+	
 	private Mysql Database;
 	
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
@@ -69,31 +74,32 @@ public class Main extends JavaPlugin {
 		
 		instance=this;
 		
-		try {
-			
+		try
+		{
 			/*
 			 * Setup or load config file(s)
-			 * */
+			 */
 			
 			setupConfigs();
 			
 			/*
-			 * Clear local storage
+			 * Clear local storage to prevent
+			 * errors and/or Data loss
 			 */
 			
+			SelectedNPC.clear();
 			Players.clear();
-			
-			/*FileConfiguration config = this.getConfig();
-	        config.options().copyDefaults(true);
-	        saveConfig();*/
-		} catch (Exception ex) {
+			QuestData.clear();
+		} catch (Exception ex)
+		{
 			getLogger().severe("Error Whilst Setting Up Configs, Shutting Down...: " + ex);
 			Bukkit.getPluginManager().disablePlugin(this);
 		}
 		
 		Database = new Mysql();
-		if(!Database.connect()){
-			
+		
+		if(!Database.connect())
+		{
 			/*
 			 * Initialize Database connection (essential!)
 			 * */
@@ -101,12 +107,13 @@ public class Main extends JavaPlugin {
 			getLogger().severe("No Mysql Connection, Shutting Down...");
 			Bukkit.getPluginManager().disablePlugin(this);
 		    return;
-		} else {
+		} else
+		{
 			getLogger().fine("Successfully set Up MySQL Connection.");
 		}
 		
-		try {
-			
+		try
+		{
 			/*
 			 * Initialize additional, internal plugins and extentions
 			 * (Overrides -> Helpers -> Handlers -> Main Components (order is important!)
@@ -120,6 +127,9 @@ public class Main extends JavaPlugin {
 			setMathHelper();
 			setScoreboardHelper();
 			setBookHelper();
+			//External
+			setGriefPreventionHelper();
+			setWorldGuardHelper();
 			
 			//Handlers
 			setDatabaseHandler();
@@ -138,7 +148,8 @@ public class Main extends JavaPlugin {
 			QuestHnd.initialize();
 			
 			getLogger().info("Sucessfully Enabled All Addons.");
-		} catch (Exception ex) {
+		} catch (Exception ex)
+		{
 			getLogger().severe("Error Whilst Initializing Addons: " + ex);
 			return;
 		}
@@ -216,6 +227,24 @@ public class Main extends JavaPlugin {
 			GameTcs.startSyncTask();
 			GameTcs.startRefreshScoreboardsTask();
 			
+			/*
+			 * Start up external Handlers
+			 */
+			
+			if (WGHelper == null || !WGHelper.isWorldGuardInitialized())
+			{
+				getLogger().warning("WorldGuard not initialized!");
+			} else
+			{
+				/*
+				 * !!!!!!!!!!!!!!!!!!!
+				 * !! DOES NOT WORK !!
+				 * !!!!!!!!!!!!!!!!!!!
+				 */
+				getLogger().info("WorldGuard is initialized! Creating custom Flags...");
+				WGHelper.setupCustomFlag();	
+			}
+			
 		} catch (Exception ex) {
 			getLogger().severe("Could Not Load Player Data: " + ex);
 		}
@@ -227,7 +256,7 @@ public class Main extends JavaPlugin {
 		
 		/*
 		 * Synchronize PlayerData to
-		 * prevent Data loss
+		 * prevent Data loss on shutdown
 		 */
 		
 		for (Player p : Bukkit.getServer().getOnlinePlayers())
@@ -288,6 +317,9 @@ public class Main extends JavaPlugin {
 	private void setPlayerHandler() {this.PlayerHnd = PlayerHandler.getInstance();}
 	private void setProfessionHandler() {this.ProfessionHnd = ProfessionHandler.getInstance();}
 	private void setRecipeHandler() {this.RecipeHnd = RecipeHandler.getInstance();}
+	//External
+	private void setGriefPreventionHelper() {this.GPHelper = GriefPreventionHelper.getInstance();}
+	private void setWorldGuardHelper() {this.WGHelper = WorldGuardHelper.getInstance();}
 	
 	//Main Components
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}
@@ -302,6 +334,9 @@ public class Main extends JavaPlugin {
 	public MathHelpers getMathHelper() {return this.MathHelper;}
 	public ScoreboardHelpers getScoreboardHelper() {return this.ScoreboardHelper;}
 	public BookHelpers getBookHelper() {return this.BookHelper;}
+	//External
+	public GriefPreventionHelper getGriefPreventionHandler() {return this.GPHelper;}
+	public WorldGuardHelper getWorldGuardHelper() {return this.WGHelper;}
 	
 	//Handlers
 	public DatabaseHandler getDatabaseHandler() {return this.DatabaseHnd;}

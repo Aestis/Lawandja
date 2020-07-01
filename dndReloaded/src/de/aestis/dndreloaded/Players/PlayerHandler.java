@@ -87,6 +87,14 @@ public class PlayerHandler {
 		return false;
 	}
 	
+	/**
+	 * Helper to check if quest is finished or not
+	 * and increase the current Slot's variable
+	 * @param playerData (Players Data)
+	 * @param questSlot (Selected Quest Slot)
+	 * @param increment (Amount to increase)
+	 * @return true/false
+	 */
 	public boolean increaseQuestVariable(PlayerData playerData, Integer questSlot, Integer increment) {
 		
 		if (questSlot == 1)
@@ -94,10 +102,37 @@ public class PlayerHandler {
 			if (playerData.getQuestActive1() != null)
 			{
 				Integer value = playerData.getQuestVariable1();
-				playerData.setQuestVariable1(value + increment);
-				return true;
+				Integer required = playerData.getQuestActive1().getVariable();
+				
+				if (required == null ||
+					required == 0 ||
+					required == -1)
+				{
+					/*
+					 * Quest doesn't require any
+					 * value to increase
+					 */
+					return false;
+				} else
+				{
+					if (required == value)
+					{
+						/*
+						 * Quest is finished,
+						 * don't increase value
+						 */
+						return false;
+					} else
+					{
+						playerData.setQuestVariable1(value + increment);
+						return true;
+					}
+				}
 			} else
 			{
+				/*
+				 * Quest Slot 1 is not set
+				 */
 				return false;
 			}
 		}
@@ -107,10 +142,37 @@ public class PlayerHandler {
 			if (playerData.getQuestActive2() != null)
 			{
 				Integer value = playerData.getQuestVariable2();
-				playerData.setQuestVariable2(value + increment);
-				return true;
+				Integer required = playerData.getQuestActive2().getVariable();
+				
+				if (required == null ||
+					required == 0 ||
+					required == -1)
+				{
+					/*
+					 * Quest doesn't require any
+					 * value to increase
+					 */
+					return false;
+				} else
+				{
+					if (required == value)
+					{
+						/*
+						 * Quest is finished,
+						 * don't increase value
+						 */
+						return false;
+					} else
+					{
+						playerData.setQuestVariable2(value + increment);
+						return true;
+					}
+				}
 			} else
 			{
+				/*
+				 * Quest Slot 1 is not set
+				 */
 				return false;
 			}
 		}

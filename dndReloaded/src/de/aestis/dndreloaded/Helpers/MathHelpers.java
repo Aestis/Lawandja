@@ -18,16 +18,17 @@ public class MathHelpers {
 		return instance;
 	}
 
-	public int getRndInt(int min, int max) {
+	public static int getRndInt(int min, int max) {
 		
-		if (min >= max) {
+		if (min >= max)
+		{
 			return max;
 		}
 		Random r = new Random();
 		return r.nextInt((max - min) + 1) + min;
 	}
 	
-	public String shortifyNumber(int value) {
+	public static String shortifyNumber(int value) {
 		
 		if (value < 1000)
 		{

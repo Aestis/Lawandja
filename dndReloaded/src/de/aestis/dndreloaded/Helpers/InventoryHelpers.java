@@ -17,18 +17,48 @@ public class InventoryHelpers {
 		
 	public static InventoryHelpers getInstance() {
 		
-		if (instance == null) {
+		if (instance == null)
+		{
 			instance = new InventoryHelpers();
 		}
 		return instance;
 	}
 	
-	public boolean isInventoryEmpty(Player player) {
+	public static boolean isInventoryEmpty(Player player) {
 		
-		for(ItemStack item : player.getInventory().getContents()) {
-			if(item != null) return false;
+		for (ItemStack item : player.getInventory().getContents())
+		{
+			if (item != null) return false;
 		}
 		return true;
+	}
+	
+	public static boolean hasInventorySpaceLeft(Player player) {
+
+		for (ItemStack item : player.getInventory().getContents())
+		{
+			if (item != null)
+			{
+				continue;
+			} else
+			{
+				return true;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static Integer inventorySlotsEmpty(Player player) {
+		
+		Integer cnt = 0;
+		
+		for (ItemStack item : player.getInventory().getContents())
+		{
+			if (item != null) cnt++;
+		}
+		
+		return cnt;
 	}
 
 }

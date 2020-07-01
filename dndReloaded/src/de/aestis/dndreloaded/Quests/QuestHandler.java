@@ -38,7 +38,11 @@ public class QuestHandler {
 		return instance;
 	}
 	
-	
+	/**
+	 * Initializes everything Quest related.
+	 * Checking for whitelisted NPCs in servers worlds
+	 * and binds available Quests to each of them
+	 */
 	public void initialize()  {
 
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable(){

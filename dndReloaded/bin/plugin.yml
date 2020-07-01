@@ -6,6 +6,7 @@ author: Guerkchen385
 api-version: 1.15
 depend: [Citizens, InventoryMenuManager, GriefPrevention, WorldGuard]
 loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
+loadafter: [WorldGuard]
 commands:
    dnd:
       description: Main Command for this Plugin
