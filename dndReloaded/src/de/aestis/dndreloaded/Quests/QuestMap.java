@@ -37,6 +37,13 @@ public class QuestMap {
     	map.clear();
     }
     
+    public Integer size() {
+    	
+    	if (map.isEmpty()) return -1;
+    	
+    	return map.size();
+    }
+    
     /**
      * Inserts Quest into the locally stored
      * QuestMap and automatically places them 

@@ -1,15 +1,21 @@
 name: Lawandja
 main: de.aestis.dndreloaded.Main
 description: High Fantasy MMORPG WoW-like Framework for JenoMiners.de
-version: 0.2.13
-author: Guerkchen385
+version: 0.3.1
+author: [Aestis.de, Jenominers.de]
 api-version: 1.15
 depend: [Citizens, InventoryMenuManager, GriefPrevention, WorldGuard]
 loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
 loadafter: [WorldGuard]
+
 commands:
    dnd:
       description: Main Command for this Plugin
+   questadmin:
+      description: Reloads or saves QuestData.
+      usage: /questadmin <reload/save>
+      aliases: [qadmin, lwqa, qa]
+      permission: lawc.admin.quest
    listquests:
       description: Lists all available Quests from the selected NPC.
       usage: /listquests

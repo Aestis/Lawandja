@@ -12,9 +12,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestMap;
 import de.aestis.dndreloaded.Chat.ChatHandler;
+import de.aestis.dndreloaded.Chat.Bungee.BungeeCordBridge;
+import de.aestis.dndreloaded.Chat.Util.ChatMode;
+import de.aestis.dndreloaded.CommandManager.CommandManager;
+import de.aestis.dndreloaded.CommandManager.Quests.QuestAdmin;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
@@ -39,7 +44,7 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.12.45";
+	public static String Version = "0.3.1";
 	
 	public static Main instance;
 	
@@ -59,10 +64,15 @@ public class Main extends JavaPlugin {
 	private GriefPreventionHelper GPHelper;
 	private WorldGuardHelper WGHelper;
 	
+	private BungeeCordBridge BungeeBridge;
+	
 	private Mysql Database;
 	
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
+	public HashMap<Player, Quest> SelectedQuest = new HashMap<Player, Quest>();
+	
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
+	public HashMap<Player, ChatMode> PlayerChannel = new HashMap<Player, ChatMode>();
 	public QuestMap QuestData = new QuestMap();
 
 	/*
@@ -73,6 +83,8 @@ public class Main extends JavaPlugin {
 	public void onEnable() {
 		
 		instance=this;
+		
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		
 		try
 		{
@@ -142,6 +154,9 @@ public class Main extends JavaPlugin {
 			setDataSync();
 			setGameTicks();
 			
+			//Bridges
+			setBungeeCordBridge();
+			
 			/*
 			 * To be removed (soon)
 			 */
@@ -190,6 +205,9 @@ public class Main extends JavaPlugin {
 			 */
 			
 			getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
+			
+			
+			getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
 			
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
@@ -325,6 +343,9 @@ public class Main extends JavaPlugin {
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}
 	private void setGameTicks() {this.GameTcs = GameTicks.getInstance();}
 	
+	//Bridges
+	private void setBungeeCordBridge() {this.BungeeBridge = BungeeCordBridge.getInstance();}
+	
 	
 	//Overrides
 	public BlockBreak getBlockBreakOverride() {return this.BlockBreakOverride;}
@@ -348,6 +369,9 @@ public class Main extends JavaPlugin {
 	//Main Components
 	public DataSync getDataSync() {return this.DataSn;}
 	public GameTicks getGameTicks() {return this.GameTcs;}
+	
+	//Bridges
+	public BungeeCordBridge getBungeeCordBridge() {return this.BungeeBridge;}
 	
 	
 	private void setupConfigs() {
