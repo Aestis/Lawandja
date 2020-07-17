@@ -4,13 +4,20 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
@@ -20,6 +27,7 @@ import de.aestis.dndreloaded.Chat.Bungee.BungeeCordBridge;
 import de.aestis.dndreloaded.Chat.Util.ChatMode;
 import de.aestis.dndreloaded.CommandManager.CommandManager;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestAdmin;
+import de.aestis.dndreloaded.CommandManager.Quests.QuestEditor;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Professions.ProfessionHandler;
@@ -27,12 +35,17 @@ import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerHerbalist;
 import de.aestis.dndreloaded.Players.Professions.Listeners.ListenerWoodcutter;
 import de.aestis.dndreloaded.Players.Professions.Recipes.RecipeHandler;
 import de.aestis.dndreloaded.Database.Mysql;
+import de.aestis.dndreloaded.Entites.EntityData;
+import de.aestis.dndreloaded.Entites.EntityHandler;
+import de.aestis.dndreloaded.Entites.Listeners.ListenerEntityEvents;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Helpers.InventoryHelpers;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Helpers.External.GriefPreventionHelper;
+import de.aestis.dndreloaded.Helpers.External.HolographicDisplaysHelper;
 import de.aestis.dndreloaded.Helpers.External.WorldGuardHelper;
+import de.aestis.dndreloaded.Helpers.External.WorldGuard.WorldGuardRegionEventListener;
 import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
@@ -44,7 +57,7 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.3.1";
+	public static String Version = "0.4.0";
 	
 	public static Main instance;
 	
@@ -68,21 +81,75 @@ public class Main extends JavaPlugin {
 	
 	private Mysql Database;
 	
+	/*
+	 * Local Storage for
+	 * every global Method
+	 */
+	
 	public HashMap<Player, String> SelectedNPC = new HashMap<Player, String>();
 	public HashMap<Player, Quest> SelectedQuest = new HashMap<Player, Quest>();
 	
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
 	public HashMap<Player, ChatMode> PlayerChannel = new HashMap<Player, ChatMode>();
 	public QuestMap QuestData = new QuestMap();
+	
+	public HashMap<UUID, Hologram> HoloStorage = new HashMap<UUID, Hologram>();
+	public HashMap<UUID, HashMap<World, EntityData>> TrackedEntities = new HashMap<UUID, HashMap<World, EntityData>>();
 
 	/*
 	 * Enable the whole plugin
 	 * (Here we go!)
 	 * */
 	
-	public void onEnable() {
+	public void onLoad() {
 		
+		/*
+		 * Starting up external Handlers
+		 * or Hooks which are only accessible
+		 * before Plugin enable sequence
+		 */
+
+		getLogger().info("Launching pre-load sequence...");
+		
+		WorldGuard api = WorldGuardHelper.getWorldGuardAPI();
+		
+		if (api != null
+			|| WorldGuard.getInstance() != null)
+		{
+			WorldGuardHelper.setupCustomFlag(api);
+			getLogger().info("Custom Flags successfully initialized!");
+		} else
+		{
+			getLogger().severe("Plugin could not find hook for WorldGuard! Is it running?");
+		}
+	}
+	
+	public void onEnable() {
+				
 		instance=this;
+		
+		/*
+		 * Clear local storage if
+		 * it somehow is filled with
+		 * something at this point
+		 */
+		
+		if (!SelectedNPC.isEmpty()
+			|| !SelectedQuest.isEmpty()
+			|| !Players.isEmpty()
+			|| !PlayerChannel.isEmpty()
+			|| !QuestData.isEmpty()
+			|| !HoloStorage.isEmpty()
+			|| !TrackedEntities.isEmpty())
+		{
+			SelectedNPC.clear();
+			SelectedQuest.clear();
+			Players.clear();
+			PlayerChannel.clear();
+			QuestData.clear();
+			HoloStorage.clear();
+			TrackedEntities.clear();
+		}
 		
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		
@@ -90,21 +157,13 @@ public class Main extends JavaPlugin {
 		{
 			/*
 			 * Setup or load config file(s)
+			 * (Current state is a bit messy)
 			 */
 			
 			setupConfigs();
-			
-			/*
-			 * Clear local storage to prevent
-			 * errors and/or Data loss
-			 */
-			
-			SelectedNPC.clear();
-			Players.clear();
-			QuestData.clear();
 		} catch (Exception ex)
 		{
-			getLogger().severe("Error Whilst Setting Up Configs, Shutting Down...: " + ex);
+			getLogger().severe("Error while setting up Config-File: " + ex);
 			Bukkit.getPluginManager().disablePlugin(this);
 		}
 		
@@ -141,7 +200,6 @@ public class Main extends JavaPlugin {
 			setBookHelper();
 			//External
 			setGriefPreventionHelper();
-			setWorldGuardHelper();
 			
 			//Handlers
 			setDatabaseHandler();
@@ -198,6 +256,14 @@ public class Main extends JavaPlugin {
 			
 			getServer().getPluginManager().registerEvents((Listener) new ChatHandler(), this);
 			
+			//Entity Stuff
+			
+			getServer().getPluginManager().registerEvents((Listener) new ListenerEntityEvents(), this);
+			
+			
+			//WorldGuard Stuff
+			getServer().getPluginManager().registerEvents((Listener) new WorldGuardRegionEventListener(), this);
+			
 			/*
 			 * Register all Quest
 			 * based EventListeners
@@ -208,6 +274,7 @@ public class Main extends JavaPlugin {
 			
 			
 			getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
+			getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());
 			
 			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
@@ -237,32 +304,34 @@ public class Main extends JavaPlugin {
 			}, 40L);
 			
 			/*
+			 * Assign Entity Data after reload
+			 */
+			
+			EntityHandler.initializeTrackerSetup();
+			
+			HolographicDisplaysHelper.createHolos(this);
+			
+			/*Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
+
+				@Override
+				public void run() {	
+
+					
+				}
+				
+			}, 10L);*/
+			
+			/*
 			 * Load Custom Recipes
 			 */
 			
 			RecipeHnd.loadCustomRecipes();
 			
 			GameTcs.startSyncTask();
-			GameTcs.startRefreshScoreboardsTask();
-			
-			/*
-			 * Start up external Handlers
-			 */
-			
-			if (WGHelper == null || !WGHelper.isWorldGuardInitialized())
-			{
-				getLogger().warning("WorldGuard not initialized!");
-			} else
-			{
-				/*
-				 * !!!!!!!!!!!!!!!!!!!
-				 * !! DOES NOT WORK !!
-				 * !!!!!!!!!!!!!!!!!!!
-				 */
-				getLogger().info("WorldGuard is initialized! Creating custom Flags...");
-				WGHelper.setupCustomFlag();	
-			}
-			
+			//GameTcs.startRefreshScoreboardsTask();
+			GameTcs.startEntityRangeTask();
+			GameTcs.startHoloUpdateTask();
+
 		} catch (Exception ex) {
 			getLogger().severe("Could Not Load Player Data: " + ex);
 		}
@@ -337,7 +406,6 @@ public class Main extends JavaPlugin {
 	private void setRecipeHandler() {this.RecipeHnd = RecipeHandler.getInstance();}
 	//External
 	private void setGriefPreventionHelper() {this.GPHelper = GriefPreventionHelper.getInstance();}
-	private void setWorldGuardHelper() {this.WGHelper = WorldGuardHelper.getInstance();}
 	
 	//Main Components
 	private void setDataSync() {this.DataSn = DataSync.getInstance();}

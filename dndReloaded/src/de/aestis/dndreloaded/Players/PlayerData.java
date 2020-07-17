@@ -1,8 +1,14 @@
 package de.aestis.dndreloaded.Players;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import org.bukkit.entity.Entity;
+
+import com.gmail.filoghost.holographicdisplays.api.Hologram;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Entites.EntityData;
 import de.aestis.dndreloaded.Players.Professions.Profession;
 import de.aestis.dndreloaded.Quests.Quest;
 
@@ -44,6 +50,8 @@ public class PlayerData {
 	private Integer Deaths;
 	private Integer Punishment;
 	private Date Joined;
+	
+	private HashMap<Entity, EntityData> EntitiesInRange = new HashMap<Entity, EntityData>();
 	
 	public PlayerData (Integer ID) {this.ID = ID;}
 	
@@ -141,6 +149,11 @@ public class PlayerData {
 	
 	public Date getJoined() {return this.Joined;}
 	public void setJoined(Date Joined) {this.Joined = Joined;}
+	
+	
+	public HashMap<Entity, EntityData> getEntitiesInRange() {return this.EntitiesInRange;}
+	public void setEntitiesInRange(Entity entity, EntityData data) {this.EntitiesInRange.put(entity, data);}
+	
 	
 	public void playerDataChangeEvent() {
 		//TODO

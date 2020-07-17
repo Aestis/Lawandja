@@ -280,6 +280,151 @@ public class DatabaseHandler {
 		}
 	}
 	
+	
+	public boolean saveQuestData (Quest q) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			stmt = con.prepareStatement("UPDATE `quests` SET " +
+										"`NpcID` = ?, " +
+										"`QuestRequired` = ?, " +
+										"`QuestFaction` = ?, " +
+										"`QuestMinReputation` = ?, " +
+										"`QuestTitle` = ?, " +
+										"`QuestIcon` = ?, " +
+										"`QuestDescription` = ?, " +
+										"`QuestTarget` = ?, " +
+										"`QuestShort` = ?, " +
+										"`QuestMessageAccept` = ?, " +
+										"`QuestMessageDecline` = ?, " +
+										"`QuestMessageRunning` = ?, " +
+										"`QuestMessageFail` = ?, " +
+										"`QuestMessageSuccess` = ?, " +
+										"`QuestStarterItem` = ?, " +
+										"`QuestStarterItemAmount` = ?, " +
+										"`QuestType` = ?, " +
+										"`QuestVariable` = ?, " +
+										"`QuestItem` = ?, " +
+										"`QuestItemAmount` = ?, " +
+										"`QuestDestination` = ?, " +
+										"`QuestMobType` = ?, " +
+										"`QuestBlockMaterial` = ?, " +
+										"`QuestRewardXP` = ?, " +
+										"`QuestReputationGain` = ?, " +
+										"`QuestBonusRewardType` = ?, " +
+										"`QuestBonusReward` = ?, " +
+										"`QuestBonusRewardAmount` = ?, " +
+										"`QuestCompletionText` = ?, " +
+										"`QuestDoesFollow` = ?, " +
+										"`QuestFollowID` = ?, " +
+										"`QuestCreator` = ?, " +
+										//"`QuestCreated` = ? " +
+										//"`DevQuestReportedStatus` = ? " +
+										//"`DevQuestReportedAsignee` = ? " +
+										//"`DevQuestReportedChange` = ? " +
+										"`QuestActive` = ? " +
+										"WHERE QuestID = ?");
+			stmt.setString(1, q.getNpcID());
+			stmt.setInt(2, q.getRequired());
+			stmt.setString(3, q.getFaction());
+			stmt.setInt(4, q.getMinReputation());
+			stmt.setString(5, q.getTitle());
+			
+			if (q.getIcon() != null)
+			{
+				stmt.setString(6, "minecraft:" + q.getIcon().getType().name());
+			} else
+			{
+				stmt.setString(6, null);
+			}
+			
+			stmt.setString(7, q.getDescription());
+			stmt.setString(8, q.getTarget());
+			stmt.setString(9, q.getShort());
+			stmt.setString(10, q.getMessageAccept());
+			stmt.setString(11, q.getMessageDecline());
+			stmt.setString(12, q.getMessageRunning());
+			stmt.setString(13, q.getMessageFail());
+			stmt.setString(14, q.getMessageSuccess());
+			
+			if (q.getStarterItem() != null)
+			{
+				stmt.setString(15, "minecraft:" + q.getStarterItem().getType().name());
+				stmt.setInt(16, q.getStarterItem().getAmount());
+			} else
+			{
+				stmt.setString(15, null);
+				stmt.setInt(16, 0);
+			}
+			
+			stmt.setString(17, q.getType());
+			stmt.setInt(18, q.getVariable());
+			
+			if (q.getItem() != null)
+			{
+				stmt.setString(19, "minecraft:" + q.getItem().getType().name());
+				stmt.setInt(20, q.getItem().getAmount());
+			} else
+			{
+				stmt.setString(19, null);
+				stmt.setInt(20, 0);
+			}
+			
+			stmt.setString(21, q.getDestination());
+			
+			if (q.getMobType() != null)
+			{
+				stmt.setString(22, q.getMobType().name());
+			} else
+			{
+				stmt.setString(22, null);
+			}
+				
+			if (q.getBlockMaterial() != null)
+			{
+				stmt.setString(23, "minecraft:" + q.getBlockMaterial().name());
+			} else
+			{
+				stmt.setString(23, null);
+			}
+
+			stmt.setInt(24, q.getRewardXP());
+			stmt.setInt(25, q.getReputationGain());
+			stmt.setString(26, q.getBonusRewardType());
+			
+			if (q.getBonusReward() != null)
+			{
+				stmt.setString(27, q.getBonusReward().getType().name());
+				stmt.setInt(28, q.getBonusReward().getAmount());
+			} else
+			{
+				stmt.setString(27, null);
+				stmt.setInt(28, 0);
+			}
+		
+			stmt.setString(29, q.getCompletionText());
+			stmt.setInt(30, q.getDoesFollow() ? 1 : 0);
+			stmt.setInt(31, q.getFollowID());
+			stmt.setString(32, q.getCreator());
+			//stmt.setString(33, q.getCreated());
+			//stmt.setString(34, q.);
+			//stmt.setString(35, q.);
+			//stmt.setString(36, q.);
+			stmt.setInt(33, q.getActive() ? 1 : 0);
+			stmt.setInt(34, q.getID());
+			
+			stmt.executeUpdate();
+			stmt.close();
+			return true;
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 	/**
 	 * Gets PlayerData directly from
 	 * Database (prioritized!)

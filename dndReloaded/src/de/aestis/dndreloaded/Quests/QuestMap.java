@@ -32,16 +32,33 @@ public class QuestMap {
     	}
     }
     
+    public boolean isEmpty() {
+    	
+    	if (map.isEmpty()) return true;
+    	return false;
+    }
+    
     public void clear() {
     	
     	map.clear();
     }
     
+    /**
+     * Gets the count of all currently
+     * loaded Quests in local storage
+     * @return Value
+     */
     public Integer size() {
     	
     	if (map.isEmpty()) return -1;
     	
-    	return map.size();
+    	Integer size = 0;
+    	for (HashMap<Integer, Quest> key : map.values())
+    	{
+    		size += key.values().size();
+    	}
+    	
+    	return size;
     }
     
     /**
@@ -70,6 +87,28 @@ public class QuestMap {
     	
     	if (map.containsKey(UUID)) return true;
     	return false;
+    }
+    
+    /**
+     * Returns all Quests that are currently
+     * set up in local storage
+     * @return List of Quests
+     */
+    public List<Quest> getAllQuests() {
+    	
+    	if (!this.isInitialized()) return null;
+    	
+    	List<Quest> list = new ArrayList<Quest>();
+    	
+    	for (HashMap<Integer, Quest> key : map.values())
+    	{
+    		for (Quest q : key.values())
+    		{
+    			list.add(q);
+    		}
+    	}
+    	System.out.println("Quest List Size: " + list.size());
+    	return list;
     }
     
     /**
@@ -138,13 +177,29 @@ public class QuestMap {
 
     	if (!this.isInitialized()) return null;
     	
-    	for (HashMap<Integer, Quest> m : map.values()) {
-    		for (Integer e : m.keySet()) {
+    	for (HashMap<Integer, Quest> m : map.values())
+    	{
+    		for (Integer e : m.keySet())
+    		{
     			if (e == QuestID) return m.get(e);
     		}
     	}
     	
     	return null;
+    }
+    
+    public boolean transferQuest(String UUIDold, String UUIDnew, Integer QuestID) {
+    	
+    	if (!hasQuests(UUIDold)) return false;
+    	
+    	Quest q = getQuestByID(QuestID);
+    	insertQuest(UUIDnew, QuestID, q);
+    	
+    	map.get(UUIDold).remove(QuestID);
+    	
+    	if (map.get(UUIDold).isEmpty()) map.remove(UUIDold);
+    	
+    	return true;
     }
     
     /**

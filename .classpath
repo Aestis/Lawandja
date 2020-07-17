@@ -8,5 +8,7 @@
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldguard-bukkit-7.0.2.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldedit-bukkit-7.1.0.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/BungeeCord.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/HolographicDisplays.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/paper-176.jar"/>
 	<classpathentry kind="output" path="dndReloaded/bin"/>
 </classpath>

@@ -4,15 +4,12 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
-import com.sk89q.worldguard.protection.ApplicableRegionSet;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -23,22 +20,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.*;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Helpers.External.WorldGuardHelper;
 
 public class WorldGuardRegionEventListener implements Listener
 {
-    private WorldGuard wgPlugin;
-    private Main Plugin = Main.instance;
+    private WorldGuard wgPlugin = WorldGuardHelper.getWorldGuardAPI();
+    private Main plugin = Main.instance;
     
-    private Map<Player, Set<ProtectedRegion>> playerRegions;
-    
-    public WorldGuardRegionEventListener(Main plugin, WorldGuardPlugin wgPlugin)
-    {
-        this.Plugin = plugin;
-        this.wgPlugin = WorldGuard.getInstance();
-        
-        playerRegions = new HashMap<Player, Set<ProtectedRegion>>();
-    }
-    
+    private HashMap<Player, Set<ProtectedRegion>> playerRegions = new HashMap<Player, Set<ProtectedRegion>>();
+   
     @EventHandler
     public void onPlayerKick(PlayerKickEvent e)
     {
@@ -47,11 +37,11 @@ public class WorldGuardRegionEventListener implements Listener
         {
             for(ProtectedRegion region : regions)
             {
-                //RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
-                //RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
 
-                //plugin.getServer().getPluginManager().callEvent(leaveEvent);
-                //plugin.getServer().getPluginManager().callEvent(leftEvent);
+                plugin.getServer().getPluginManager().callEvent(leaveEvent);
+                plugin.getServer().getPluginManager().callEvent(leftEvent);
             }
         }
     }
@@ -64,11 +54,11 @@ public class WorldGuardRegionEventListener implements Listener
         {
             for(ProtectedRegion region : regions)
             {
-                //RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
-                //RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeaveEvent leaveEvent = new RegionLeaveEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
+                RegionLeftEvent leftEvent = new RegionLeftEvent(region, e.getPlayer(), MovementWay.DISCONNECT, e);
 
-                //plugin.getServer().getPluginManager().callEvent(leaveEvent);
-                //plugin.getServer().getPluginManager().callEvent(leftEvent);
+                plugin.getServer().getPluginManager().callEvent(leaveEvent);
+                plugin.getServer().getPluginManager().callEvent(leftEvent);
             }
         }
     }
@@ -102,7 +92,7 @@ public class WorldGuardRegionEventListener implements Listener
         Set<ProtectedRegion> regions;
         Set<ProtectedRegion> oldRegions;
         
-        if (playerRegions.get(player) == null)
+        if (!playerRegions.containsKey(player))
         {
             regions = new HashSet<ProtectedRegion>();
         }
@@ -113,7 +103,8 @@ public class WorldGuardRegionEventListener implements Listener
         
         oldRegions = new HashSet<ProtectedRegion>(regions);
         
-        RegionManager rm = wgPlugin.getPlatform().getRegionContainer().get((World) to.getWorld());
+        World world = BukkitAdapter.adapt(to.getWorld());
+        RegionManager rm = wgPlugin.getPlatform().getRegionContainer().get(world);
         
         if (rm == null)
         {
@@ -136,7 +127,7 @@ public class WorldGuardRegionEventListener implements Listener
             {
                 RegionEnterEvent e = new RegionEnterEvent(region, player, movement, event);
                 
-                Plugin.getServer().getPluginManager().callEvent(e);
+                plugin.getServer().getPluginManager().callEvent(e);
                 
                 if (e.isCancelled())
                 {
@@ -147,15 +138,15 @@ public class WorldGuardRegionEventListener implements Listener
                 }
                 else
                 {
-                    Bukkit.getScheduler().runTaskLater(Plugin, new Runnable()
+                    Bukkit.getScheduler().runTaskLater(plugin, new Runnable()
                     {
                         @Override
                         public void run()
                         {
                             {}
-                            /*RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement, event);
+                            RegionEnteredEvent e = new RegionEnteredEvent(region, player, movement, event);
                             
-                            Plugin.getServer().getPluginManager().callEvent(e);*/
+                            plugin.getServer().getPluginManager().callEvent(e);
                         }
                     }, 1L);
                     regions.add(region);
@@ -164,7 +155,7 @@ public class WorldGuardRegionEventListener implements Listener
         }
         
         Iterator<ProtectedRegion> itr = regions.iterator();
-        /*while(itr.hasNext())
+        while(itr.hasNext())
         {
             final ProtectedRegion region = itr.next();
             if (!appRegions.contains(region))
@@ -176,7 +167,7 @@ public class WorldGuardRegionEventListener implements Listener
                 }
                 RegionLeaveEvent e = new RegionLeaveEvent(region, player, movement, event);
 
-                Plugin.getServer().getPluginManager().callEvent(e);
+                plugin.getServer().getPluginManager().callEvent(e);
 
                 if (e.isCancelled())
                 {
@@ -193,13 +184,13 @@ public class WorldGuardRegionEventListener implements Listener
                         {
                             RegionLeftEvent e = new RegionLeftEvent(region, player, movement, event);
                             
-                            Plugin.getServer().getPluginManager().callEvent(e);
+                            plugin.getServer().getPluginManager().callEvent(e);
                         }
                     }, 1L);
                     itr.remove();
                 }
             }
-        }*/
+        }
         playerRegions.put(player, regions);
         return false;
     }

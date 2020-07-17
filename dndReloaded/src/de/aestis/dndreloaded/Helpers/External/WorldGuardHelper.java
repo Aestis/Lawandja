@@ -1,96 +1,57 @@
 package de.aestis.dndreloaded.Helpers.External;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Entity;
+import org.bukkit.plugin.Plugin;
 
 import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import com.sk89q.worldguard.protection.managers.RegionManager;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
 
 import de.aestis.dndreloaded.Main;
 
 public class WorldGuardHelper {
 
-	private static WorldGuardHelper instance;
-	
-	/*
-	 * Setting up the instance
-	 * DO NOT CHANGE ANYTHING!
-	 * */
-	
-	private final Main Plugin = Main.instance;
-	private WorldGuard API = WorldGuard.getInstance();
-
 	private static StateFlag LC_USE_NAME;
 	private static StringFlag LC_REGION_NAME;
+
 	
-	public static WorldGuardHelper getInstance() {
-		if (instance == null) {
-			instance = new WorldGuardHelper();
+	public static WorldGuardPlugin getWorldGuard() {
+		
+		Plugin plugin = Main.instance.getServer().getPluginManager().getPlugin("WorldGuard");
+		
+		if (plugin == null
+			|| !(plugin instanceof WorldGuardPlugin))
+		{
+			return null;
 		}
-		return instance;
+		
+		return (WorldGuardPlugin) plugin;
 	}
 	
-	public boolean isWorldGuardInitialized() {
+	public static WorldGuard getWorldGuardAPI() {
 		
-		if (API != null)
-		{
-			return true;
-		} else
-		{
-			API = WorldGuard.getInstance();
-			return false;
-		}
+		return WorldGuard.getInstance();
 	}
 	
-	public WorldGuard getAPI() {
-		
-		if (isWorldGuardInitialized())
-		{
-			return API;
-		} else
-		{
-			return API;
-		}
-	}
+	/**
+	 * Used to setup pre-defined
+	 * 3rd-Party Flags when running
+	 * compatible WorldGuard Plugin
+	 * @param api (WorldGuardAPI)
+	 */
+	public static void setupCustomFlag(WorldGuard api) {
 	
-	
-	public boolean entityInsideRegion (Entity entity) {
-		
-		if (entity == null) return false;
-		
-		Location loc = entity.getLocation();
-		World world = entity.getWorld();
-		
-		
-		
-		RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-		RegionManager regions = container.get((com.sk89q.worldedit.world.World) world);
-		
-		
-		
-		//for (ProtectedRegion r : API.)
-		
-		return false;
-	}
-	
-	
-	public void setupCustomFlag() {
-		
-		API.disable();
-		
-		FlagRegistry registry = API.getFlagRegistry();
+		FlagRegistry registry = api.getFlagRegistry();
 		
 		try
 		{
 			/*
-			 * Create Boolean Flag first
+			 * Create boolean Flag to
+			 * determine if 3rd-Party
+			 * Region Name should be
+			 * utilized or not
 			 */
 			
 			StateFlag use = new StateFlag("lc-use-name", false);
@@ -99,19 +60,27 @@ public class WorldGuardHelper {
 			
 			/*
 			 * Next create String Flag
+			 * to later input separate
+			 * Nametag for this Region
 			 */
+			
 			StringFlag name = new StringFlag("lc-region-name");
 			registry.register(name);
 			LC_REGION_NAME = name;
-			
-			API.setup();
-			
-			Plugin.getLogger().severe("Custom Flags ('lc-region-name', 'lc-region-name') successfully set up!"); 
-			
 		} catch (FlagConflictException ex)
 		{
-			
+			ex.printStackTrace();
 		}
+	}
+	
+	public static StateFlag getLCUse() {
+		
+		return LC_USE_NAME;
+	}
+	
+	public static StringFlag getLCName() {
+		
+		return LC_REGION_NAME;
 	}
 	
 }
