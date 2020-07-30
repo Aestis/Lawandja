@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 /*import java.util.Objects;
 
 import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;*/
@@ -15,11 +15,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;*/
 
 import de.aestis.dndreloaded.Players.PlayerData;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent;
-import net.minecraft.server.v1_15_R1.Packet;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardDisplayObjective;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardObjective;
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardScore;
+import net.minecraft.server.v1_16_R1.IChatBaseComponent;
+import net.minecraft.server.v1_16_R1.Packet;
+import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardDisplayObjective;
+import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardObjective;
+import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardScore;
 /*import net.minecraft.server.v1_15_R1.IChatBaseComponent;
 import net.minecraft.server.v1_15_R1.IScoreboardCriteria;
 import net.minecraft.server.v1_15_R1.Packet;
@@ -29,12 +29,12 @@ import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardScore;
 import net.minecraft.server.v1_15_R1.Scoreboard;
 import net.minecraft.server.v1_15_R1.ScoreboardObjective;
 import net.minecraft.server.v1_15_R1.ScoreboardServer;*/
-import net.minecraft.server.v1_15_R1.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_15_R1.Scoreboard;
-import net.minecraft.server.v1_15_R1.ScoreboardScore;
-import net.minecraft.server.v1_15_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_15_R1.IScoreboardCriteria;
-import net.minecraft.server.v1_15_R1.IScoreboardCriteria.EnumScoreboardHealthDisplay;
+import net.minecraft.server.v1_16_R1.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_16_R1.Scoreboard;
+import net.minecraft.server.v1_16_R1.ScoreboardScore;
+import net.minecraft.server.v1_16_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_16_R1.IScoreboardCriteria;
+import net.minecraft.server.v1_16_R1.IScoreboardCriteria.EnumScoreboardHealthDisplay;
 
 public class TitleBar {
 

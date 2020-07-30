@@ -21,6 +21,7 @@ import com.gmail.filoghost.holographicdisplays.api.VisibilityManager;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Entites.EntityData;
+import de.aestis.dndreloaded.Helpers.EntityHelpers;
 
 public class HolographicDisplaysHelper {
 	
@@ -58,6 +59,7 @@ public class HolographicDisplaysHelper {
 	private static Hologram setupHolo(Plugin plugin, Entity ent) {
 		
 		if (!ent.isValid()) return null;
+		if (!EntityHelpers.isLivingEntity(ent)) return null;
 		
 		Hologram holo = null;
 		Double height = ent.getHeight();
@@ -79,6 +81,7 @@ public class HolographicDisplaysHelper {
 	public static void createHolo(Plugin plugin, Entity ent) {
 		
 		if (!ent.isValid()) return;
+		if (!EntityHelpers.isLivingEntity(ent)) return;
 		
 		Hologram holo = null;
 		Double height = ent.getHeight();
@@ -143,6 +146,5 @@ public class HolographicDisplaysHelper {
 		}
 
 		return null;
-	}
-	
+	}	
 }

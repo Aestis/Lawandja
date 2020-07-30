@@ -9,11 +9,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Auctions.Util.Auction;
+import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
+import de.aestis.dndreloaded.Auctions.Util.AuctionCategory.AuctionCategories;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
@@ -711,6 +715,73 @@ public class DatabaseHandler {
 		 	d.setCreator(rs.getString("QuestCreator"));
 		 	d.setCreated(rs.getDate("QuestCreated"));
 		 	d.setActive(rs.getBoolean("QuestActive"));
+			
+		 	list.add(d);
+		}
+		
+		return list;
+	}
+	
+	/**
+	 * Fetches all available Quests from the NPC
+	 * by using his UUID (prioritized!)
+	 * @param uuid (NPCs UUID)
+	 * @return QuestList
+	 */
+	public List<Auction> getAuctionData(String uuid) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			stmt = con.prepareStatement("SELECT * FROM Auctions WHERE AuctionActive = 1");
+			ResultSet rs = stmt.executeQuery();
+			
+			List<Auction> list = new ArrayList<Auction>();
+			list.addAll(prepareAuctionData(rs));	
+			for (Auction a : list) Plugin.getLogger().info("Auction {" + a.getID() + "} by '" + a.getSeller().getName() + "' in Category " + a.getCategory() + " added to list!");
+			
+			rs.close();
+			stmt.close();
+			
+			return list;
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private List<Auction> prepareAuctionData(ResultSet rs) throws SQLException {
+		
+		List<Auction> list = new ArrayList<Auction>();
+		
+		while (rs.next())
+		{
+			ItemStack itm = null;
+			Auction d = new Auction(rs.getInt("AuctionID"));
+			
+			AuctionCategories cat = AuctionCategories.valueOf(rs.getString("AuctionCategory"));
+			
+			if (cat != null)
+			{
+				d.setCategory(cat);
+			} else
+			{
+				d.setCategory(null);
+			}
+			
+			d.setFaction(rs.getString("AuctionFaction"));
+			
+			if (rs.getString("AuctionItem") != null)
+			{
+				itm = new ItemStack(Material.matchMaterial(rs.getString("AuctionItem")), rs.getInt("AuctionAmount"));
+				d.setItem(itm);
+			}
+			
+			d.setPrice(rs.getDouble("AuctionPrice"));
+			d.setSeller(Bukkit.getPlayer(rs.getString("AuctionSeller")));
+			//d.setTimestamp(rs.getDate("AuctionDuration").);
+			d.setDuration(rs.getInt("AuctionDuration"));
 			
 		 	list.add(d);
 		}

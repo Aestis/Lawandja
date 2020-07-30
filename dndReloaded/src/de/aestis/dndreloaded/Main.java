@@ -22,6 +22,7 @@ import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestMap;
+import de.aestis.dndreloaded.Auctions.Util.Auction;
 import de.aestis.dndreloaded.Chat.ChatHandler;
 import de.aestis.dndreloaded.Chat.Bungee.BungeeCordBridge;
 import de.aestis.dndreloaded.Chat.Util.ChatMode;
@@ -57,7 +58,7 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.4.0";
+	public static String Version = "0.5.1";
 	
 	public static Main instance;
 	
@@ -92,6 +93,8 @@ public class Main extends JavaPlugin {
 	public HashMap<Player, PlayerData> Players = new HashMap<Player, PlayerData>();
 	public HashMap<Player, ChatMode> PlayerChannel = new HashMap<Player, ChatMode>();
 	public QuestMap QuestData = new QuestMap();
+	
+	public HashMap<Integer, Auction> Auctions = new HashMap<Integer, Auction>();
 	
 	public HashMap<UUID, Hologram> HoloStorage = new HashMap<UUID, Hologram>();
 	public HashMap<UUID, HashMap<World, EntityData>> TrackedEntities = new HashMap<UUID, HashMap<World, EntityData>>();

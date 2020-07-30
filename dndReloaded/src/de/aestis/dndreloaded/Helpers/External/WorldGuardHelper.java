@@ -15,7 +15,8 @@ public class WorldGuardHelper {
 
 	private static StateFlag LC_USE_NAME;
 	private static StringFlag LC_REGION_NAME;
-
+	private static StateFlag LC_USE_SOUND;
+	private static StringFlag LC_SOUND_ENUM;
 	
 	public static WorldGuardPlugin getWorldGuard() {
 		
@@ -48,39 +49,60 @@ public class WorldGuardHelper {
 		try
 		{
 			/*
-			 * Create boolean Flag to
+			 * Create custom Flags to
 			 * determine if 3rd-Party
-			 * Region Name should be
-			 * utilized or not
+			 * RegionEnter titles should
+			 * be used or not
 			 */
 			
-			StateFlag use = new StateFlag("lc-use-name", false);
-			registry.register(use);
-			LC_USE_NAME = use;
+			StateFlag usename = new StateFlag("lc-use-name", false);
+			registry.register(usename);
+			LC_USE_NAME = usename;
+
+			StringFlag stringname = new StringFlag("lc-region-name");
+			registry.register(stringname);
+			LC_REGION_NAME = stringname;
+			
+			
 			
 			/*
-			 * Next create String Flag
-			 * to later input separate
-			 * Nametag for this Region
+			 * Create custom Flags to
+			 * determine if 3rd-Party
+			 * RegionEnter sounds should
+			 * be used or not
 			 */
 			
-			StringFlag name = new StringFlag("lc-region-name");
-			registry.register(name);
-			LC_REGION_NAME = name;
+			StateFlag usesound = new StateFlag("lc-use-sound", false);
+			registry.register(usesound);
+			LC_USE_SOUND = usesound;
+			
+			StringFlag stringsoundenum = new StringFlag("lc-sound-enum");
+			registry.register(stringsoundenum);
+			LC_SOUND_ENUM = stringsoundenum;
 		} catch (FlagConflictException ex)
 		{
 			ex.printStackTrace();
 		}
 	}
 	
-	public static StateFlag getLCUse() {
+	public static StateFlag getLCUseRegionTitle() {
 		
 		return LC_USE_NAME;
 	}
 	
-	public static StringFlag getLCName() {
+	public static StringFlag getLCRegionTitleString() {
 		
 		return LC_REGION_NAME;
+	}
+	
+	public static StateFlag getLCUseRegionSound() {
+		
+		return LC_USE_SOUND;
+	}
+	
+	public static StringFlag getLCRegionSoundEnum() {
+		
+		return LC_SOUND_ENUM;
 	}
 	
 }
