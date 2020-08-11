@@ -171,6 +171,7 @@ public class QuestHandler {
 			if (Plugin.Players.get(player).getQuestActive1() == null)
 			{
 				Plugin.Players.get(player).setQuestActive1(quest);
+				Plugin.Players.get(player).setQuestVariable2(quest.getVariable());
 				return true;
 			} else
 			{
@@ -197,6 +198,7 @@ public class QuestHandler {
 			if (Plugin.Players.get(player).getQuestActive2() == null)
 			{
 				Plugin.Players.get(player).setQuestActive2(quest);
+				Plugin.Players.get(player).setQuestVariable2(quest.getVariable());
 				return true;
 			} else
 			{

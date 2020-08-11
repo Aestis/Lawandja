@@ -48,6 +48,13 @@ public class Auction {
 	
 	public Integer getTimestamp() {return this.Timestamp;}
 	public void setTimestamp(Integer Timestamp) {this.Timestamp = Timestamp;}
+	
+	public Boolean getBidding() {return this.Bidding;}
+	public void setBidding(Boolean Bidding) {this.Bidding = Bidding;}
+	
+	public List<Bid> getBiddings() {return this.Biddings;}
+	public void insertBiddings(List<Bid> Biddings) {this.Biddings = Biddings;}
+	public void addBidding(Bid Bid) {this.Biddings.add(Bid);}
 
 	public Integer getDuration() {return this.Duration;}
 	public void setDuration(Integer Duration) {this.Duration = Duration;}
