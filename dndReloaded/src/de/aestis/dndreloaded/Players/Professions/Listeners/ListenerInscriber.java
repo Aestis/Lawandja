@@ -86,7 +86,6 @@ public class ListenerInscriber implements Listener {
 
 		if (isBlock && hasProfession)
 		{	
-			MathHelpers MathHelper = Plugin.getMathHelper();
 			ProfessionHandler ProfHandler = Plugin.getProfessionHandler();
 			Profession prof = null;
 			
@@ -97,7 +96,7 @@ public class ListenerInscriber implements Listener {
 			{	
 				Integer min = Plugin.getConfig().getInt("Profession.Inscriber.Experience.Pickup.min");
 				Integer max = Plugin.getConfig().getInt("Profession.Inscriber.Experience.Pickup.max");
-				ProfHandler.addProfessionXP(player, prof, MathHelper.getRndInt(min, max));
+				ProfHandler.addProfessionXP(player, prof, MathHelpers.getRndInt(min, max));
 			} else
 			{	
 				Bukkit.broadcastMessage("Oops! Something went terribly wrong...");

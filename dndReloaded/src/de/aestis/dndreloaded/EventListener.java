@@ -50,8 +50,6 @@ public class EventListener implements Listener {
 	
 	BlockBreak BlockBreakOverride = Plugin.getBlockBreakOverride();
 	
-	InventoryHelpers InventoryHelper = Plugin.getInventoryHelper();
-	MathHelpers MathHelper = Plugin.getMathHelper();
 	ScoreboardHelpers ScoreboardHelper = Plugin.getScoreboardHelper();
 	
 	QuestHandler QuestHnd = Plugin.getQuestHandler();

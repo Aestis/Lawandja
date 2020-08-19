@@ -16,6 +16,8 @@ import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Helpers.RegionHelpers;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Players.PlayerHandler;
+import de.aestis.dndreloaded.Quests.QuestSlot;
+import de.aestis.dndreloaded.Quests.QuestTypes;
 
 public class TypeEntityKillArea implements Listener {
 
@@ -59,8 +61,8 @@ public class TypeEntityKillArea implements Listener {
         	 */
         	
 	
-        	if ((pd.getQuestActive1() != null && pd.getQuestActive1().getType().equalsIgnoreCase("KILL_MOBS_AREA")) ||
-    			(pd.getQuestActive2() != null && pd.getQuestActive2().getType().equalsIgnoreCase("KILL_MOBS_AREA")))
+        	if ((pd.getQuestActive1() != null && pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS_AREA)) ||
+    			(pd.getQuestActive2() != null && pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS_AREA)))
         	{
         		
         		if (pd.getQuestActive1().getMobType() == mob.getType() ||
@@ -70,10 +72,10 @@ public class TypeEntityKillArea implements Listener {
         			
         			if (pd.getQuestActive1() != null && pd.getQuestActive1().getMobType() == mob.getType())
         			{
-        				ph.increaseQuestVariable(pd, 1, 1);
+        				ph.increaseQuestVariable(pd, QuestSlot.SLOT_PRIMARY, 1);
         			} else
         			{
-        				ph.increaseQuestVariable(pd, 2, 1);
+        				ph.increaseQuestVariable(pd, QuestSlot.SLOT_SECONDARY, 1);
         			}       			
         		} else
         		{

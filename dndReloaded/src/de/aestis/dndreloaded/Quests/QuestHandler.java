@@ -279,6 +279,22 @@ public class QuestHandler {
 		return false;
 	}
 	
+	/**
+	 * Used to get the QuestSlot from
+	 * a specific Quest the player is
+	 * currently active on
+	 * @param player (Players Name)
+	 * @param quest (Quest to compare)
+	 * @return QuestSlot/null
+	 */
+	public QuestSlot getSlotByQuest (Player player, Quest quest) {
+		
+		if (this.getPlayerQuestPrimary(player) == quest) return QuestSlot.SLOT_PRIMARY;
+		if (this.getPlayerQuestSecondary(player) == quest) return QuestSlot.SLOT_SECONDARY;
+		
+		return null;
+	}
+	
 	public void handleQuestEvents (Player player, Event event) {
 		
 		if (Plugin.Players.get(player).getQuestActive1() != null
@@ -314,9 +330,7 @@ public class QuestHandler {
 			@SuppressWarnings("unchecked")
 			List<String> messages = (List<String>) Plugin.getConfig().getList("Localization.Quests.General.Messages.missingrequiredquests");
 			
-			MathHelpers MathHelper = Plugin.getMathHelper();
-			
-			return messages.get(MathHelper.getRndInt(0, messages.size() - 1));
+			return messages.get(MathHelpers.getRndInt(0, messages.size() - 1));
 		} else
 		{
 			Plugin.getLogger().warning("Messages for 'Localization.Quests.General.Messages.missingrequiredquests' not set up yet!");

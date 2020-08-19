@@ -3,20 +3,6 @@ package de.aestis.dndreloaded.Helpers;
 import java.util.Random;
 
 public class MathHelpers {
-	
-	private static MathHelpers instance;
-	
-	/*
-	 * Setting up the instance
-	 * DO NOT CHANGE ANYTHING!
-	 * */
-	
-	public static MathHelpers getInstance() {
-		if (instance == null) {
-			instance = new MathHelpers();
-		}
-		return instance;
-	}
 
 	public static int getRndInt(int min, int max) {
 		

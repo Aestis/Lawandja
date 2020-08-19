@@ -26,10 +26,11 @@ public class Quest {
 	private String MessageSuccess;
 	
 	private ItemStack StarterItem;
-	private String Type;
+	private QuestTypes Type;
 	private Integer Variable;
 	private ItemStack Item;
 	private String Destination;
+	private String Region;
 	private EntityType MobType;
 	private Material BlockMaterial;
 	private Integer RewardXP;
@@ -94,8 +95,8 @@ public class Quest {
 	public ItemStack getStarterItem() {return this.StarterItem;}
 	public void setStarterItem(ItemStack StarterItem) {this.StarterItem = StarterItem;}
 	
-	public String getType() {return this.Type;}
-	public void setType(String Type) {this.Type = Type;}
+	public QuestTypes getType() {return this.Type;}
+	public void setType(QuestTypes Type) {this.Type = Type;}
 	
 	public Integer getVariable() {return this.Variable;}
 	public void setVariable(Integer Variable) {this.Variable = Variable;}
@@ -105,6 +106,9 @@ public class Quest {
 	
 	public String getDestination() {return this.Destination;}
 	public void setDestination(String Destination) {this.Destination = Destination;}
+	
+	public String getRegion() {return this.Region;}
+	public void setRegion(String Region) {this.Region = Region;}
 	
 	public EntityType getMobType() {return this.MobType;}
 	public void setMobType(EntityType MobType) {this.MobType = MobType;}

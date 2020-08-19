@@ -85,7 +85,6 @@ public class ListenerAlchemist {
 
 		if (isBlock && hasProfession)
 		{	
-			MathHelpers MathHelper = Plugin.getMathHelper();
 			ProfessionHandler ProfHandler = Plugin.getProfessionHandler();
 			Profession prof = null;
 			
@@ -96,7 +95,7 @@ public class ListenerAlchemist {
 			{	
 				Integer min = Plugin.getConfig().getInt("Profession.Alchemist.Experience.Pickup.min");
 				Integer max = Plugin.getConfig().getInt("Profession.Alchemist.Experience.Pickup.max");
-				ProfHandler.addProfessionXP(player, prof, MathHelper.getRndInt(min, max));
+				ProfHandler.addProfessionXP(player, prof, MathHelpers.getRndInt(min, max));
 			} else
 			{	
 				Bukkit.broadcastMessage("Oops! Something went terribly wrong...");

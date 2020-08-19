@@ -8,6 +8,7 @@ import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Helpers.MathHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Players.PlayerData;
+import de.aestis.dndreloaded.Quests.QuestTypes;
 
 public class CustomScoreboards {
 	
@@ -30,7 +31,6 @@ public class CustomScoreboards {
 	public Scoreboard getMainPlayerScoreboard(Player player) {
 		
 		ScoreboardHelpers ScoreboardHelper = Plugin.getScoreboardHelper();
-		MathHelpers MathHelper = Plugin.getMathHelper();
 		Scoreboard scb = ScoreboardHelper.prepareScoreboard(player, "Testboard", "Willkommen in Lawandja!", DisplaySlot.SIDEBAR);
 		PlayerData pd = Plugin.Players.get(player.getPlayer());
 		
@@ -43,7 +43,7 @@ public class CustomScoreboards {
 		
 		if (pd.getProfessionPrimary() != null)
 		{
-			String skillpoints = MathHelper.shortifyNumber(pd.getProfessionPrimary().getCurrentExperience()) + "k";
+			String skillpoints = MathHelpers.shortifyNumber(pd.getProfessionPrimary().getCurrentExperience()) + "k";
 			ScoreboardHelper.addToScoreboard(scb, "Testboard", " + §7" + pd.getProfessionPrimary().getName() + " (" + skillpoints + "/50 xp)", 14);
 		}	
 		if (pd.getProfessionSecondary() != null)
@@ -55,36 +55,46 @@ public class CustomScoreboards {
 		{
 			ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 12);
 			
-			switch (pd.getQuestActive1().getType()) {
-				
-				case "KILL_MOBS": case "KILL_MOBS_AREA":
-					String quick = " (" + pd.getQuestVariable1() + "/" + pd.getQuestActive1().getVariable() + ")";
-					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
-					break;
-					
-				default:
-					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle(), 11);
-					break;
-			
+			if (pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_BREAK)
+				|| pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_BREAK_AREA)
+				|| pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_PLACE)
+				|| pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_PLACE_AREA)
+				|| pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS)
+				|| pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS_AREA))
+			{
+				String quick = " (" + pd.getQuestVariable1() + "/" + pd.getQuestActive1().getVariable() + ")";
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
+			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
+			{
+				String quick = " (" + pd.getQuestActive1().getVariable() + " " + pd.getQuestActive1().getItem().getType().name() + ")";
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
+			} else
+			{
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle(), 11);
 			}
-			
-			
+
 		}
 		if (pd.getQuestActive2() != null)
 		{
-			switch (pd.getQuestActive2().getType()) {
-				
-				case "KILL_MOBS": case "KILL_MOBS_AREA":
-					String quick = " (" + pd.getQuestVariable2() + "/" + pd.getQuestActive2().getVariable() + ")";
-					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 10);
-					break;
-					
-				default:
-					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle(), 10);
-					break;
+			ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 10);
 			
+			if (pd.getQuestActive2().getType().equals(QuestTypes.BLOCK_BREAK)
+				|| pd.getQuestActive2().getType().equals(QuestTypes.BLOCK_BREAK_AREA)
+				|| pd.getQuestActive2().getType().equals(QuestTypes.BLOCK_PLACE)
+				|| pd.getQuestActive2().getType().equals(QuestTypes.BLOCK_PLACE_AREA)
+				|| pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS)
+				|| pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS_AREA))
+			{
+				String quick = " (" + pd.getQuestVariable2() + "/" + pd.getQuestActive2().getVariable() + ")";
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
+			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
+			{
+				String quick = " (" + pd.getQuestActive2().getVariable() + " " + pd.getQuestActive2().getItem().getType().name() + ")";
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
+			} else
+			{
+				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle(), 9);
 			}
-			
 			
 		}
 		

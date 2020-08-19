@@ -8,20 +8,6 @@ import org.bukkit.inventory.meta.BookMeta;
 
 public class BookHelpers {
 	
-	private static BookHelpers instance;
-	
-	/*
-	 * Setting up the instance
-	 * DO NOT CHANGE ANYTHING!
-	 * */
-	
-	public static BookHelpers getInstance() {
-		if (instance == null) {
-			instance = new BookHelpers();
-		}
-		return instance;
-	}
-	
 	public static ItemStack createNewBook (String title, String author, List<String> content) {
 		
 		ItemStack book = new ItemStack(Material.WRITTEN_BOOK);

@@ -21,6 +21,7 @@ import de.aestis.dndreloaded.Auctions.Util.AuctionCategory.AuctionCategories;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
+import de.aestis.dndreloaded.Quests.QuestTypes;
 
 public class DatabaseHandler {
 	
@@ -312,6 +313,7 @@ public class DatabaseHandler {
 										"`QuestItem` = ?, " +
 										"`QuestItemAmount` = ?, " +
 										"`QuestDestination` = ?, " +
+										"`QuestRegion` = ?, " +
 										"`QuestMobType` = ?, " +
 										"`QuestBlockMaterial` = ?, " +
 										"`QuestRewardXP` = ?, " +
@@ -362,7 +364,7 @@ public class DatabaseHandler {
 				stmt.setInt(16, 0);
 			}
 			
-			stmt.setString(17, q.getType());
+			stmt.setString(17, q.getType().name());
 			stmt.setInt(18, q.getVariable());
 			
 			if (q.getItem() != null)
@@ -376,47 +378,48 @@ public class DatabaseHandler {
 			}
 			
 			stmt.setString(21, q.getDestination());
+			stmt.setString(22, q.getRegion());
 			
 			if (q.getMobType() != null)
 			{
-				stmt.setString(22, q.getMobType().name());
-			} else
-			{
-				stmt.setString(22, null);
-			}
-				
-			if (q.getBlockMaterial() != null)
-			{
-				stmt.setString(23, "minecraft:" + q.getBlockMaterial().name());
+				stmt.setString(23, q.getMobType().name());
 			} else
 			{
 				stmt.setString(23, null);
 			}
+				
+			if (q.getBlockMaterial() != null)
+			{
+				stmt.setString(24, "minecraft:" + q.getBlockMaterial().name());
+			} else
+			{
+				stmt.setString(24, null);
+			}
 
-			stmt.setInt(24, q.getRewardXP());
-			stmt.setInt(25, q.getReputationGain());
-			stmt.setString(26, q.getBonusRewardType());
+			stmt.setInt(25, q.getRewardXP());
+			stmt.setInt(26, q.getReputationGain());
+			stmt.setString(27, q.getBonusRewardType());
 			
 			if (q.getBonusReward() != null)
 			{
-				stmt.setString(27, q.getBonusReward().getType().name());
-				stmt.setInt(28, q.getBonusReward().getAmount());
+				stmt.setString(28, q.getBonusReward().getType().name());
+				stmt.setInt(29, q.getBonusReward().getAmount());
 			} else
 			{
-				stmt.setString(27, null);
-				stmt.setInt(28, 0);
+				stmt.setString(28, null);
+				stmt.setInt(29, 0);
 			}
 		
-			stmt.setString(29, q.getCompletionText());
-			stmt.setInt(30, q.getDoesFollow() ? 1 : 0);
-			stmt.setInt(31, q.getFollowID());
-			stmt.setString(32, q.getCreator());
-			//stmt.setString(33, q.getCreated());
-			//stmt.setString(34, q.);
+			stmt.setString(30, q.getCompletionText());
+			stmt.setInt(31, q.getDoesFollow() ? 1 : 0);
+			stmt.setInt(32, q.getFollowID());
+			stmt.setString(33, q.getCreator());
+			//stmt.setString(34, q.getCreated());
 			//stmt.setString(35, q.);
 			//stmt.setString(36, q.);
-			stmt.setInt(33, q.getActive() ? 1 : 0);
-			stmt.setInt(34, q.getID());
+			//stmt.setString(37, q.);
+			stmt.setInt(34, q.getActive() ? 1 : 0);
+			stmt.setInt(35, q.getID());
 			
 			stmt.executeUpdate();
 			stmt.close();
@@ -666,7 +669,7 @@ public class DatabaseHandler {
 				d.setStarterItem(null);
 			}
 			
-			d.setType(rs.getString("QuestType"));
+			d.setType(QuestTypes.valueOf(rs.getString("QuestType")));
 			d.setVariable(rs.getInt("QuestVariable"));
 			
 			if (rs.getString("QuestItem") != null)
@@ -679,6 +682,7 @@ public class DatabaseHandler {
 			}
 			
 		 	d.setDestination(rs.getString("QuestDestination"));
+		 	d.setRegion(rs.getString("QuestRegion"));
 		 	
 		 	if (rs.getString("QuestMobType") != null)
 		 	{

@@ -135,8 +135,6 @@ public class QuestMap {
     		
     		if (isCompleteQuest(q))
     		{
-    			Main.instance.getLogger().fine("Skipped incomplete Quest {" + q.getID() + "}!");
-    			
     			buffer.put(key, q);
         		list.add(buffer);
     		} else

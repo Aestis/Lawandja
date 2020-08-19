@@ -12,6 +12,8 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Players.PlayerHandler;
+import de.aestis.dndreloaded.Quests.QuestSlot;
+import de.aestis.dndreloaded.Quests.QuestTypes;
 
 public class TypeEntityKill implements Listener {
 
@@ -30,8 +32,8 @@ public class TypeEntityKill implements Listener {
         	Player player = (Player) mob.getKiller();
         	PlayerData pd = Plugin.Players.get(player);
         	
-        	if ((pd.getQuestActive1() != null && pd.getQuestActive1().getType().equalsIgnoreCase("KILL_MOBS")) ||
-    			(pd.getQuestActive2() != null && pd.getQuestActive2().getType().equalsIgnoreCase("KILL_MOBS")))
+        	if ((pd.getQuestActive1() != null && pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS)) ||
+    			(pd.getQuestActive2() != null && pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS)))
         	{
         		
         		if (pd.getQuestActive1().getMobType() == mob.getType() ||
@@ -41,10 +43,10 @@ public class TypeEntityKill implements Listener {
         			
         			if (pd.getQuestActive1() != null && pd.getQuestActive1().getMobType() == mob.getType())
         			{
-        				ph.increaseQuestVariable(pd, 1, 1);
+        				ph.increaseQuestVariable(pd, QuestSlot.SLOT_PRIMARY, 1);
         			} else
         			{
-        				ph.increaseQuestVariable(pd, 2, 1);
+        				ph.increaseQuestVariable(pd, QuestSlot.SLOT_SECONDARY, 1);
         			}       			
         		} else
         		{

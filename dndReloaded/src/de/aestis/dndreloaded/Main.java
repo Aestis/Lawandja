@@ -52,21 +52,20 @@ import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerRegionEnterEvent;
+import de.aestis.dndreloaded.Quests.Listeners.TypeBlockBreak;
+import de.aestis.dndreloaded.Quests.Listeners.TypeBlockBreakArea;
 import de.aestis.dndreloaded.Quests.Listeners.TypeEntityKill;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.5.1";
+	public static String Version = "0.6.3";
 	
 	public static Main instance;
 	
 	private BlockBreak BlockBreakOverride;
-	private InventoryHelpers InventoryHelper;
 	private ScoreboardHelpers ScoreboardHelper;
-	private MathHelpers MathHelper;
-	private BookHelpers BookHelper;
 	private DatabaseHandler DatabaseHnd;
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
@@ -152,6 +151,8 @@ public class Main extends JavaPlugin {
 			QuestData.clear();
 			HoloStorage.clear();
 			TrackedEntities.clear();
+			
+			getLogger().info("Pre-cleared local storage.");
 		}
 		
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -197,10 +198,7 @@ public class Main extends JavaPlugin {
 			setBlockBreakOverride();
 			
 			//Helpers
-			setInventoryHelper();
-			setMathHelper();
 			setScoreboardHelper();
-			setBookHelper();
 			//External
 			setGriefPreventionHelper();
 			
@@ -274,6 +272,9 @@ public class Main extends JavaPlugin {
 			 */
 			
 			getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
+			//...
+			getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreak(), this);
+			getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreakArea(), this);
 			
 			
 			getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
@@ -339,7 +340,7 @@ public class Main extends JavaPlugin {
 			getLogger().severe("Could Not Load Player Data: " + ex);
 		}
 		
-		getLogger().fine("dndReloaded v" + Version + " successfully enabled!");
+		getLogger().fine("Lawandja CORE v" + Version + " successfully enabled!");
 	}
 	
 	public void onDisable() {
@@ -363,12 +364,7 @@ public class Main extends JavaPlugin {
 		 */
 		
 		this.BlockBreakOverride = null;
-		this.InventoryHelper = null;
-		this.MathHelper = null;
 		this.ScoreboardHelper = null;
-		this.MathHelper = null;
-		this.ScoreboardHelper = null;
-		this.BookHelper = null;
 		this.DatabaseHnd = null;
 		this.QuestHnd = null;
 		this.PlayerHnd = null;
@@ -396,10 +392,7 @@ public class Main extends JavaPlugin {
 	private void setBlockBreakOverride() {this.BlockBreakOverride = BlockBreak.getInstance();}
 	
 	//Helpers
-	private void setInventoryHelper() {this.InventoryHelper = InventoryHelpers.getInstance();}
-	private void setMathHelper() {this.MathHelper = MathHelpers.getInstance();}
 	private void setScoreboardHelper() {this.ScoreboardHelper = ScoreboardHelpers.getInstance();}
-	private void setBookHelper() {this.BookHelper = BookHelpers.getInstance();}
 	
 	//Handlers
 	private void setDatabaseHandler() {this.DatabaseHnd = DatabaseHandler.getInstance();}
@@ -422,10 +415,7 @@ public class Main extends JavaPlugin {
 	public BlockBreak getBlockBreakOverride() {return this.BlockBreakOverride;}
 	
 	//Helpers
-	public InventoryHelpers getInventoryHelper() {return this.InventoryHelper;}
-	public MathHelpers getMathHelper() {return this.MathHelper;}
 	public ScoreboardHelpers getScoreboardHelper() {return this.ScoreboardHelper;}
-	public BookHelpers getBookHelper() {return this.BookHelper;}
 	//External
 	public GriefPreventionHelper getGriefPreventionHandler() {return this.GPHelper;}
 	public WorldGuardHelper getWorldGuardHelper() {return this.WGHelper;}

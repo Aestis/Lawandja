@@ -42,7 +42,6 @@ public class BlockBreak {
 				block.getType() == Material.ACACIA_LOG) {
 			
 			FileConfiguration Config = Plugin.getConfig();
-			MathHelpers MathHelper = Plugin.getMathHelper();
 			
 			if (Config.getBoolean("Block.Drop.Wood.enabled")) {
 				
@@ -50,7 +49,7 @@ public class BlockBreak {
 				event.setDropItems(false);
 				
 				//Initialize Custom Item :)
-				int size = MathHelper.getRndInt(Config.getInt("Block.Drop.Wood.Amount.min"), Config.getInt("Block.Drop.Wood.Amount.max"));
+				int size = MathHelpers.getRndInt(Config.getInt("Block.Drop.Wood.Amount.min"), Config.getInt("Block.Drop.Wood.Amount.max"));
 				ItemStack drop = null;
 				switch (block.getType()) {
 					case OAK_LOG:
@@ -122,12 +121,11 @@ public class BlockBreak {
 	public void blockBreakToolSharpness(BlockBreakEvent event) {
 		
 		FileConfiguration Config = Plugin.getConfig();
-		MathHelpers MathHelper = Plugin.getMathHelper();
 		
 		if (Config.getBoolean("Items.Tools.Sharpness.enabled")) {
 			
 			ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
-			Integer dice = MathHelper.getRndInt(1, 100);
+			Integer dice = MathHelpers.getRndInt(1, 100);
 			
 			if (tool.getType() == Material.STONE_AXE ||
 				tool.getType() == Material.IRON_AXE ||

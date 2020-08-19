@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.Professions.Profession;
+import de.aestis.dndreloaded.Quests.QuestSlot;
 
 public class PlayerHandler {
 
@@ -95,9 +96,9 @@ public class PlayerHandler {
 	 * @param increment (Amount to increase)
 	 * @return true/false
 	 */
-	public boolean increaseQuestVariable(PlayerData playerData, Integer questSlot, Integer increment) {
+	public boolean increaseQuestVariable(PlayerData playerData, QuestSlot slot, Integer increment) {
 		
-		if (questSlot == 1)
+		if (slot == QuestSlot.SLOT_PRIMARY)
 		{
 			if (playerData.getQuestActive1() != null)
 			{
@@ -137,7 +138,7 @@ public class PlayerHandler {
 			}
 		}
 		
-		if (questSlot == 2)
+		if (slot == QuestSlot.SLOT_SECONDARY)
 		{
 			if (playerData.getQuestActive2() != null)
 			{

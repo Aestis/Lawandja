@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
+import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Messages.InfoHandler;
 
 public class CommandManager implements CommandExecutor {
@@ -40,7 +41,7 @@ public class CommandManager implements CommandExecutor {
 				text.add("§d[1. Abmeddeln]");
 				text.add("Der Drachenlord ist sehr dankbar für deine Dienste! Gut gemacht! Und jetzt ab zum nächsten Kaschber, sonder schmaßt dir der Ongl Alfred am Mondach noch die Anzeigne naus!");
 				
-				player.getInventory().addItem(Plugin.getBookHelper().createNewBook("Questlog von" + player.getName(), "Jenominers.de", text));
+				player.getInventory().addItem(BookHelpers.createNewBook("Questlog von" + player.getName(), "Jenominers.de", text));
 				
 				return true;
 			}	

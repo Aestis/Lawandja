@@ -60,7 +60,7 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 				rtn.put(i, dw);
 			}
 			if (i == 14) {
-				dw = new DoubleWrapper<>(gui.getGUIItem(Material.FILLED_MAP, 1, "§6Kategorie", q.getType()), null);
+				dw = new DoubleWrapper<>(gui.getGUIItem(Material.FILLED_MAP, 1, "§6Kategorie", q.getType().name()), null);
 				rtn.put(i, dw);
 			}
 			if (i == 15) {
@@ -106,10 +106,12 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 	public void onQuestAccept(Player player, Quest quest) {
 		
 		QuestHandler qh = Plugin.getQuestHandler();
+		UUID uuid = UUID.fromString(quest.getNpcID());
+		Entity ent = Bukkit.getEntity(uuid);
 		
 		if (qh.setPlayerQuest(player, quest))
 		{
-			player.sendMessage(quest.getMessageAccept());
+			player.sendMessage(ent.getCustomName() + " sagt: " + quest.getMessageAccept());
 		} else
 		{
 			player.sendMessage(Plugin.getConfig().getString("Localization.Quests.Inventories.Messages.fulljournal"));
@@ -119,7 +121,10 @@ public class QuestMenu extends CustomMenu implements Closeable, ShiftClickable {
 	
 	private void onQuestDecline(Player player, Quest quest) {
 		
-		player.sendMessage(quest.getMessageDecline());	
+		UUID uuid = UUID.fromString(quest.getNpcID());
+		Entity ent = Bukkit.getEntity(uuid);
+		
+		player.sendMessage(ent.getCustomName() + " sagt: " + quest.getMessageDecline());	
 	}
 
 
