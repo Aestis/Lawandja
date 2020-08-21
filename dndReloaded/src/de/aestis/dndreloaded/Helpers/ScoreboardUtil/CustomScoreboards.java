@@ -53,7 +53,7 @@ public class CustomScoreboards {
 		
 		if (pd.getQuestActive1() != null)
 		{
-			ScoreboardHelper.addToScoreboard(scb, "Testboard", " ", 12);
+			ScoreboardHelper.addToScoreboard(scb, "Testboard", "- ", 12);
 			
 			if (pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_BREAK)
 				|| pd.getQuestActive1().getType().equals(QuestTypes.BLOCK_BREAK_AREA)
@@ -62,8 +62,19 @@ public class CustomScoreboards {
 				|| pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS)
 				|| pd.getQuestActive1().getType().equals(QuestTypes.KILL_MOBS_AREA))
 			{
-				String quick = " (" + pd.getQuestVariable1() + "/" + pd.getQuestActive1().getVariable() + ")";
-				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
+				if (pd.getQuestVariable1() >= pd.getQuestActive1().getVariable())
+				{
+					/*
+					 * Quest is completed
+					 * show specified String instead!
+					 */
+					String quick = " §2§lFertig!";
+					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
+				} else
+				{
+					String quick = " (" + pd.getQuestVariable1() + "/" + pd.getQuestActive1().getVariable() + ")";
+					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
+				}
 			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
 			{
 				String quick = " (" + pd.getQuestActive1().getVariable() + " " + pd.getQuestActive1().getItem().getType().name() + ")";
@@ -85,8 +96,19 @@ public class CustomScoreboards {
 				|| pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS)
 				|| pd.getQuestActive2().getType().equals(QuestTypes.KILL_MOBS_AREA))
 			{
-				String quick = " (" + pd.getQuestVariable2() + "/" + pd.getQuestActive2().getVariable() + ")";
-				ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
+				if (pd.getQuestVariable2() >= pd.getQuestActive2().getVariable())
+				{
+					/*
+					 * Quest is completed
+					 * show specified String instead!
+					 */
+					String quick = " §2§lFertig!";
+					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
+				} else
+				{
+					String quick = " (" + pd.getQuestVariable2() + "/" + pd.getQuestActive2().getVariable() + ")";
+					ScoreboardHelper.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
+				}
 			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
 			{
 				String quick = " (" + pd.getQuestActive2().getVariable() + " " + pd.getQuestActive2().getItem().getType().name() + ")";

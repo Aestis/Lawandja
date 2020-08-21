@@ -331,12 +331,26 @@ public class Main extends JavaPlugin {
 			
 			RecipeHnd.loadCustomRecipes();
 			
+		} catch (Exception ex)
+		{
+			getLogger().severe("Could Not Load Player Data: " + ex);
+		}
+		
+		try {
+			
+			/*
+			 * Starting up Timers such as
+			 * synchronizing PlayerData and
+			 * refreshing Scoreboards
+			 */
+			
 			GameTcs.startSyncTask();
-			//GameTcs.startRefreshScoreboardsTask();
+			GameTcs.startRefreshScoreboardsTask();
 			GameTcs.startEntityRangeTask();
 			GameTcs.startHoloUpdateTask();
 
-		} catch (Exception ex) {
+		} catch (Exception ex)
+		{
 			getLogger().severe("Could Not Load Player Data: " + ex);
 		}
 		

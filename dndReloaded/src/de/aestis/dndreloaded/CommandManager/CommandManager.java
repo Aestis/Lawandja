@@ -13,6 +13,7 @@ import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Messages.InfoHandler;
+import de.aestis.dndreloaded.Players.PlayerData;
 
 public class CommandManager implements CommandExecutor {
 
@@ -37,11 +38,10 @@ public class CommandManager implements CommandExecutor {
 				
 				sender.sendMessage("Erstelle Questlog...");
 				
-				List<String> text = new ArrayList<String>();
-				text.add("§d[1. Abmeddeln]");
-				text.add("Der Drachenlord ist sehr dankbar für deine Dienste! Gut gemacht! Und jetzt ab zum nächsten Kaschber, sonder schmaßt dir der Ongl Alfred am Mondach noch die Anzeigne naus!");
+				PlayerData pd = Main.instance.Players.get(player);
+				List<String> contents = BookHelpers.getQuestTitles(pd.getQuestsCompleted());
 				
-				player.getInventory().addItem(BookHelpers.createNewBook("Questlog von" + player.getName(), "Jenominers.de", text));
+				player.getInventory().addItem(BookHelpers.createNewBook("Questlog von" + player.getName(), "Jenominers.de", contents));
 				
 				return true;
 			}	

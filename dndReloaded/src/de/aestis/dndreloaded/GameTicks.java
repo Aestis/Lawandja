@@ -48,6 +48,8 @@ public class GameTicks {
 	
 	public void startSyncTask() {
 			
+		Plugin.getLogger().info("GameTicks Info: Starting 'syncTaskTimer'!");
+		
 		syncTaskID = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.instance, new Runnable() {
 
 			@Override
@@ -69,12 +71,14 @@ public class GameTicks {
 	
 	public void startRefreshScoreboardsTask() {
 		
+		Plugin.getLogger().info("GameTicks Info: Starting 'scoreUpdateTaskTimer'!");
+		
 		scoreUpdateTaskID = Bukkit.getScheduler().runTaskTimer(Main.instance, new Runnable() {
 
 			@Override
 			public void run() {
 				
-				//Bukkit.broadcastMessage("§cRefreshing Scoreboards for " + Bukkit.getServer().getOnlinePlayers().size() + " Players()...");
+				Bukkit.broadcastMessage("§cRefreshing Scoreboards for " + Bukkit.getServer().getOnlinePlayers().size() + " Players()...");
 				
 				for (Player p : Bukkit.getServer().getOnlinePlayers())
 				{
