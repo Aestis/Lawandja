@@ -10,14 +10,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
@@ -39,16 +37,11 @@ import de.aestis.dndreloaded.Database.Mysql;
 import de.aestis.dndreloaded.Entites.EntityData;
 import de.aestis.dndreloaded.Entites.EntityHandler;
 import de.aestis.dndreloaded.Entites.Listeners.ListenerEntityEvents;
-import de.aestis.dndreloaded.Helpers.BookHelpers;
-import de.aestis.dndreloaded.Helpers.InventoryHelpers;
-import de.aestis.dndreloaded.Helpers.MathHelpers;
-import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Helpers.External.GriefPreventionHelper;
 import de.aestis.dndreloaded.Helpers.External.HolographicDisplaysHelper;
 import de.aestis.dndreloaded.Helpers.External.WorldGuardHelper;
 import de.aestis.dndreloaded.Helpers.External.WorldGuard.WorldGuardRegionEventListener;
 import de.aestis.dndreloaded.Listeners.EntityDamageByEntityEventHandler;
-import de.aestis.dndreloaded.Listeners.PlayerInteractEntityEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerLoginEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerQuitEventHandler;
 import de.aestis.dndreloaded.Listeners.PlayerRegionEnterEvent;
@@ -60,12 +53,11 @@ import de.aestis.dndreloaded.Players.PlayerData;
 
 public class Main extends JavaPlugin {
 	
-	public static String Version = "0.6.3";
+	public static String Version = "0.6.6";
 	
 	public static Main instance;
 	
 	private BlockBreak BlockBreakOverride;
-	private ScoreboardHelpers ScoreboardHelper;
 	private DatabaseHandler DatabaseHnd;
 	private QuestHandler QuestHnd;
 	private PlayerHandler PlayerHnd;
@@ -103,6 +95,11 @@ public class Main extends JavaPlugin {
 	 * (Here we go!)
 	 * */
 	
+	/**
+	 * onLoad() is the prefered method
+	 * when injecting into other Plugins
+	 * before them fully started up
+	 */
 	public void onLoad() {
 		
 		/*
@@ -152,146 +149,142 @@ public class Main extends JavaPlugin {
 			HoloStorage.clear();
 			TrackedEntities.clear();
 			
-			getLogger().info("Pre-cleared local storage.");
+			getLogger().warning("Pre-cleared local storage to prevent corruption. Check your settings if this message shows up!");
+		} else
+		{
+			getLogger().fine("Local storage is empty, everything fine.");
 		}
 		
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		
 		try
 		{
-			/*
-			 * Setup or load config file(s)
-			 * (Current state is a bit messy)
-			 */
-			
 			setupConfigs();
 		} catch (Exception ex)
 		{
-			getLogger().severe("Error while setting up Config-File: " + ex);
+			getLogger().severe("Error while setting up config.");
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
+			ex.printStackTrace();
+			
 			Bukkit.getPluginManager().disablePlugin(this);
+			return;
 		}
 		
 		Database = new Mysql();
 		
 		if(!Database.connect())
 		{
-			/*
-			 * Initialize Database connection (essential!)
-			 * */
-			
-			getLogger().severe("No Mysql Connection, Shutting Down...");
+			getLogger().severe("It seems like no MySQL Server is running at the moment!");
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
 			Bukkit.getPluginManager().disablePlugin(this);
 		    return;
 		} else
 		{
-			getLogger().fine("Successfully set Up MySQL Connection.");
+			getLogger().info("Successfully set Up MySQL connection on port '" + getConfig().getString("Mysql.port") + "'!");
 		}
 		
 		try
 		{
 			/*
-			 * Initialize additional, internal plugins and extentions
-			 * (Overrides -> Helpers -> Handlers -> Main Components (order is important!)
-			 * */
+			 * Initialize or run additional,
+			 * internal Addons and other extentions
+			 * (Overrides -> Externals -> Handlers
+			 * -> Main Components (order is important!)
+			 */
 			
-			//Overrides
+			/*
+			 * Section OVERRIDES
+			 */
 			setBlockBreakOverride();
-			
-			//Helpers
-			setScoreboardHelper();
-			//External
+
+			/*
+			 * Section EXTERNALS
+			 */
 			setGriefPreventionHelper();
 			
-			//Handlers
+			/*
+			 * Section HANDLERS
+			 */
 			setDatabaseHandler();
 			setQuestHandler();
 			setPlayerHandler();
 			setProfessionHandler();
 			setRecipeHandler();
 			
-			//Main Components
+			/*
+			 * Section MAIN COMPONENTS
+			 */
 			setDataSync();
 			setGameTicks();
 			
-			//Bridges
+			/*
+			 * Section BRIDGES
+			 */
 			setBungeeCordBridge();
 			
 			/*
-			 * To be removed (soon)
+			 * Section ADDONS
 			 */
 			QuestHnd.initialize();
+			RecipeHnd.loadCustomRecipes();
 			
 			getLogger().info("Sucessfully Enabled All Addons.");
 		} catch (Exception ex)
 		{
-			getLogger().severe("Error Whilst Initializing Addons: " + ex);
+			getLogger().severe("Error Whilst Initializing Addons!");
+			ex.printStackTrace();
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
+			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 		
-		try {
-			
+		try
+		{
 			/*
-			 * Create tables if not existing + Hook everything into place :)
+			 * Creates Database tables if
+			 * not existing and checks if
+			 * everything seems okay
 			 * */
 			
 			DatabaseHnd.initializeDatabase();
+		} catch (Exception ex)
+		{
+			getLogger().severe("Error while enabling Listeners or Commands!");
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
+			ex.printStackTrace();
 			
-			getServer().getPluginManager().registerEvents((Listener) new EventListener(), this);
-			//...
-			//getServer().getPluginManager().registerEvents((Listener) new PlayerInteractEntityEventHandler(), this);
-			getServer().getPluginManager().registerEvents((Listener) new EntityDamageByEntityEventHandler(), this);
-			getServer().getPluginManager().registerEvents((Listener) new PlayerLoginEventHandler(), this);
-			getServer().getPluginManager().registerEvents((Listener) new PlayerQuitEventHandler(), this);
-			getServer().getPluginManager().registerEvents((Listener) new PlayerRegionEnterEvent(), this);
-			
-			/*
-			 * Register all Profession
-			 * based EventListeners
-			 */
-			
-			getServer().getPluginManager().registerEvents((Listener) new ListenerWoodcutter(), this);
-			//...
-			getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
-			
-			//ChatHandler
-			
-			getServer().getPluginManager().registerEvents((Listener) new ChatHandler(), this);
-			
-			//Entity Stuff
-			
-			getServer().getPluginManager().registerEvents((Listener) new ListenerEntityEvents(), this);
-			
-			
-			//WorldGuard Stuff
-			getServer().getPluginManager().registerEvents((Listener) new WorldGuardRegionEventListener(), this);
-			
-			/*
-			 * Register all Quest
-			 * based EventListeners
-			 * 
-			 */
-			
-			getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
-			//...
-			getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreak(), this);
-			getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreakArea(), this);
-			
-			
-			getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
-			getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());
-			
-			getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
-			getLogger().info( "Set Up Main Functionality (EventListener + CommandExecutor)");
-		} catch (Exception ex) {
-			getLogger().severe("Error whilst enabling EventListener/CommandExecutor: " + ex);
+			Bukkit.getPluginManager().disablePlugin(this);
 			return;
 		}
 		
-		try {
-			
+		try
+		{
 			/*
-			 * Load PlayerData initially and after reload
-			 * */
+			 * Sets up Main and Addon
+			 * EventListeners and Commands
+			 */
+			
+			setupEventListeners();
+			setupCommands();
+			
+			getLogger().info("Set up EventListeners and Commands!");
+		} catch (Exception ex)
+		{
+			getLogger().severe("Error while enabling Listeners or Commands!");
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
+			ex.printStackTrace();
+			
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
+		}
+		
+		try
+		{
+			/*
+			 * Load PlayerData, if theres
+			 * somehow Players online after
+			 * restart (for example)
+			 */
 			
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
 
@@ -306,34 +299,32 @@ public class Main extends JavaPlugin {
 				}
 				
 			}, 40L);
-			
-			/*
-			 * Assign Entity Data after reload
-			 */
-			
-			EntityHandler.initializeTrackerSetup();
-			
-			HolographicDisplaysHelper.createHolos(this);
-			
-			/*Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, new Runnable() {
 
-				@Override
-				public void run() {	
-
-					
-				}
-				
-			}, 10L);*/
 			
-			/*
-			 * Load Custom Recipes
-			 */
-			
-			RecipeHnd.loadCustomRecipes();
 			
 		} catch (Exception ex)
 		{
 			getLogger().severe("Could Not Load Player Data: " + ex);
+		}
+		
+		try
+		{
+			/*
+			 * Assign Entity Data to
+			 * each currently loaded
+			 * Entity on all worlds
+			 */
+			
+			EntityHandler.initializeTrackerSetup();
+			HolographicDisplaysHelper.createHolos(this);
+		} catch (Exception ex)
+		{
+			getLogger().severe("Error while tracking Enttites and creating Holos!");
+			getLogger().severe("Shutting down Lawandja-CORE " + Main.Version);
+			ex.printStackTrace();
+			
+			Bukkit.getPluginManager().disablePlugin(this);
+			return;
 		}
 		
 		try {
@@ -359,6 +350,15 @@ public class Main extends JavaPlugin {
 	
 	public void onDisable() {
 		
+		getLogger().info("Lawandja CORE v " + Version + " shutting down...");
+		
+		/*
+		 * Cancel Tasks to prevent errors
+		 * or yet unknown Bugs
+		 */
+		
+		GameTcs.killAll();
+		
 		/*
 		 * Synchronize PlayerData to
 		 * prevent Data loss on shutdown
@@ -366,19 +366,17 @@ public class Main extends JavaPlugin {
 		
 		for (Player p : Bukkit.getServer().getOnlinePlayers())
 		{
+			getLogger().info("Saving PlayerData for Player " + p.getName() + "...");
 			DataSn.savePlayerData(p);
 			Players.remove(p);
 		}
-		
-		getLogger().info("Lawandja CORE v " + Version + " shutting down...");
-		
+
 		/*
 		 * Resetting all local variables
 		 * to prevent memory leaks
 		 */
 		
 		this.BlockBreakOverride = null;
-		this.ScoreboardHelper = null;
 		this.DatabaseHnd = null;
 		this.QuestHnd = null;
 		this.PlayerHnd = null;
@@ -404,10 +402,7 @@ public class Main extends JavaPlugin {
 	
 	//Overrides
 	private void setBlockBreakOverride() {this.BlockBreakOverride = BlockBreak.getInstance();}
-	
-	//Helpers
-	private void setScoreboardHelper() {this.ScoreboardHelper = ScoreboardHelpers.getInstance();}
-	
+
 	//Handlers
 	private void setDatabaseHandler() {this.DatabaseHnd = DatabaseHandler.getInstance();}
 	private void setQuestHandler() {this.QuestHnd = QuestHandler.getInstance();}
@@ -427,9 +422,7 @@ public class Main extends JavaPlugin {
 	
 	//Overrides
 	public BlockBreak getBlockBreakOverride() {return this.BlockBreakOverride;}
-	
-	//Helpers
-	public ScoreboardHelpers getScoreboardHelper() {return this.ScoreboardHelper;}
+
 	//External
 	public GriefPreventionHelper getGriefPreventionHandler() {return this.GPHelper;}
 	public WorldGuardHelper getWorldGuardHelper() {return this.WGHelper;}
@@ -449,6 +442,62 @@ public class Main extends JavaPlugin {
 	public BungeeCordBridge getBungeeCordBridge() {return this.BungeeBridge;}
 	
 	
+	private void setupEventListeners() {
+		
+		/*
+		 * General Events for Joining,
+		 * loading PlayerData and handling
+		 * or overriding NMS-Stuff
+		 */
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new EventListener(), this);
+		//...
+		//getServer().getPluginManager().registerEvents((Listener) new PlayerInteractEntityEventHandler(), this);
+		this.getServer().getPluginManager().registerEvents((Listener) new EntityDamageByEntityEventHandler(), this);
+		this.getServer().getPluginManager().registerEvents((Listener) new PlayerLoginEventHandler(), this);
+		this.getServer().getPluginManager().registerEvents((Listener) new PlayerQuitEventHandler(), this);
+		this.getServer().getPluginManager().registerEvents((Listener) new PlayerRegionEnterEvent(), this);
+		
+		/*
+		 * Register all Profession
+		 * based EventListeners
+		 */
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new ListenerWoodcutter(), this);
+		//...
+		this.getServer().getPluginManager().registerEvents((Listener) new ListenerHerbalist(), this);
+		
+		//ChatHandler
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new ChatHandler(), this);
+		
+		//Entity Stuff
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new ListenerEntityEvents(), this);
+		
+		
+		//WorldGuard Stuff
+		this.getServer().getPluginManager().registerEvents((Listener) new WorldGuardRegionEventListener(), this);
+		
+		/*
+		 * Register all Quest
+		 * based EventListeners
+		 * 
+		 */
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new TypeEntityKill(), this);
+		//...
+		this.getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreak(), this);
+		this.getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreakArea(), this);
+	}
+	
+	private void setupCommands() {
+		
+		getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
+		getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());	
+		getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
+	}
+	
 	private void setupConfigs() {
 		
 		/*
@@ -457,13 +506,16 @@ public class Main extends JavaPlugin {
 		
         FileConfiguration config = getConfig();
         
-        if(!config.isSet("Mysql.host")){config.set("Mysql.host", "localhost");}
-        if(!config.isSet("Mysql.database")){config.set("Mysql.database", "quests");}
-        if(!config.isSet("Mysql.port")){config.set("Mysql.port", 3306);}
-        if(!config.isSet("Mysql.username")){config.set("Mysql.username", "user");}
-        if(!config.isSet("Mysql.password")){config.set("Mysql.password", "supersafepassword");}
+        if(!config.isSet("Mysql.host")) {config.set("Mysql.host", "localhost");}
+        if(!config.isSet("Mysql.database")) {config.set("Mysql.database", "quests");}
+        if(!config.isSet("Mysql.port")) {config.set("Mysql.port", 3306);}
+        if(!config.isSet("Mysql.username")) {config.set("Mysql.username", "user");}
+        if(!config.isSet("Mysql.password")) {config.set("Mysql.password", "supersafepassword");}
         
-        if(!config.isSet("Tasks.Sync.interval")){config.set("Tasks.Sync.interval", 6000);}
+        if(!config.isSet("Tasks.Sync.interval")) {config.set("Tasks.Sync.interval", 500);}
+        if(!config.isSet("Tasks.Scoreboard.Refresh.interval")) {config.set("Tasks.Scoreboard.Refresh.interval", 20);}
+        if(!config.isSet("Tasks.Tracker.Entites.interval")) {config.set("Tasks.Tracker.Entites.interval", 50);}
+        if(!config.isSet("Tasks.Tracker.Holos.interval")) {config.set("Tasks.Tracker.Holos.interval", 3);}
         
         if (!config.isSet("Items.Tools.Durability.enabled")) {config.set("Items.Tools.Durability.enabled", true);}
         if (!config.isSet("Items.Tools.Durability.multiplier")) {config.set("Items.Tools.Durability.multiplier", 3);}
@@ -471,7 +523,6 @@ public class Main extends JavaPlugin {
         
         if (!config.isSet("Items.Tools.Sharpness.enabled")) {config.set("Items.Tools.Sharpness.enabled", true);}
         if (!config.isSet("Items.Tools.Sharpness.chance")) {config.set("Items.Tools.Sharpness.chance", 3);}
-        //Sharpness Will Be Accounted For When Calculating Tool Damage
 
         if (!config.isSet("Block.Drop.Wood.enabled")) {config.set("Block.Drop.Wood.enabled", true);}
         if (!config.isSet("Block.Drop.Wood.usesilktouch")) {config.set("Block.Drop.Wood.usesilktouch", true);}
@@ -863,11 +914,14 @@ public class Main extends JavaPlugin {
         if (!config.isSet("Chat.Channels.2.formatting")) {config.set("Chat.Channels.2.formatting", "§a[2. Lawandja][{PLAYER_NAME}]§f");}
         if (!config.isSet("Chat.Channels.2.name")) {config.set("Chat.Channels.2.name", "[2. Lawandja]");}
         if (!config.isSet("Chat.Channels.3.enabled")) {config.set("Chat.Channels.3.enabled", true);}
-        if (!config.isSet("Chat.Channels.3.formatting")) {config.set("Chat.Channels.3.formatting", "§6[3. {REGION_NAME}][{PLAYER_NAME}]§f");}
-        if (!config.isSet("Chat.Channels.3.name")) {config.set("Chat.Channels.3.name", "[3. Region]");}
+        if (!config.isSet("Chat.Channels.3.formatting")) {config.set("Chat.Channels.3.formatting", "§6[3. {GUILD}][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.3.name")) {config.set("Chat.Channels.3.name", "[3. Gilde]");}
         if (!config.isSet("Chat.Channels.4.enabled")) {config.set("Chat.Channels.4.enabled", true);}
         if (!config.isSet("Chat.Channels.4.formatting")) {config.set("Chat.Channels.4.formatting", "[{PLAYER_NAME}]");}
         if (!config.isSet("Chat.Channels.4.name")) {config.set("Chat.Channels.4.name", "[4. Lokal]");}
+        if (!config.isSet("Chat.Channels.5.enabled")) {config.set("Chat.Channels.5.enabled", true);}
+        if (!config.isSet("Chat.Channels.5.formatting")) {config.set("Chat.Channels.5.formatting", "§6[4. {REGION_NAME}][{PLAYER_NAME}]§f");}
+        if (!config.isSet("Chat.Channels.5.name")) {config.set("Chat.Channels.5.name", "[5. Region]");}
         
         List<String> denyMessages = new ArrayList<>();
         denyMessages.add("Komm später noch einmal vorbei!");

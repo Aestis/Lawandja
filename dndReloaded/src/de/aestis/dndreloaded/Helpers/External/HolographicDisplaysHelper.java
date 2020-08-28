@@ -13,6 +13,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.gmail.filoghost.holographicdisplays.api.Hologram;
@@ -50,9 +51,17 @@ public class HolographicDisplaysHelper {
 			Main.instance.HoloStorage.put(entry.getKey(), setupHolo(Main.instance, ent));
 		}
 		
-		for (Hologram holo : Main.instance.HoloStorage.values())
+		
+		for (Player p : Bukkit.getOnlinePlayers())
 		{
-			holo.getVisibilityManager().hideTo(Bukkit.getPlayer("Guerkchen385"));
+			for (Hologram holo : Main.instance.HoloStorage.values())
+			{
+				if (holo != null
+					&& p != null)
+				{
+					holo.getVisibilityManager().hideTo(Bukkit.getPlayer(p.getName()));
+				}
+			}
 		}
 	}
 	

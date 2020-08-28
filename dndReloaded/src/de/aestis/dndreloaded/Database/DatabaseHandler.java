@@ -85,8 +85,14 @@ public class DatabaseHandler {
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 			
 			stmt.executeUpdate();
-			Main.instance.getLogger().info("Required Table 'players' Successfully Created.");
-			
+			Main.instance.getLogger().info("Required table 'players' successfully created.");			
+		} catch (SQLException e)
+		{
+			Main.instance.getLogger().info("Required table 'players' already exist. Nothing changed.");
+		}
+		
+		try
+		{
 			stmt = con.prepareStatement("CREATE TABLE `quests` (" + 
 					"  `QuestID` int(8) NOT NULL," + 
 					"  `NpcID` varchar(36) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
@@ -109,6 +115,7 @@ public class DatabaseHandler {
 					"  `QuestItem` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
 					"  `QuestItemAmount` int(3) NOT NULL DEFAULT '0'," + 
 					"  `QuestDestination` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," + 
+					"  `QuestRegion` varchar(96) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
 					"  `QuestMobType` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
 					"  `QuestBlockMaterial` varchar(64) COLLATE utf8mb4_unicode_ci DEFAULT NULL," +
 					"  `QuestRewardXP` int(16) NOT NULL DEFAULT '0'," + 
@@ -128,12 +135,11 @@ public class DatabaseHandler {
 					"  PRIMARY KEY (QuestID)" + 
 					") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");	
 			stmt.executeUpdate();
-			Main.instance.getLogger().info("Required Table 'quests' Successfully Created.");
-			
+			Main.instance.getLogger().info("Required table 'quests' successfully created.");			
 			stmt.close();
 		} catch (SQLException e)
 		{
-			Main.instance.getLogger().info("Required Tables Already Exist. Nothing Changed.");
+			Main.instance.getLogger().info("Required table 'quests' already exist. Nothing changed.");
 		}
 	}
 	
@@ -276,6 +282,9 @@ public class DatabaseHandler {
 			stmt.setInt(26, pd.getPunishment());
 			stmt.setInt(27, pd.getID());
 			stmt.executeUpdate();
+			
+			Plugin.getLogger().info("Sucessfully synchronized PlayerData for Player " + player + "!");
+			
 			stmt.close();
 			return true;
 		} catch (SQLException e)

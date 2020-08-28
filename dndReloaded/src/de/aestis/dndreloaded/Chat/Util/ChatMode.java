@@ -7,7 +7,12 @@ public class ChatMode {
 	private Integer ChannelID;
 	private Integer LastChannelID;
 	
-	public ChatMode (Integer ID) {this.ID = ID;}
+	public ChatMode (Integer ID) {
+		
+		this.ID = ID;
+		this.ChannelID = 1;
+		this.LastChannelID = 0;
+	}
 	
 	public Integer getID() {return this.ID;}
 	

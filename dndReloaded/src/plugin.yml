@@ -1,7 +1,7 @@
 name: Lawandja
 main: de.aestis.dndreloaded.Main
 description: High Fantasy MMORPG WoW-like Framework for JenoMiners.de
-version: 0.6.3
+version: 0.6.6
 author: [Aestis.de, Jenominers.de]
 api-version: 1.15
 depend: [Citizens, InventoryMenuManager, GriefPrevention, WorldGuard, HolographicDisplays]

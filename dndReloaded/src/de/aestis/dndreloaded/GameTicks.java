@@ -1,13 +1,11 @@
 package de.aestis.dndreloaded;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,7 +18,6 @@ import de.aestis.dndreloaded.Entites.EntityData;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Helpers.External.HolographicDisplaysHelper;
 import de.aestis.dndreloaded.Helpers.ScoreboardUtil.CustomScoreboards;
-import de.aestis.dndreloaded.Players.PlayerData;
 
 public class GameTicks {
 	
@@ -46,16 +43,43 @@ public class GameTicks {
 		return instance;
 	}
 	
+	public void killAll() {
+		
+		if (syncTaskID != null
+			&& !syncTaskID.isCancelled())
+		{
+			syncTaskID.cancel();
+		}
+		
+		if (scoreUpdateTaskID != null
+				&& !scoreUpdateTaskID.isCancelled())
+		{
+			scoreUpdateTaskID.cancel();
+		}
+		
+		if (entityRangeTaskID != null
+				&& !entityRangeTaskID.isCancelled())
+		{
+			entityRangeTaskID.cancel();
+		}
+		
+		if (holoUpdateTaskID != null
+				&& !holoUpdateTaskID.isCancelled())
+		{
+			holoUpdateTaskID.cancel();
+		}
+	}
+	
 	public void startSyncTask() {
-			
-		Plugin.getLogger().info("GameTicks Info: Starting 'syncTaskTimer'!");
+		
+		Integer interval = Plugin.getConfig().getInt("Tasks.Sync.interval");
+		Plugin.getLogger().info("GameTicks Info: Starting 'syncTaskTimer' at interval '" + interval + "'!");
 		
 		syncTaskID = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.instance, new Runnable() {
 
 			@Override
 			public void run() {
 				
-				//Bukkit.broadcastMessage("§cSynchronizing Local Data With Database...");
 				DataSync Synchronizer = Plugin.getDataSync();
 				
 				for (Player p : Bukkit.getServer().getOnlinePlayers())
@@ -66,29 +90,27 @@ public class GameTicks {
 				System.out.println(Plugin.Players);
 			}
 			
-		}, 500, 500);
+		}, 500, interval);
 	}
 	
 	public void startRefreshScoreboardsTask() {
 		
-		Plugin.getLogger().info("GameTicks Info: Starting 'scoreUpdateTaskTimer'!");
+		Integer interval = Plugin.getConfig().getInt("Tasks.Scoreboard.Refresh.interval");
+		Plugin.getLogger().info("GameTicks Info: Starting 'scoreUpdateTaskTimer' at interval '" + interval + "'!");
 		
 		scoreUpdateTaskID = Bukkit.getScheduler().runTaskTimer(Main.instance, new Runnable() {
 
 			@Override
 			public void run() {
-				
-				Bukkit.broadcastMessage("§cRefreshing Scoreboards for " + Bukkit.getServer().getOnlinePlayers().size() + " Players()...");
-				
+
 				for (Player p : Bukkit.getServer().getOnlinePlayers())
 				{
-					ScoreboardHelpers ScoreboardHelper = Plugin.getScoreboardHelper();
 					Scoreboard scb = CustomScoreboards.getInstance().getMainPlayerScoreboard(p);
-					ScoreboardHelper.setScoreboard(p, scb);
+					ScoreboardHelpers.setScoreboard(p, scb);
 				}
 			}
 			
-		}, 100, 20);
+		}, 100, interval);
 	}
 	
 	public void startEntityRangeTask() {
@@ -145,7 +167,11 @@ public class GameTicks {
 					}
 				} catch (Exception ex)
 				{
-					ex.printStackTrace();
+					//TODO
+					/*
+					 * Implement Debug Option in Config
+					 */
+					//ex.printStackTrace();
 				}
 				
 			}

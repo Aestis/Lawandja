@@ -24,8 +24,7 @@ public class ChatHandler implements Listener {
 	
 	public ChatMode getPlayerChatMode(Player player) {
 		
-		if (player == null ||
-			player.isEmpty()) return null;
+		if (player == null) return null;
 		
 		if (Plugin.PlayerChannel.containsKey(player))
 		{
@@ -37,15 +36,64 @@ public class ChatHandler implements Listener {
 		}
 	}
 	
+	/**
+	 * Handles chat messages via Channel-Modes
+	 * (for example sending stuff to Bungee)
+	 * @param event
+	 */
+	@EventHandler
+	public void playerChatEvent(AsyncPlayerChatEvent event) {
+		
+		Player player = (Player) event.getPlayer();
+		
+		if (player == null) return;		
+		if (event.getMessage().startsWith("+")) return;
+		
+		Plugin.getLogger().severe("Requesting ChatMode for Player " + player.getName());
+		
+		ChatMode cm = this.getPlayerChatMode(player);
+		
+		if (cm == null)
+		{
+			//TODO
+			//Implement config msg
+			player.sendMessage("§cPLAYER NOT FOUND!");
+			event.setCancelled(true);
+			return;
+		}
+		
+		if (cm.getChannelID() != null)
+		{
+			player.sendMessage("Channel: " + cm.getChannelID());
+		} else
+		{
+			//TODO
+			//Implement config msg
+			player.sendMessage("§cNO CHANNEL SELECTED!");
+			event.setCancelled(true);
+			return;
+		}
+		
+		if (cm.getChannelID() == 4)
+		{
+			ChannelLocal.sendMessage(event.getPlayer(), event.getMessage());
+			event.setCancelled(true);
+		}
+	}
+	
+	/**
+	 * Event for cycling through available
+	 * Chat-Channels set up in config.yml
+	 * @param event
+	 */
 	@EventHandler
 	public void playerInitChannelChangeEvent(AsyncPlayerChatEvent event) {
 
-		Player player = event.getPlayer();
+		Player player = (Player) event.getPlayer();
 		
+		if (player == null) return;		
 		if (!event.getMessage().startsWith("+")) return;
-		
-		Plugin.getLogger().info("playerInitChannelChangeEvent triggered! Awaiting further instrucitons...");
-		
+
 		if (Plugin.PlayerChannel.containsKey(player))
 		{
 			ChatMode cm = Plugin.PlayerChannel.get(player);
@@ -62,6 +110,9 @@ public class ChatHandler implements Listener {
 					cm.setChannelID(4);
 					break;
 				case 4:
+					cm.setChannelID(5);
+					break;
+				case 5:
 					cm.setChannelID(1);
 					break;
 				default:
@@ -70,6 +121,9 @@ public class ChatHandler implements Listener {
 			}
 			
 			String name = Plugin.getConfig().getString("Chat.Channels." + cm.getChannelID() + ".name");
+			
+			//TODO
+			//Add Config msg
 			player.sendMessage("!In den Channel " + name + " gewechselt.");
 			
 			event.setCancelled(true);
@@ -81,9 +135,9 @@ public class ChatHandler implements Listener {
 			event.setCancelled(true);
 		}		
 	}
-	
-	@EventHandler
-	public void playerChatEvent(AsyncPlayerChatEvent event) {
+
+	//@EventHandler
+	public void playerChatEventOLD(AsyncPlayerChatEvent event) {
 		
 		if (event.getMessage().startsWith("+")) return;
 		

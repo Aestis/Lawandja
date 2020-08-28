@@ -24,7 +24,6 @@ public class DataSync {
 		return instance;
 	}
 	
-	
 	public void loadPlayerData(Player player) {
 		
 		DatabaseHandler Database = Plugin.getDatabaseHandler();
