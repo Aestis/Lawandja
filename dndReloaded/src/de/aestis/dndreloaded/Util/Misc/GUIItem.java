@@ -9,23 +9,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.ChatPaginator;
 
 public class GUIItem {
-	
-	private static GUIItem instance;
-	
-	/*
-	 * Setting up the instance
-	 * DO NOT CHANGE ANYTHING!
-	 * */
-		
-	public static GUIItem getInstance() {
-		
-		if (instance == null) {
-			instance = new GUIItem();
-		}
-		return instance;
-	}
-	
-	public ItemStack getGUIItem (Material material, Integer amount, String name, String lore) {
+
+	public static ItemStack getGUIItem (Material material, Integer amount, String name, String lore) {
 		ItemStack item = new ItemStack(material, amount);
 		ItemMeta meta = item.getItemMeta();
 		

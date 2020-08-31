@@ -118,7 +118,10 @@ public class HolographicDisplaysHelper {
 		
 		loc.setY(loc.getY() + height + offsetY);
 		
-		holo.getLine(1).removeLine();
+		if (holo.getLine(1) != null)
+		{
+			holo.getLine(1).removeLine();
+		}
 		holo.insertTextLine(1, translateHealthToASCII(ent));
 		
 		holo.teleport(loc);

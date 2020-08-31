@@ -39,10 +39,9 @@ public class QuestSelectorMenu extends CustomMenu implements Closeable, Subdevid
 
 		Map<Integer, DoubleWrapper<ItemStack, Runnable>> rtn = new HashMap<Integer, DoubleWrapper<ItemStack, Runnable>>();
 		DoubleWrapper<ItemStack, Runnable> dw;
-		GUIItem gui = GUIItem.getInstance();
 		
 		for (int i = 0; i < list.size(); i++) {
-			dw = new DoubleWrapper<>(gui.getGUIItem(list.get(i).getIcon().getType(), 1, "§l+ §6" + list.get(i).getTitle(), "§o§7" + list.get(i).getShort()), null);
+			dw = new DoubleWrapper<>(GUIItem.getGUIItem(list.get(i).getIcon().getType(), 1, "§l+ §6" + list.get(i).getTitle(), "§o§7" + list.get(i).getShort()), null);
 			rtn.put(i, dw);
 		}
 		
@@ -63,14 +62,15 @@ public class QuestSelectorMenu extends CustomMenu implements Closeable, Subdevid
 	}
 
 	@Override
-	public void onClose() {
-		
+	public boolean isClickAllowed(Player arg0, int arg1) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 	@Override
-	public boolean isClickAllowed(Player arg0, int arg1) {
+	public void onClose(Player arg0, ItemStack[] arg1, CloseReason arg2) {
 		// TODO Auto-generated method stub
-		return false;
+		
 	}
 	
 	

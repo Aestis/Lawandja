@@ -74,6 +74,12 @@ public class ChatHandler implements Listener {
 			return;
 		}
 		
+		if (cm.getChannelID() == 1)
+		{
+			ChannelGlobal.sendMessage(event.getPlayer(), event.getMessage());
+			event.setCancelled(true);
+		}
+		
 		if (cm.getChannelID() == 4)
 		{
 			ChannelLocal.sendMessage(event.getPlayer(), event.getMessage());

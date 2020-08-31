@@ -155,7 +155,7 @@ public class Main extends JavaPlugin {
 			getLogger().fine("Local storage is empty, everything fine.");
 		}
 		
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "lawandja:lbchat");
 		
 		try
 		{
