@@ -17,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Auctions.Util.Auction;
 import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
-import de.aestis.dndreloaded.Auctions.Util.AuctionCategory.AuctionCategories;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
@@ -741,7 +740,7 @@ public class DatabaseHandler {
 	 * @param uuid (NPCs UUID)
 	 * @return QuestList
 	 */
-	public List<Auction> getAuctionData(String uuid) {
+	public List<Auction> getAuctionData() {
 		
 		PreparedStatement stmt;
 		try
@@ -750,8 +749,12 @@ public class DatabaseHandler {
 			ResultSet rs = stmt.executeQuery();
 			
 			List<Auction> list = new ArrayList<Auction>();
-			list.addAll(prepareAuctionData(rs));	
-			for (Auction a : list) Plugin.getLogger().info("Auction {" + a.getID() + "} by '" + a.getSeller().getName() + "' in Category " + a.getCategory() + " added to list!");
+			list.addAll(prepareAuctionData(rs));
+			
+			for (Auction a : list) 
+			{
+				Plugin.getLogger().info("Auction {" + a.getID() + "} by '" + a.getSeller().getName() + "' in Category " + a.getCategory() + " added to list!");
+			}
 			
 			rs.close();
 			stmt.close();
@@ -773,7 +776,7 @@ public class DatabaseHandler {
 			ItemStack itm = null;
 			Auction d = new Auction(rs.getInt("AuctionID"));
 			
-			AuctionCategories cat = AuctionCategories.valueOf(rs.getString("AuctionCategory"));
+			AuctionCategory cat = AuctionCategory.valueOf(rs.getString("AuctionCategory"));
 			
 			if (cat != null)
 			{

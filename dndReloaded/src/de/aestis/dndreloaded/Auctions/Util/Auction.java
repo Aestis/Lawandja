@@ -6,13 +6,12 @@ import java.util.List;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import de.aestis.dndreloaded.Auctions.Util.AuctionCategory.AuctionCategories;
 
 public class Auction {
 
 	private final Integer ID;
 	
-	private AuctionCategories Category;
+	private AuctionCategory Category;
 	private String Faction;
 	private ItemStack Item;
 	private Integer Amount;
@@ -28,8 +27,8 @@ public class Auction {
 	
 	public Integer getID() {return this.ID;}
 	
-	public AuctionCategories getCategory() {return this.Category;}
-	public void setCategory(AuctionCategories Category) {this.Category = Category;}
+	public AuctionCategory getCategory() {return this.Category;}
+	public void setCategory(AuctionCategory Category) {this.Category = Category;}
 	
 	public String getFaction() {return this.Faction;}
 	public void setFaction(String Faction) {this.Faction = Faction;}

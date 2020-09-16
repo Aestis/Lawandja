@@ -23,6 +23,7 @@ public class ChannelGlobal {
         {
 			out.writeUTF("SendGlobalMessage");
 			out.writeUTF(Main.instance.getServer().getName());
+			out.writeUTF(player.getName());
 			out.writeUTF(message);
 			out.writeUTF(_CHANNEL);
 			

@@ -3,6 +3,7 @@ package de.aestis.dndreloaded.Chat;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.libs.org.apache.commons.io.output.ByteArrayOutputStream;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -43,7 +44,7 @@ public class ChatHandler implements Listener {
 	 */
 	@EventHandler
 	public void playerChatEvent(AsyncPlayerChatEvent event) {
-		
+
 		Player player = (Player) event.getPlayer();
 		
 		if (player == null) return;		

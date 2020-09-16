@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,10 +23,14 @@ import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestMap;
 import de.aestis.dndreloaded.Auctions.Util.Auction;
+import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
+import de.aestis.dndreloaded.Auctions.Util.Auctionator;
 import de.aestis.dndreloaded.Chat.ChatHandler;
 import de.aestis.dndreloaded.Chat.Bungee.BungeeCordBridge;
+import de.aestis.dndreloaded.Chat.Listeners.BungeeMessageReceived;
 import de.aestis.dndreloaded.Chat.Util.ChatMode;
 import de.aestis.dndreloaded.CommandManager.CommandManager;
+import de.aestis.dndreloaded.CommandManager.Auctions.AuctionAdmin;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestAdmin;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestEditor;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
@@ -85,7 +91,8 @@ public class Main extends JavaPlugin {
 	public HashMap<Player, ChatMode> PlayerChannel = new HashMap<Player, ChatMode>();
 	public QuestMap QuestData = new QuestMap();
 	
-	public HashMap<Integer, Auction> Auctions = new HashMap<Integer, Auction>();
+	public ArrayList<Auction> Auctions = new ArrayList<Auction>();
+	public HashMap<Entity, Auctionator> Auctionators = new HashMap<Entity, Auctionator>();
 	
 	public HashMap<UUID, Hologram> HoloStorage = new HashMap<UUID, Hologram>();
 	public HashMap<UUID, HashMap<World, EntityData>> TrackedEntities = new HashMap<UUID, HashMap<World, EntityData>>();
@@ -156,6 +163,7 @@ public class Main extends JavaPlugin {
 		}
 		
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "lawandja:lbchat");
+		getServer().getMessenger().registerIncomingPluginChannel(this, "lawandja:lbungeechat", new BungeeMessageReceived());
 		
 		try
 		{
@@ -493,8 +501,11 @@ public class Main extends JavaPlugin {
 	
 	private void setupCommands() {
 		
+		getCommand("setauctionator").setExecutor((CommandExecutor) new AuctionAdmin());
+		
 		getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
-		getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());	
+		getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());
+		
 		getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 	}
 	

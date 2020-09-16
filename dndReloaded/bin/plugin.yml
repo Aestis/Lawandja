@@ -10,6 +10,12 @@ loadafter: [WorldGuard]
 
 commands:
 
+   setauctionator:
+      description: Converts the currently selected NPC to an auctionator.
+      usage: /setauctionator <category>
+      aliases: [seta, sa]
+      permission: lawc.auctions.admin
+
    dnd:
       description: Main Command for this Plugin
       
