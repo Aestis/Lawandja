@@ -56,6 +56,7 @@ import de.aestis.dndreloaded.Listeners.PlayerRegionEnterEvent;
 import de.aestis.dndreloaded.Quests.Listeners.TypeBlockBreak;
 import de.aestis.dndreloaded.Quests.Listeners.TypeBlockBreakArea;
 import de.aestis.dndreloaded.Quests.Listeners.TypeEntityKill;
+import de.aestis.dndreloaded.itemManager.ItemLoader;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
 import de.aestis.dndreloaded.Players.PlayerData;
 
@@ -337,6 +338,20 @@ public class Main extends JavaPlugin {
 			return;
 		}
 		
+		try
+		{
+			/*
+			 * Load Enchantments and Items
+			 */
+			
+			ItemLoader.loadItems();
+		} catch (Exception ex)
+		{
+			getLogger().severe("Error while loading Enchantments and Items!");
+			ex.printStackTrace();
+			return;
+		}
+		
 		try {
 			
 			/*
@@ -380,6 +395,11 @@ public class Main extends JavaPlugin {
 			DataSn.savePlayerData(p);
 			Players.remove(p);
 		}
+		
+		/*
+		 * unload all Enchantments to prevent Errors on restart
+		 */
+		ItemLoader.unloadItems();
 
 		/*
 		 * Resetting all local variables
