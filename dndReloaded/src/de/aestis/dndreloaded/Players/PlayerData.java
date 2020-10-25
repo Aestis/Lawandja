@@ -11,6 +11,7 @@ import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Entites.EntityData;
 import de.aestis.dndreloaded.Players.Professions.Profession;
 import de.aestis.dndreloaded.Quests.Quest;
+import de.aestis.dndreloaded.itemManager.enchants.EnchantmentData;
 
 public class PlayerData {
 	
@@ -50,6 +51,8 @@ public class PlayerData {
 	private Integer Deaths;
 	private Integer Punishment;
 	private Date Joined;
+	
+	private EnchantmentData enchantmentData;
 	
 	private HashMap<Entity, EntityData> EntitiesInRange = new HashMap<Entity, EntityData>();
 	
@@ -150,6 +153,8 @@ public class PlayerData {
 	public Date getJoined() {return this.Joined;}
 	public void setJoined(Date Joined) {this.Joined = Joined;}
 	
+	public EnchantmentData getEnchantmentData() {return enchantmentData;}
+	public void setEnchantmentData(EnchantmentData enchantmentData) {this.enchantmentData = enchantmentData;}
 	
 	public HashMap<Entity, EntityData> getEntitiesInRange() {return this.EntitiesInRange;}
 	public void setEntitiesInRange(Entity entity, EntityData data) {this.EntitiesInRange.put(entity, data);}

@@ -101,7 +101,7 @@ public class HolographicDisplaysHelper {
 		
 		holo = HologramsAPI.createHologram(plugin, loc);
 		//holo.appendTextLine(ent.getName() + ", §d#" + ent.getEntityId());
-		holo.appendTextLine("Schoko stinkt, §d#" + ent.getEntityId());
+		holo.appendTextLine("Lauch, §d#" + ent.getEntityId());
 		holo.appendTextLine("§7" + ent.getTicksLived());
 		
 		VisibilityManager mgr = holo.getVisibilityManager();

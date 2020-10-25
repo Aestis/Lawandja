@@ -3,8 +3,6 @@ package de.aestis.dndreloaded.Players.Professions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import com.sun.webkit.plugin.Plugin;
-
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Players.PlayerHandler;
