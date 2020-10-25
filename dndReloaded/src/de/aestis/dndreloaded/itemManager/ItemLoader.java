@@ -108,6 +108,7 @@ public class ItemLoader{
 		Bukkit.getServer().getPluginManager().registerEvents(ItemManager.getInstance(), plugin);
 		Bukkit.getServer().getPluginManager().registerEvents(new ArmorListener(), plugin);
 		Bukkit.getServer().getPluginManager().registerEvents(new DispenserArmorListener(), plugin);
+		Bukkit.getServer().getPluginManager().registerEvents(new EnchantmentLoader(), plugin);
 		
 		plugin.getCommand("ItemEditor").setExecutor(new ItemEditorCommand());
 	}
