@@ -12,6 +12,7 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Attributes.Health.Health;
+import de.aestis.dndreloaded.Players.Events.PlayerDataLoadedEvent;
 
 public class PlayerLoginEventHandler implements Listener {
 
@@ -59,6 +60,8 @@ public class PlayerLoginEventHandler implements Listener {
 			PlayerData pd = Main.instance.Players.get(event.getPlayer());
 			PlayerHandler ph = Main.instance.getPlayerHandler();
 			ph.setupPlayerProfessions(pd);
+			
+			Main.instance.getServer().getPluginManager().callEvent(new PlayerDataLoadedEvent(pd, event.getPlayer()));
 			
 			Bukkit.broadcastMessage("Player   = " + pd.getName());
 			Bukkit.broadcastMessage("Faction  = " + pd.getFaction());

@@ -3,8 +3,11 @@ package de.aestis.dndreloaded;
 import de.aestis.dndreloaded.Helpers.ScoreboardHelpers;
 import de.aestis.dndreloaded.Helpers.ScoreboardUtil.CustomScoreboards;
 import de.aestis.dndreloaded.Overrides.BlockBreak;
+import de.aestis.dndreloaded.Players.Events.PlayerDataLoadedEvent;
+import de.aestis.dndreloaded.Players.Events.PlayerDataUnloadedEvent;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
@@ -60,4 +63,16 @@ public class EventListener implements Listener {
 		ScoreboardHelpers.setScoreboard(event.getPlayer(), scb);
 	}
 
+	@EventHandler
+	public void pdLoadTest(PlayerDataLoadedEvent event) {
+		
+		Bukkit.broadcastMessage("PlayerDataLoadedEvent fired!");
+	}
+	
+	@EventHandler
+	public void pdLoadTest(PlayerDataUnloadedEvent event) {
+		
+		Bukkit.broadcastMessage("PlayerDataUnloadedEvent fired!");
+	}
+	
 }

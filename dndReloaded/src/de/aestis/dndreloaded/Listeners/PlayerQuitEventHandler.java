@@ -7,6 +7,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.aestis.dndreloaded.DataSync;
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Players.Events.PlayerDataLoadedEvent;
+import de.aestis.dndreloaded.Players.Events.PlayerDataUnloadedEvent;
 
 public class PlayerQuitEventHandler implements Listener {
 
@@ -24,6 +26,8 @@ public class PlayerQuitEventHandler implements Listener {
 		DataSync Synchronizer = Plugin.getDataSync();
 		Synchronizer.savePlayerData(event.getPlayer());
 		Plugin.Players.remove(event.getPlayer());
+		
+		Main.instance.getServer().getPluginManager().callEvent(new PlayerDataUnloadedEvent(event.getPlayer()));
 		
 		Plugin.getLogger().info("Unloaded PlayerData of Player '" + event.getPlayer().getName() + "'.");
 	}
