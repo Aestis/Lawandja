@@ -8,7 +8,7 @@
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/paper-176.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldedit-bukkit-7.2.0-beta-02.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/worldguard-bukkit-7.0.4-beta1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/spigot-1.16.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/plugins/InventoryMenuManager.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Simon/Desktop/Minecraft-Testserver/spigot-1.16.3.jar"/>
 	<classpathentry kind="output" path="dndReloaded/bin"/>
 </classpath>

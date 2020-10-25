@@ -12,6 +12,7 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Players.PlayerHandler;
 import de.aestis.dndreloaded.Players.Attributes.Health.Health;
+import de.aestis.dndreloaded.Players.Events.PlayerDataBeforeLoadEvent;
 import de.aestis.dndreloaded.Players.Events.PlayerDataLoadedEvent;
 
 public class PlayerLoginEventHandler implements Listener {
@@ -30,6 +31,8 @@ public class PlayerLoginEventHandler implements Listener {
 	
 	@EventHandler
 	public void playerBeforeJoinEvent(PlayerLoginEvent event) {
+		
+		Main.instance.getServer().getPluginManager().callEvent(new PlayerDataBeforeLoadEvent(event.getPlayer()));
 		
 		/*
 		 * Check if Quests have been

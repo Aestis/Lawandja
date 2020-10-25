@@ -7,6 +7,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.aestis.dndreloaded.DataSync;
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Players.PlayerData;
+import de.aestis.dndreloaded.Players.Events.PlayerDataBeforeUnloadEvent;
 import de.aestis.dndreloaded.Players.Events.PlayerDataLoadedEvent;
 import de.aestis.dndreloaded.Players.Events.PlayerDataUnloadedEvent;
 
@@ -22,6 +24,10 @@ public class PlayerQuitEventHandler implements Listener {
 		 * Synchronize first and then
 		 * remove PlayerData from local storage
 		 */
+		
+		PlayerData pd = Plugin.Players.get(event.getPlayer());
+		
+		Main.instance.getServer().getPluginManager().callEvent(new PlayerDataBeforeUnloadEvent(pd, event.getPlayer()));
 		
 		DataSync Synchronizer = Plugin.getDataSync();
 		Synchronizer.savePlayerData(event.getPlayer());
