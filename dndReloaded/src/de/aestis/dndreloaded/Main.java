@@ -22,6 +22,7 @@ import com.sk89q.worldguard.WorldGuard;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestMap;
+import de.aestis.dndreloaded.Auctions.Listener.NPCInteractEventListener;
 import de.aestis.dndreloaded.Auctions.Util.Auction;
 import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
 import de.aestis.dndreloaded.Auctions.Util.Auctionator;
@@ -31,6 +32,7 @@ import de.aestis.dndreloaded.Chat.Listeners.BungeeMessageReceived;
 import de.aestis.dndreloaded.Chat.Util.ChatMode;
 import de.aestis.dndreloaded.CommandManager.CommandManager;
 import de.aestis.dndreloaded.CommandManager.Auctions.AuctionAdmin;
+import de.aestis.dndreloaded.CommandManager.Auctions.AuctionsDummy;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestAdmin;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestEditor;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
@@ -497,11 +499,18 @@ public class Main extends JavaPlugin {
 		//...
 		this.getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreak(), this);
 		this.getServer().getPluginManager().registerEvents((Listener) new TypeBlockBreakArea(), this);
+		
+		/*
+		 * Auctions
+		 */
+		
+		this.getServer().getPluginManager().registerEvents((Listener) new NPCInteractEventListener(), this);
 	}
 	
 	private void setupCommands() {
 		
 		getCommand("setauctionator").setExecutor((CommandExecutor) new AuctionAdmin());
+		getCommand("auctiondummy").setExecutor((CommandExecutor) new AuctionsDummy());
 		
 		getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
 		getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());

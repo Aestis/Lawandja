@@ -3,7 +3,6 @@ package de.aestis.dndreloaded.Auctions.Util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -18,7 +17,7 @@ public class Auction {
 	private Double Price;
 	private Boolean Bidding;
 	private List<Bid> Biddings = new ArrayList<Bid>();
-	private Player Seller;
+	private String Seller;
 	
 	private Integer Timestamp;
 	private Integer Duration;
@@ -42,8 +41,8 @@ public class Auction {
 	public Double getPrice() {return this.Price;}
 	public void setPrice(Double Price) {this.Price = Price;}
 	
-	public Player getSeller() {return this.Seller;}
-	public void setSeller(Player Seller) {this.Seller = Seller;}
+	public String getSeller() {return this.Seller;}
+	public void setSeller(String Seller) {this.Seller = Seller;}
 	
 	public Integer getTimestamp() {return this.Timestamp;}
 	public void setTimestamp(Integer Timestamp) {this.Timestamp = Timestamp;}

@@ -19,7 +19,6 @@ import de.aestis.dndreloaded.Auctions.Util.Auction;
 import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
-import de.aestis.dndreloaded.Quests.QuestHandler;
 import de.aestis.dndreloaded.Quests.QuestTypes;
 
 public class DatabaseHandler {
@@ -753,7 +752,7 @@ public class DatabaseHandler {
 			
 			for (Auction a : list) 
 			{
-				Plugin.getLogger().info("Auction {" + a.getID() + "} by '" + a.getSeller().getName() + "' in Category " + a.getCategory() + " added to list!");
+				Plugin.getLogger().info("Auction {" + a.getID() + "} by '" + a.getSeller() + "' in Category " + a.getCategory() + " added to list!");
 			}
 			
 			rs.close();
@@ -795,7 +794,7 @@ public class DatabaseHandler {
 			}
 			
 			d.setPrice(rs.getDouble("AuctionPrice"));
-			d.setSeller(Bukkit.getPlayer(rs.getString("AuctionSeller")));
+			d.setSeller(rs.getString("AuctionSeller"));
 			//d.setTimestamp(rs.getDate("AuctionDuration").);
 			d.setDuration(rs.getInt("AuctionDuration"));
 			
@@ -803,6 +802,81 @@ public class DatabaseHandler {
 		}
 		
 		return list;
+	}
+	
+	//public boolean saveAuctionData (List<Auction> auctions) {
+	public boolean saveAuctionData (Auction a) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			/*
+			 * Take List (bulk update) from
+			 * Stats Plugin :)
+			 */
+			
+			stmt = con.prepareStatement("UPDATE `auctions` SET " +
+										"`AuctionCategory` = ?, " +
+										"`AuctionFaction` = ?, " +
+										"`AuctionItem` = ?, " +
+										"`AuctionAmount` = ?, " +
+										"`AuctionPrice` = ?, " +
+										"`AuctionSeller` = ?, " +
+										"`AuctionCreated` = ?, " +
+										"`AuctionDuration` = ?, " +
+										"`AuctionActive` = ?");
+			
+			int i = 1;
+			stmt.setString(i++, a.getCategory().toString());
+			stmt.setString(i++, a.getFaction());
+			stmt.setString(i++, a.getItem().getType().name());
+			stmt.setInt(i++, a.getItem().getAmount());
+			stmt.setDouble(i++, a.getPrice());
+			stmt.setString(i++, a.getSeller());
+			//stmt.setInt(i++, a.getCreated());
+			//stmt.setInt(i++, a.getDuration());
+			//stmt.setInt(i++, 1)
+			
+			stmt.executeUpdate();
+			stmt.close();
+			return true;
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	public boolean insertAuction (Auction a) {
+		
+		PreparedStatement stmt;
+		try
+		{
+			stmt = con.prepareStatement("INSERT INTO `auctions` SET " +
+										"(`AuctionID`, `AuctionCategory`, `AuctionFaction`, `AuctionItem`, " +
+										"`AuctionAmount`, `AuctionPrice`, `AuctionSeller`, `AuctionCreated`, " +
+										"`AuctionDuration`, `AuctionActive`) VALUES " +
+										"(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			
+			int i = 1;
+			stmt.setString(i++, a.getCategory().toString());
+			stmt.setString(i++, a.getFaction());
+			stmt.setString(i++, a.getItem().getType().name());
+			stmt.setInt(i++, a.getItem().getAmount());
+			stmt.setDouble(i++, a.getPrice());
+			stmt.setString(i++, a.getSeller());
+			//stmt.setInt(i++, a.getCreated());
+			//stmt.setInt(i++, a.getDuration());
+			//stmt.setInt(i++, 1)
+			
+			stmt.executeUpdate();
+			stmt.close();
+			return true;
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	/**

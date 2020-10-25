@@ -14,6 +14,7 @@ import de.aestis.dndreloaded.Database.DatabaseHandler;
 import de.aestis.dndreloaded.Helpers.BookHelpers;
 import de.aestis.dndreloaded.Messages.InfoHandler;
 import de.aestis.dndreloaded.Players.PlayerData;
+import de.aestis.dndreloaded.Players.Attributes.Health.Health;
 
 public class CommandManager implements CommandExecutor {
 
@@ -32,7 +33,6 @@ public class CommandManager implements CommandExecutor {
 				sender.sendMessage("Hello World :)");
 				return true;
 			}
-			
 			
 			if (argArr[0].equalsIgnoreCase("book")) {
 				

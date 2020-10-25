@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 import de.aestis.dndreloaded.Main;
 
@@ -20,6 +21,12 @@ public class EntityHandler {
 			
 			for (Entity ent : w.getEntities())
 			{
+				if (ent.getType().equals(EntityType.ARMOR_STAND)) {
+					
+					Main.instance.getLogger().severe("ARMORSTAND got blocked from Tracker!");
+					continue;
+				}
+				
 				EntityData ed = new EntityData(ent.getUniqueId());
 				HashMap<World, EntityData> map = new HashMap<World, EntityData>();
 				

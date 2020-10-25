@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.Scoreboard;
@@ -132,6 +133,7 @@ public class GameTicks {
 						{
 							for (Entity e : ent)
 							{
+								if (e.getType() == EntityType.ARMOR_STAND) continue;
 								/*
 								 * Check if Entity is already
 								 * tracked and create new entry

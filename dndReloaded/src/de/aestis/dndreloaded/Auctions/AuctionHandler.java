@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Auctions.Events.AuctionCreatedEvent;
 import de.aestis.dndreloaded.Auctions.Util.Auction;
 import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
 import de.aestis.dndreloaded.Auctions.Util.Auctionator;
@@ -25,7 +26,27 @@ public class AuctionHandler {
 		}
 	}
 	
-	public static void setupAuctionators(String _uuid, AuctionCategory category) {
+	public static void addAuction(Auction auction) {
+		
+		if (auction == null) return;
+		
+		//AuctionCreateEvent createEvent = new AuctionCreateEvent(auction);
+		//Main.instance.getServer().getPluginManager().callEvent(createEvent);
+		Main.instance.Auctions.add(auction);
+	}
+	
+	public static void saveAuctions() {
+		
+		
+	}
+	
+	public static void setupAuctionators() {
+		
+		//TODO
+		//First setup from Database
+	}
+	
+	public static void setupAuctionator(String _uuid, AuctionCategory category) {
 		
 		UUID uuid = UUID.fromString(_uuid);
 		Entity ent = Bukkit.getEntity(uuid);
@@ -41,6 +62,12 @@ public class AuctionHandler {
 			}
 			
 		}
+	}
+	
+	public static void saveAuctionators() {
+		
+		//TODO
+		//Save to Database
 	}
 	
 	
@@ -66,7 +93,7 @@ public class AuctionHandler {
 		}
 	}
 	
-	private static boolean doesAuctionatorExist(Entity ent) {
+	public static boolean doesAuctionatorExist(Entity ent) {
 		
 		if (Main.instance.Auctionators.containsKey(ent))
 		{
@@ -77,7 +104,7 @@ public class AuctionHandler {
 		}
 	}
 	
-	private static AuctionCategory getAuctionatorCategory(Entity ent) {
+	public static AuctionCategory getAuctionatorCategory(Entity ent) {
 		
 		if (doesAuctionatorExist(ent))
 		{

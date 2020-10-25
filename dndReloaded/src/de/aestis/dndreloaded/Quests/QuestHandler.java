@@ -298,10 +298,10 @@ public class QuestHandler {
 	public void handleQuestEvents (Player player, Event event) {
 		
 		if (Plugin.Players.get(player).getQuestActive1() != null
-			|| Plugin.Players.get(player).getQuestActive2() != null) {
-			
-			switch (event.getEventName()) {
-			
+			|| Plugin.Players.get(player).getQuestActive2() != null)
+		{
+			switch (event.getEventName())
+			{
 				case "PlayerInteractEntity":
 					//TODO
 					
@@ -312,8 +312,8 @@ public class QuestHandler {
 					//event.getHandlers().register(listener);
 					break;
 			}
-		} else {
-			
+		} else
+		{
 			return;
 		}
 	}
@@ -409,7 +409,7 @@ public class QuestHandler {
 		
 		//TODO
 		//REMOVE AFTER IMPLEMENTING AT THE RIGHT LOCATION!
-		event.getPlayer().sendMessage(getNPCDenyMessage());
+		//event.getPlayer().sendMessage(getNPCDenyMessage());
 	}
 	
 }
