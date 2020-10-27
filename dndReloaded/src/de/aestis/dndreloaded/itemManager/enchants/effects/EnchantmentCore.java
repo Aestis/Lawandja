@@ -1,10 +1,16 @@
 package de.aestis.dndreloaded.itemManager.enchants.effects;
 
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
+import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Players.PlayerData;
+import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
+import de.aestis.dndreloaded.itemManager.enchants.EnchantmentData;
 import de.aestis.dndreloaded.itemManager.enchants.EnchantmentGroup;
 import de.aestis.dndreloaded.itemManager.events.PlayerConsumeItemEvent;
 import de.aestis.dndreloaded.itemManager.items.SimpleItem;
@@ -47,7 +53,16 @@ public interface EnchantmentCore extends Listener, Comparable<EnchantmentCore>{
 	 * @return true if the enchantment is currently in cooldown for the specified player
 	 */
 	default boolean isInCooldown(Player p) {
-		//TODO add cooldown lookup
+		EnchantmentData data = Main.instance.Players.get(p).getEnchantmentData();
+		Map<CustomEnchantment, Long> cooldowns = data.getCooldowns();
+		CustomEnchantment ench = CustomEnchantment.getByCore(this);
+		if (cooldowns.containsKey(ench)) {
+			if (cooldowns.get(ench) > System.currentTimeMillis()) {
+				return true;
+			} else {
+				cooldowns.remove(ench);
+			}
+		}
 		return false;
 	}
 	
@@ -57,7 +72,7 @@ public interface EnchantmentCore extends Listener, Comparable<EnchantmentCore>{
 	 * @param milisEndCooldown the miliseconds that the cooldown ends at
 	 */
 	default void setCooldown(Player p, int secondsCooldown) {
-		//TODO add cooldown setting
+		Main.instance.Players.get(p).getEnchantmentData().getCooldowns().put(CustomEnchantment.getByCore(this), System.currentTimeMillis() + secondsCooldown * 1000);
 	}
 	
 	default void callItemConsumeEvent(Player consumer, SimpleItem consumed) {

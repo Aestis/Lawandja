@@ -1,5 +1,6 @@
 package de.aestis.dndreloaded.itemManager.enchants.implemet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -53,6 +54,7 @@ public class SpeedCore implements EquipEffect{
 
 	@Override
 	public void onEquipChange(ArmorEquipEvent evt, Player p, ItemStack newArmor, ItemStack oldArmor, int oldLevel, int newLevel, int amountOfActiveItems) {
+		newLevel = newLevel/Math.max(amountOfActiveItems, 1);
 		if (newLevel == 0) {
 			p.setWalkSpeed(0.2f);
 		} else if (newLevel < 100) {

@@ -9,7 +9,8 @@ loadbefore: [Citizens, InventoryMenuManager, GriefPrevention]
 loadafter: [WorldGuard]
 
 commands:
-
+   itemeditor:
+      description: Opens ItemEditor
    setauctionator:
       description: Converts the currently selected NPC to an auctionator.
       usage: /setauctionator <category>

@@ -13,6 +13,7 @@ import de.aestis.dndreloaded.Helpers.PseudoPlugin;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.AttackSpeedDataType;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.BooleanDataType;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.ItemIDDataType;
+import de.aestis.dndreloaded.itemManager.items.dataTypes.SetDataType;
 
 public class ItemFlag <V> {
 
@@ -22,6 +23,7 @@ public class ItemFlag <V> {
 	public static final ItemFlag<Long> COOLDOWN = register(new ItemFlag<>("cd", PersistentDataType.LONG));
 	public static final ItemFlag<Integer> VALUE = register(new ItemFlag<>("val", PersistentDataType.INTEGER));
 	public static final ItemFlag<AttackSpeed> ATTACK_SPEED = register(new ItemFlag<>("spd", new AttackSpeedDataType()));
+	public static final ItemFlag<ItemSet> SET = register(new ItemFlag<>("set", new SetDataType()));
 	
 	private static final Plugin PLUGNIN_NAMESPACE  = new PseudoPlugin("flg");
 	

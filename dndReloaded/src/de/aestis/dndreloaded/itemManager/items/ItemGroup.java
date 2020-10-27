@@ -6,10 +6,11 @@ public enum ItemGroup {
 	
 	UNKNOWN("Unbekannt"), // If the item group is unknown, Item may not have a unique ID
 	QUEST(ChatColor.RED + "Quest Item"), //for quest items
-	JUNK(ChatColor.GRAY + "MÃ¼ll"), //for all junk items
-	LEGENDARY(ChatColor.AQUA + "LegendÃ¤r"), //for legendary items
+	JUNK(ChatColor.GRAY + "Müll"), //for all junk items
+	LEGENDARY(ChatColor.AQUA + "Legendär"), //for legendary items
 	CRAFTED(ChatColor.DARK_AQUA + "Hergestellt"), // for crafted items
-	MONEY(ChatColor.GOLD + "WÃ¤hrung"), // Representing all Economy related Items
+	SET(ChatColor.LIGHT_PURPLE + "Set Item"), // for crafted items
+	MONEY(ChatColor.GOLD + "Währung"), // Representing all Economy related Items
 	TEST(ChatColor.RED + "TEST ITEM"); //for testing Items
 	
 	

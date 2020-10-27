@@ -1,5 +1,6 @@
 package de.aestis.dndreloaded.itemManager.enchants.effects;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,7 +40,11 @@ public interface EquipEffect extends EnchantmentCore {
 		int levelOld = evt.getOldArmorPiece() == null ? 0 : PlayerInventoryHelper.calculateLevel(evt.getOldArmorPiece(), ench);
 		int levelNew = evt.getNewArmorPiece() == null ? 0 : PlayerInventoryHelper.calculateLevel(evt.getNewArmorPiece(), ench);
 		
-		onEquipChange(evt, p, evt.getNewArmorPiece() , evt.getOldArmorPiece() , levelAll, levelAll - levelOld + levelNew, itemLevel.getValue1());
+		if (levelOld == levelNew) {
+			return;
+		}
+		
+		onEquipChange(evt, p, evt.getNewArmorPiece() , evt.getOldArmorPiece() , levelAll - levelNew + levelOld, levelAll, itemLevel.getValue1());
 		
 	}
 	
