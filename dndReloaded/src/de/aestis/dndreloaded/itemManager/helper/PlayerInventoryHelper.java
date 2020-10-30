@@ -107,7 +107,7 @@ public class PlayerInventoryHelper {
 	 */
 	public static DoubleWrapper<Integer, Integer> calculateLevelAll(Player p, CustomEnchantment ench) {
 		EnchantmentData enchantmentData = Main.instance.Players.get(p).getEnchantmentData();
-		Map<Enchantment,Integer> enchants = enchantmentData.getEnchantmentLevel();
+		Map<Enchantment,Integer> enchants = enchantmentData.getActiveLevel();
 		
 		int level = 0;
 		int pieces = 0;

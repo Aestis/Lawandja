@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
 import de.aestis.dndreloaded.itemManager.enchants.effects.EnchantmentCore;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 import oxolotel.utils.DoubleWrapper;
 
 public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
@@ -21,6 +22,7 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 	protected ArrayList<String> lore;
 	protected int value;
 	protected int damage;
+	protected ItemSet set;
 	
 	/**
 	 * @param id the id of the item
@@ -28,12 +30,13 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 	 * @param value the value of the item
 	 * @param damage the damage of the item
 	 */
-	public CustomItem(ItemID id, AttackSpeed attackSpeed, ArrayList<String> lore, int value, int damage) {
+	public CustomItem(ItemID id, ItemSet set, AttackSpeed attackSpeed, ArrayList<String> lore, int value, int damage) {
 		this.id = id;
 		this.lore = lore;
 		this.value = value;
 		this.damage = damage;
 		this.attackSpeed = attackSpeed;
+		this.set = set;
 	}
 	
 	/**
@@ -46,6 +49,7 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 		this.lore = (ArrayList<String>) item.lore.clone();
 		this.damage = item.damage;
 		this.value = item.value;
+		this.set = item.set;
 	}
 
 	public static ArrayList<String> extractLore(ItemStack item, ItemID id) {
@@ -106,47 +110,55 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 	}
 	
 	public static SimpleItem createSimpleItem(Material material, ItemGroup group, String name) {
-		return new SimpleItem(new ItemID(group, material, name), AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
+		return new SimpleItem(new ItemID(group, material, name), null, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id, ArrayList<String> lore, HashMap<CustomEnchantment, Integer> customEnchants) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, lore, 0, 0, customEnchants);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, lore, 0, 0, customEnchants);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id, HashMap<CustomEnchantment, Integer> customEnchants) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, customEnchants);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, customEnchants);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id, ArrayList<String> lore) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, lore, 0, 0, null);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, lore, 0, 0, null);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id, int value) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, new ArrayList<String>(), value, 0, null);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, new ArrayList<String>(), value, 0, null);
 	}
 	
 	public static SimpleItem createSimpleItem(ItemID id, ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, Integer> customEnchants) {
-		return new SimpleItem(id, AttackSpeed.NORMAL, lore, value, damage, customEnchants);
+		return new SimpleItem(id, null, AttackSpeed.NORMAL, lore, value, damage, customEnchants);
+	}
+	
+	public static SimpleItem createSimpleItem(ItemID id, ItemSet set, ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, Integer> customEnchants) {
+		return new SimpleItem(id, set, AttackSpeed.NORMAL, lore, value, damage, customEnchants);
 	}
 	
 	public static AbstractItem createAbstractItem(ItemID id) {
-		return new AbstractItem(id, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
+		return new AbstractItem(id, null, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, null);
 	}
 	
 	public static AbstractItem createAbstractItem(ItemID id, ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
-		return new AbstractItem(id, AttackSpeed.NORMAL, lore, value, damage, customEnchants);
+		return new AbstractItem(id, null, AttackSpeed.NORMAL, lore, value, damage, customEnchants);
 	}
 	
 	public static AbstractItem createAbstractItem(ItemID id, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
-		return new AbstractItem(id, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, customEnchants);
+		return new AbstractItem(id, null, AttackSpeed.NORMAL, new ArrayList<String>(), 0, 0, customEnchants);
 	}
 	
 	public static AbstractItem createAbstractItem(ItemID id, ArrayList<String> lore, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
-		return new AbstractItem(id, AttackSpeed.NORMAL, lore, 0, 0, customEnchants);
+		return new AbstractItem(id, null, AttackSpeed.NORMAL, lore, 0, 0, customEnchants);
+	}
+	
+	public static AbstractItem createAbstractItem(ItemID id, ItemSet set,ArrayList<String> lore, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
+		return new AbstractItem(id, set, AttackSpeed.NORMAL, lore, 0, 0, customEnchants);
 	}
 	
 	/**
@@ -360,6 +372,14 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 		this.id = id;
 	}
 	
+	public ItemSet getItemSet() {
+		return set;
+	}
+	
+	public void setItemSet(ItemSet set) {
+		this.set = set;
+	}
+	
 	public AttackSpeed getAttackSpeed() {
 		return attackSpeed;
 	}
@@ -453,5 +473,10 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 	@Override
 	public int compareTo(CustomItem item) {
 		return id.compareTo(item.id);
+	}
+	
+	@Override
+	public String toString() {
+		return "{ID=" + id + ", Value=" + value + ", AttackSpeed=" + attackSpeed + ", Damage=" + damage + ", Lore=" + lore + ", Set=" + set + "}";
 	}
 }

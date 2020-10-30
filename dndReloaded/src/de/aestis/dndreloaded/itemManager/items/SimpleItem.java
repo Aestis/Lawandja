@@ -16,6 +16,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
 import de.aestis.dndreloaded.itemManager.enchants.EnchantmentWrapper;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 import net.md_5.bungee.api.ChatColor;
 import oxolotel.utils.DoubleWrapper;
 
@@ -38,7 +39,7 @@ public class SimpleItem extends CustomItem {
 	}
 	
 	protected SimpleItem(ItemID id, ItemStack item) {
-		super(id, ItemFlag.get(item, ItemFlag.ATTACK_SPEED, AttackSpeed.SUPER_FAST), extractLore(item, id), ItemFlag.get(item, ItemFlag.VALUE, 0), 0);
+		super(id, null, ItemFlag.get(item, ItemFlag.ATTACK_SPEED, AttackSpeed.SUPER_FAST), extractLore(item, id), ItemFlag.get(item, ItemFlag.VALUE, 0), 0);
 		
 		this.item = item;
 		setItemID(id);
@@ -50,8 +51,8 @@ public class SimpleItem extends CustomItem {
 		item.setItemMeta(meta);
 	}
 	
-	protected SimpleItem(ItemID id, AttackSpeed attackSpeed , ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, Integer> customEnchants) {
-		super(id, attackSpeed , lore, value, damage);
+	protected SimpleItem(ItemID id, ItemSet set,AttackSpeed attackSpeed , ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, Integer> customEnchants) {
+		super(id, set, attackSpeed , lore, value, damage);
 		
 		this.item = new ItemStack(id.getMaterial());
 		
@@ -373,5 +374,10 @@ public class SimpleItem extends CustomItem {
 	@Override
 	public CustomItem clone() {
 		return new SimpleItem(this);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString().replace("}", ", customeEnchants=" + customEnchants + "}");
 	}
 }

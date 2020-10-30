@@ -13,6 +13,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import de.aestis.dndreloaded.itemManager.items.CustomItem;
 import de.aestis.dndreloaded.itemManager.items.ItemGroup;
 import de.aestis.dndreloaded.itemManager.items.ItemID;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
+import de.aestis.dndreloaded.itemManager.items.set.creator.EditSetMenu;
 import oxolotel.inventoryMenuManager.menus.Closeable;
 import oxolotel.inventoryMenuManager.menus.CustomMenu;
 import oxolotel.inventoryMenuManager.menus.Subdevideable;
@@ -35,6 +37,10 @@ public class CreateItem extends CustomMenu implements Subdevideable, Closeable{
 	public CustomMenu getSubmenu(int slot) {
 		if (slot == 2) {
 			return new EditItemMenu(CustomItem.createSimpleItem(new ItemID(ItemGroup.UNKNOWN, Material.DIRT, "-")), true);
+		} else if (slot == 4) {
+			ItemSet set = new ItemSet("Default", new ArrayList<>());
+			ItemSet.register(set);
+			return new EditSetMenu(set);
 		} else if (slot == 6) {
 			return new EditItemMenu(CustomItem.createAbstractItem(new ItemID(ItemGroup.UNKNOWN, Material.DIRT, "-")), true);
 		}
@@ -43,7 +49,7 @@ public class CreateItem extends CustomMenu implements Subdevideable, Closeable{
 
 	@Override
 	public boolean hasSubmenu(int slot) {
-		if (slot == 2 || slot == 6) {
+		if (slot == 2 || slot == 4 || slot == 6) {
 			return true;
 		}
 		return false;
@@ -63,6 +69,8 @@ public class CreateItem extends CustomMenu implements Subdevideable, Closeable{
 		meta.setLore(lore);
 		newItem.setItemMeta(meta);
 		returnMap.put(2, new DoubleWrapper<>(newItem, null));
+		
+		returnMap.put(4, createGuiItem(null, Material.NETHER_STAR, "Create Set", "Click to create a new set"));
 		
 		newItem = new ItemStack(Material.EMERALD);
 		newItem.setAmount(64);

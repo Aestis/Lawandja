@@ -49,7 +49,7 @@ public class DefenceCore implements DefenceEffect {
 
 	@Override
 	public EnchantmentGroup getGroup() {
-		return EnchantmentGroup.NORMAL;
+		return EnchantmentGroup.DAMAGE;
 	}
 
 	@Override

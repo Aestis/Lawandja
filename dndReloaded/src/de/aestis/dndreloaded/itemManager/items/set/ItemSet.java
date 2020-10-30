@@ -1,4 +1,4 @@
-package de.aestis.dndreloaded.itemManager.items;
+package de.aestis.dndreloaded.itemManager.items.set;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.bukkit.enchantments.Enchantment;
+
+import de.aestis.dndreloaded.itemManager.items.CustomItem;
+import de.aestis.dndreloaded.itemManager.items.ItemID;
+import de.aestis.dndreloaded.itemManager.items.ItemManager;
 
 public class ItemSet {
 
@@ -28,11 +32,15 @@ public class ItemSet {
 	public static ItemSet register(ItemSet set) {
 		return registeredSets.put(set.name, set);
 	}
+	
+	public static void unregister(ItemSet itemSet) {
+		registeredSets.remove(itemSet.getName());
+	}
 
 	public ItemSet(String name, List<Map<Enchantment,Integer>> enchants, ItemID... members) {
 		this.name = name;
 		this.enchantmentLevel = enchants;
-		this.items = Arrays.asList(members);
+		this.items = new ArrayList<ItemID>(Arrays.asList(members));
 	}
 	
 	public String getName() {
@@ -40,13 +48,27 @@ public class ItemSet {
 	}
 
 	public void addMember(ItemID item) {
+		CustomItem custom = ItemManager.getInstance().getItemByID(item);
+		ItemSet set = custom.getItemSet();
+		if (custom.getItemSet() != null) {
+			set.removeMember(item);
+		}
+		custom.setItemSet(this);
+		ItemManager.getInstance().registerItem(custom);
 		items.add(item);
 	}
 
 	public void removeMember(ItemID item) {
+		CustomItem custom = ItemManager.getInstance().getItemByID(item);
+		custom.setItemSet(null);
+		ItemManager.getInstance().registerItem(custom);
 		items.remove(item);
 	}
 
+	public List<ItemID> getMembers() {
+		return items;
+	}
+	
 	public boolean isMember(CustomItem item) {
 		return isMember(item.getItemID());
 	}
@@ -64,12 +86,14 @@ public class ItemSet {
 	}
 
 	public Map<Enchantment, Integer> getEnchantsOfLevel(int level){
-		Map<Enchantment, Integer> enchants = enchantmentLevel.get(level);
-		if (enchants != null) {
-			return enchants;
-		} else {
-			return new HashMap<>();
+		if (enchantmentLevel.size() > level) {
+			Map<Enchantment, Integer> enchants = enchantmentLevel.get(level);
+			if (enchants != null) {
+				return enchants;
+			}
 		}
+		return new HashMap<>();
+		
 	}
 	
 	@Override
@@ -95,5 +119,10 @@ public class ItemSet {
 		return false;
 	}
 
+	public void setName(String newName) {
+		ItemSet.unregister(this);
+		this.name = newName;
+		ItemSet.register(this);
+	}
 	
 }

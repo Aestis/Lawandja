@@ -3,7 +3,7 @@ package de.aestis.dndreloaded.itemManager.items.dataTypes;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 
-import de.aestis.dndreloaded.itemManager.items.ItemSet;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 
 public class SetDataType implements PersistentDataType<String, ItemSet> { 
 

@@ -8,6 +8,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 import net.md_5.bungee.api.ChatColor;
 import oxolotel.utils.DoubleWrapper;
 
@@ -23,8 +24,8 @@ public class AbstractItem extends CustomItem{
 		}
 	}
 	
-	public AbstractItem(ItemID id, AttackSpeed attackSpeed, ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
-		super(id, attackSpeed, lore, value, damage);
+	public AbstractItem(ItemID id, ItemSet set, AttackSpeed attackSpeed, ArrayList<String> lore, int value, int damage, HashMap<CustomEnchantment, DoubleWrapper<Integer, Integer>> customEnchants) {
+		super(id, set, attackSpeed, lore, value, damage);
 		this.customEnchants = customEnchants;
 	}
 
@@ -40,7 +41,7 @@ public class AbstractItem extends CustomItem{
 				simpleEnchant.put(ench, (int) (Math.random() * (max - min)) + min);
 			}
 		}
-		return new SimpleItem(id, attackSpeed , lore, value, damage, simpleEnchant);
+		return new SimpleItem(id, set,attackSpeed , lore, value, damage, simpleEnchant);
 	}
 	
 	/**
@@ -118,7 +119,7 @@ public class AbstractItem extends CustomItem{
 				simpleEnchant.put(ench, (int) (Math.random() * max - min) + min);
 			}
 		}
-		SimpleItem newItem = new SimpleItem(id, attackSpeed ,lore, value, damage, simpleEnchant);
+		SimpleItem newItem = new SimpleItem(id, set, attackSpeed ,lore, value, damage, simpleEnchant);
 		return newItem.aply(item, applyFix);
 	}
 
@@ -127,5 +128,8 @@ public class AbstractItem extends CustomItem{
 		return new AbstractItem(this);
 	}
 
-	
+	@Override
+	public String toString() {
+		return super.toString().replace("}", ", customeEnchants=" + customEnchants + "}");
+	}
 }

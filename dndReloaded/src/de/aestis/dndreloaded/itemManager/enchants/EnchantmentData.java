@@ -18,15 +18,18 @@ import org.bukkit.plugin.Plugin;
 
 import de.aestis.dndreloaded.itemManager.events.ArmorEquipEvent;
 import de.aestis.dndreloaded.itemManager.events.ArmorType;
+import de.aestis.dndreloaded.itemManager.items.CustomItem;
 import de.aestis.dndreloaded.itemManager.items.ItemFlag;
-import de.aestis.dndreloaded.itemManager.items.ItemSet;
+import de.aestis.dndreloaded.itemManager.items.SimpleItem;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 
 public class EnchantmentData implements Listener{
 
 	private String player;
-	private Map<ArmorType, ItemStack> equippedItems = new HashMap<>();
+	private Map<ArmorType, SimpleItem> equippedItems = new HashMap<>();
 	private Map<ArmorType,Map<Enchantment,Integer>> itemLevel = new HashMap<>();
 	private Map<Enchantment,Integer> setLevel = new HashMap<>();
+	private Map<Enchantment,Integer> equipLevel = new HashMap<>();
 	private Map<Enchantment,Integer> activeLevel = new HashMap<>();
 	private Map<CustomEnchantment,Long> cooldowns = new HashMap<>();
 
@@ -53,11 +56,15 @@ public class EnchantmentData implements Listener{
 	}
 
 	public Map<Enchantment, Integer> getEnchantmentLevel() {
-		return activeLevel;
+		return equipLevel;
 	}
 
-	public Map<ArmorType, ItemStack> getEquippedItems() {
+	public Map<ArmorType, SimpleItem> getEquippedItems() {
 		return equippedItems;
+	}
+	
+	public Map<Enchantment, Integer> getActiveLevel() {
+		return activeLevel;
 	}
 
 	public int getPiecesWithEnchantment(Enchantment e) {
@@ -73,7 +80,7 @@ public class EnchantmentData implements Listener{
 	public void reloadArmor() {
 		equippedItems = new HashMap<>();
 		itemLevel = new HashMap<>();
-		activeLevel = new HashMap<>();
+		equipLevel = new HashMap<>();
 		loadEnchantments(Bukkit.getPlayer(player));
 	}
 
@@ -84,12 +91,12 @@ public class EnchantmentData implements Listener{
 		equippedItems.remove(type);
 		Map<Enchantment,Integer> oldEnchs = itemLevel.get(type);
 		for (Enchantment ench:oldEnchs.keySet()) {
-			Integer oldLevel = activeLevel.get(ench);
+			Integer oldLevel = equipLevel.get(ench);
 			Integer newLevel = oldLevel - oldEnchs.get(ench);
 			if (newLevel < 1) {
-				activeLevel.remove(ench);
+				equipLevel.remove(ench);
 			} else {
-				activeLevel.put(ench, newLevel);
+				equipLevel.put(ench, newLevel);
 			}
 		}
 		itemLevel.remove(type);
@@ -107,17 +114,17 @@ public class EnchantmentData implements Listener{
 			unequipArmor(type);
 		}
 
-		equippedItems.put(type, item);
+		equippedItems.put(type, CustomItem.loadCustomItem(item, false));
 
 		Map<Enchantment, Integer> enchs = item.getEnchantments();
 		Map<Enchantment, Integer> newItemLevel = new HashMap<>();
 		newItemLevel.putAll(enchs);
 		itemLevel.put(type, newItemLevel);
 		for (Enchantment ench:enchs.keySet()) {
-			if (activeLevel.containsKey(ench)) {
-				activeLevel.put(ench, activeLevel.get(ench) + enchs.get(ench));
+			if (equipLevel.containsKey(ench)) {
+				equipLevel.put(ench, equipLevel.get(ench) + enchs.get(ench));
 			} else {
-				activeLevel.put(ench, enchs.get(ench));
+				equipLevel.put(ench, enchs.get(ench));
 			}
 		}
 	}
@@ -129,28 +136,36 @@ public class EnchantmentData implements Listener{
 			}
 			equipArmor(item);
 		}
+		updateActiveEnchantments();
 	}
 
+	private void updateActiveEnchantments() {
+		activeLevel = new HashMap<Enchantment, Integer>(equipLevel);
+		setLevel.forEach((key,value) -> activeLevel.compute(key, (k,v) -> v == null ? value : value + v));
+	}
+	
 	private void updateSetEnchants() {
 		setLevel = new HashMap<Enchantment, Integer>();
-		List<ItemStack> itemsLeft = new ArrayList<>(equippedItems.values());
+		List<SimpleItem> itemsLeft = new ArrayList<>(equippedItems.values());
 		while (!itemsLeft.isEmpty()) {
 
-			ItemStack current = itemsLeft.get(0);
-			if (!isSetItem(current)) {
+			SimpleItem current = itemsLeft.get(0);
+			ItemSet set = current.getItemSet();
+			
+			if (set == null) {
 				itemsLeft.remove(0);
 				continue;
 			}
 			int currentSetAmount = 0;
 
-			ItemSet set = ItemFlag.get(current, ItemFlag.SET, null);
 			for (int i = 1; i < itemsLeft.size(); i++) {
-				if (set.equals(ItemFlag.get(itemsLeft.get(i), ItemFlag.SET, null))) {
+				if (set.equals(itemsLeft.get(i).getItemSet())) {
 					currentSetAmount++;
 					itemsLeft.remove(i);
 					i--;
 				}
 			}
+			itemsLeft.remove(0);
 
 			Map<Enchantment, Integer> enchants = set.getEnchantsOfLevel(currentSetAmount);
 			for (Enchantment ench:enchants.keySet()) {
@@ -164,7 +179,10 @@ public class EnchantmentData implements Listener{
 	}
 
 	private boolean isSetItem(ItemStack item) {
-		return ItemFlag.isSet(item, ItemFlag.SET);
+		if (item == null || item.getAmount() == 0 || item.getType() == Material.AIR) {
+			return false;
+		}
+		return CustomItem.loadCustomItem(item, false).getItemSet() != null;
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
@@ -172,7 +190,6 @@ public class EnchantmentData implements Listener{
 		ItemStack newArmorPiece = evt.getNewArmorPiece();
 		if (newArmorPiece == null || newArmorPiece.getType() == Material.AIR || newArmorPiece.getAmount() == 0) {
 			unequipArmor(evt.getType());
-			return;
 		} else {
 			equipArmor(newArmorPiece);
 		}
@@ -181,5 +198,6 @@ public class EnchantmentData implements Listener{
 		if (isSetItem(newArmorPiece) || isSetItem(oldArmorPiece)) {
 			updateSetEnchants();
 		}
+		updateActiveEnchantments();
 	}
 }

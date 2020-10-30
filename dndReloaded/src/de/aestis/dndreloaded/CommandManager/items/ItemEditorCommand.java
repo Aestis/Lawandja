@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import de.aestis.dndreloaded.itemManager.items.ItemGroup;
 import de.aestis.dndreloaded.itemManager.items.creator.CreateItem;
 import de.aestis.dndreloaded.itemManager.items.creator.ItemListMenu;
+import de.aestis.dndreloaded.itemManager.items.set.creator.SetListMenu;
 import oxolotel.inventoryMenuManager.InventoryMenuManager;
 
 public class ItemEditorCommand implements CommandExecutor{
@@ -20,7 +21,7 @@ public class ItemEditorCommand implements CommandExecutor{
 		if (sender instanceof Player) {
 			p = (Player) sender;
 		}
-		String commandHelp = "/ItemEditor <create | open [group] |>";
+		String commandHelp = "/ItemEditor <create | open [group] | set>";
 		if (args.length < 1) {
 			sender.sendMessage(commandHelp);
 			return true;
@@ -34,6 +35,9 @@ public class ItemEditorCommand implements CommandExecutor{
 			return true;
 		} else if (args[0].equalsIgnoreCase("create")) {
 			InventoryMenuManager.getInstance().openMenu(p, new CreateItem());
+			return true;
+		} else if (args[0].equalsIgnoreCase("set")) {
+			InventoryMenuManager.getInstance().openMenu(p, new SetListMenu());
 			return true;
 		} else {
 			sender.sendMessage(commandHelp);

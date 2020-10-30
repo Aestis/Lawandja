@@ -14,6 +14,7 @@ import de.aestis.dndreloaded.itemManager.items.dataTypes.AttackSpeedDataType;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.BooleanDataType;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.ItemIDDataType;
 import de.aestis.dndreloaded.itemManager.items.dataTypes.SetDataType;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 
 public class ItemFlag <V> {
 

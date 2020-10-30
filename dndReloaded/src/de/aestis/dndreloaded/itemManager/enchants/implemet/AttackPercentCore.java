@@ -49,7 +49,7 @@ public class AttackPercentCore implements AttackEffect {
 
 	@Override
 	public EnchantmentGroup getGroup() {
-		return EnchantmentGroup.NORMAL;
+		return EnchantmentGroup.DAMAGE;
 	}
 
 	@Override

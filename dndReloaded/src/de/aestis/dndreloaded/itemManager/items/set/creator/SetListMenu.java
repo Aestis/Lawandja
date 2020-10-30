@@ -1,4 +1,4 @@
-package de.aestis.dndreloaded.itemManager.items.creator;
+package de.aestis.dndreloaded.itemManager.items.set.creator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import de.aestis.dndreloaded.itemManager.items.ItemSet;
+import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
 import oxolotel.inventoryMenuManager.menus.Closeable;
 import oxolotel.inventoryMenuManager.menus.CustomMenu;
 import oxolotel.inventoryMenuManager.menus.Pageable;
