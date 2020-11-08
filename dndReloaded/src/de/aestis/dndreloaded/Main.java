@@ -33,6 +33,7 @@ import de.aestis.dndreloaded.Chat.Util.ChatMode;
 import de.aestis.dndreloaded.CommandManager.CommandManager;
 import de.aestis.dndreloaded.CommandManager.Auctions.AuctionAdmin;
 import de.aestis.dndreloaded.CommandManager.Auctions.AuctionsDummy;
+import de.aestis.dndreloaded.CommandManager.Quests.ExternalQuestEditor;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestAdmin;
 import de.aestis.dndreloaded.CommandManager.Quests.QuestEditor;
 import de.aestis.dndreloaded.Database.DatabaseHandler;
@@ -65,6 +66,7 @@ public class Main extends JavaPlugin {
 	public static String Version = "0.6.6";
 	
 	public static Main instance;
+	public static boolean isStandaloneProgram = true;
 	
 	private BlockBreak BlockBreakOverride;
 	private DatabaseHandler DatabaseHnd;
@@ -112,12 +114,15 @@ public class Main extends JavaPlugin {
 	 */
 	public void onLoad() {
 		
+		//Enable Spigot Functionallity.
+		isStandaloneProgram = false;
+		
 		/*
 		 * Starting up external Handlers
 		 * or Hooks which are only accessible
 		 * before Plugin enable sequence
 		 */
-
+		
 		getLogger().info("Launching pre-load sequence...");
 		
 		WorldGuard api = WorldGuardHelper.getWorldGuardAPI();
@@ -534,6 +539,7 @@ public class Main extends JavaPlugin {
 		
 		getCommand("questadmin").setExecutor((CommandExecutor) new QuestAdmin());
 		getCommand("questedit").setExecutor((CommandExecutor) new QuestEditor());
+		getCommand("equestedit").setExecutor((CommandExecutor) new ExternalQuestEditor());
 		
 		getCommand("dnd").setExecutor((CommandExecutor) new CommandManager());
 	}

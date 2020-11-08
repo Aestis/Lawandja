@@ -76,7 +76,7 @@ public class CustomScoreboards {
 				}
 			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
 			{
-				String quick = " (" + pd.getQuestActive1().getVariable() + " " + pd.getQuestActive1().getItem().getType().name() + ")";
+				String quick = " (" + pd.getQuestActive1().getVariable() + " " + pd.getQuestActive1().getItem().getItemID().getMaterial() + ")";
 				ScoreboardHelpers.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive1().getTitle() + quick, 11);
 			} else
 			{
@@ -110,7 +110,7 @@ public class CustomScoreboards {
 				}
 			} else if (pd.getQuestActive1().getType().equals(QuestTypes.DELIVER_ITEM))
 			{
-				String quick = " (" + pd.getQuestActive2().getVariable() + " " + pd.getQuestActive2().getItem().getType().name() + ")";
+				String quick = " (" + pd.getQuestActive2().getVariable() + " " + pd.getQuestActive2().getItem().getItemID().getMaterial() + ")";
 				ScoreboardHelpers.addToScoreboard(scb, "Testboard", " ? §7" + pd.getQuestActive2().getTitle() + quick, 9);
 			} else
 			{

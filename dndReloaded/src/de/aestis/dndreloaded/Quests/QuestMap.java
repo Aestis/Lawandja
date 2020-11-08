@@ -201,6 +201,22 @@ public class QuestMap {
     }
     
     /**
+     * Removes the quest given by the Id from this QuestMap
+     * @param questID the id of the quest to remove
+     * @return the quest that was registered under this id or null if none present
+     */
+    public Quest removeQuest(Integer questID) {
+    	for (String uuid:map.keySet()) {
+    		Quest q = map.get(uuid).remove(questID);
+    		if (map.get(uuid).isEmpty()) {
+    			map.remove(uuid);
+    		}
+    		return q;
+    	}
+    	return null;
+    }
+    
+    /**
      * Little helper to specify if a Quest truly is
      * complete or not set up properly (right now)
      * @param quest (Quest to check)

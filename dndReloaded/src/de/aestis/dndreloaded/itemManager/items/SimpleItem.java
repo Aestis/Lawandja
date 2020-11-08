@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
 import de.aestis.dndreloaded.itemManager.enchants.EnchantmentWrapper;
 import de.aestis.dndreloaded.itemManager.items.set.ItemSet;
@@ -60,6 +61,10 @@ public class SimpleItem extends CustomItem {
 			for (CustomEnchantment ench:customEnchants.keySet()) {
 				addEnchantment(ench, customEnchants.get(ench));
 			}
+		}
+		
+		if (Main.isStandaloneProgram) {
+			return;
 		}
 		
 		setValue(value);

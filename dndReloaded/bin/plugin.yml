@@ -31,6 +31,10 @@ commands:
       usage: /questedit <mode>
       aliases: [qedit, lwqe, qe]
       permission: lawc.quests.edit
+   equestedit:
+      description: Used to load or dump files for external Editor.
+      usage: /questedit <dump|load>
+      permission: lawc.quests.edit
       
 
    auctiondummy:

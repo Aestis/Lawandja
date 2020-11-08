@@ -20,6 +20,9 @@ import de.aestis.dndreloaded.Auctions.Util.AuctionCategory;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestTypes;
+import de.aestis.dndreloaded.itemManager.items.CustomItem;
+import de.aestis.dndreloaded.itemManager.items.ItemID;
+import de.aestis.dndreloaded.itemManager.items.SimpleItem;
 
 public class DatabaseHandler {
 	
@@ -363,8 +366,8 @@ public class DatabaseHandler {
 			
 			if (q.getStarterItem() != null)
 			{
-				stmt.setString(15, "minecraft:" + q.getStarterItem().getType().name());
-				stmt.setInt(16, q.getStarterItem().getAmount());
+				stmt.setString(15, q.getStarterItem().getItemID().toString());
+				stmt.setInt(16, q.getStarterItem().getSpigotItem().getAmount());
 			} else
 			{
 				stmt.setString(15, null);
@@ -376,8 +379,8 @@ public class DatabaseHandler {
 			
 			if (q.getItem() != null)
 			{
-				stmt.setString(19, "minecraft:" + q.getItem().getType().name());
-				stmt.setInt(20, q.getItem().getAmount());
+				stmt.setString(19, q.getStarterItem().getItemID().toString());
+				stmt.setInt(20, q.getStarterItem().getSpigotItem().getAmount());
 			} else
 			{
 				stmt.setString(19, null);
@@ -409,8 +412,8 @@ public class DatabaseHandler {
 			
 			if (q.getBonusReward() != null)
 			{
-				stmt.setString(28, q.getBonusReward().getType().name());
-				stmt.setInt(29, q.getBonusReward().getAmount());
+				stmt.setString(28, q.getStarterItem().getItemID().toString());
+				stmt.setInt(29, q.getStarterItem().getSpigotItem().getAmount());
 			} else
 			{
 				stmt.setString(28, null);
@@ -642,6 +645,7 @@ public class DatabaseHandler {
 		while (rs.next())
 		{
 			ItemStack itm = null;
+			CustomItem cItm = null;
 			Quest d = new Quest(rs.getInt("QuestID"));
 			d.setNpcID(rs.getString("NpcID"));
 			d.setRequired(rs.getInt("QuestRequired"));
@@ -669,8 +673,11 @@ public class DatabaseHandler {
 			
 			if (rs.getString("QuestStarterItem") != null)
 			{
-				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestStarterItem")), rs.getInt("QuestStarterItemAmount"));
-				d.setStarterItem(itm);
+				cItm = CustomItem.loadCustomItem(ItemID.valueOf(rs.getString("QuestStarterItem")));
+				if (cItm instanceof SimpleItem) {
+					((SimpleItem) cItm).setAmount(rs.getInt("QuestStarterItemAmount"));
+				}
+				d.setStarterItem(cItm);
 			} else
 			{
 				d.setStarterItem(null);
@@ -681,8 +688,11 @@ public class DatabaseHandler {
 			
 			if (rs.getString("QuestItem") != null)
 			{
-				itm = new ItemStack(Material.matchMaterial(rs.getString("QuestItem")), rs.getInt("QuestItemAmount"));
-				d.setItem(itm);
+				cItm = CustomItem.loadCustomItem(ItemID.valueOf(rs.getString("QuestItem")));
+				if (cItm instanceof SimpleItem) {
+					((SimpleItem) cItm).setAmount(rs.getInt("QuestItemAmount"));
+				}
+				d.setItem(cItm);
 			} else
 			{
 				d.setItem(null);
@@ -713,8 +723,11 @@ public class DatabaseHandler {
 		 	
 		 	if (rs.getString("QuestBonusReward") != null)
 		 	{
-		 		itm = new ItemStack(Material.matchMaterial(rs.getString("QuestBonusReward")), rs.getInt("QuestBonusRewardAmount"));
-		 		d.setBonusReward(itm);
+		 		cItm = CustomItem.loadCustomItem(ItemID.valueOf(rs.getString("QuestBonusReward")));
+				if (cItm instanceof SimpleItem) {
+					((SimpleItem) cItm).setAmount(rs.getInt("QuestBonusRewardAmount"));
+				}
+				d.setBonusReward(cItm);
 		 	} else
 		 	{
 				d.setBonusReward(null);

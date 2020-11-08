@@ -5,6 +5,7 @@ import java.util.List;
 
 import de.aestis.dndreloaded.Main;
 import de.aestis.dndreloaded.Quests.Quest;
+import de.aestis.dndreloaded.itemManager.items.SimpleItem;
 
 public class InfoHandler {
 
@@ -134,7 +135,7 @@ public class InfoHandler {
 			info.add("§eQuest Starter Item: §cFALSE");
 		} else
 		{
-			info.add("§eQuest Starter Item: §2" + quest.getStarterItem().getType().name() + " x" + quest.getStarterItem().getAmount());
+			info.add("§eQuest Starter Item: §2" + quest.getStarterItem().getItemID().getMaterial() + " x" + (quest.getStarterItem() instanceof SimpleItem ? quest.getStarterItem().getSpigotItem().getAmount() : 1));
 		}
 		
 		return info;
