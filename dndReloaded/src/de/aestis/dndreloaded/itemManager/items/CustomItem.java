@@ -87,9 +87,6 @@ public abstract class CustomItem implements Comparable<CustomItem>, Cloneable {
 	 * @return the item with the given ID. If the itemGroup is UNKNOWN it will create a new Simple item from the id. If Group is not UNKNOWN and ItemID is not registered returns null
 	 */
 	public static CustomItem loadCustomItem(ItemID id) {
-		if (id != null && id.getGroup() == ItemGroup.UNKNOWN) {
-			return new SimpleItem(id, null, AttackSpeed.EXTREMLY_FAST, new ArrayList<String>(), 0, 0, new HashMap<>());
-		}
 		return ItemManager.getInstance().getItemByID(id);
 	}
 	

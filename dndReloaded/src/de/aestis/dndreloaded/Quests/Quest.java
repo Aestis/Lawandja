@@ -1,7 +1,5 @@
 package de.aestis.dndreloaded.Quests;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,9 +16,9 @@ public class Quest {
 	private final Integer ID;
 	
 	private String NpcID;
-	private Integer Required;
+	private int Required;
 	private String Faction;
-	private Integer MinReputation;
+	private int MinReputation;
 	private String Title;
 	private ItemStack Icon;
 	private String Description;
@@ -34,19 +32,19 @@ public class Quest {
 	
 	private CustomItem StarterItem;
 	private QuestTypes Type;
-	private Integer Variable;
+	private int Variable;
 	private CustomItem Item;
 	private String Destination;
 	private String Region;
 	private EntityType MobType;
 	private Material BlockMaterial;
-	private Integer RewardXP;
-	private Integer ReputationGain;
+	private int RewardXP;
+	private int ReputationGain;
 	private String BonusRewardType;
 	private CustomItem BonusReward;
 	private String CompletionText;
 	private Boolean DoesFollow;
-	private Integer FollowID;
+	private int FollowID;
 	private String Creator;
 	private Date Created;
 	private Boolean Active;
@@ -105,7 +103,7 @@ public class Quest {
 	public QuestTypes getType() {return this.Type;}
 	public void setType(QuestTypes Type) {this.Type = Type;}
 	
-	public Integer getVariable() {return this.Variable;}
+	public int getVariable() {return this.Variable;}
 	public void setVariable(Integer Variable) {this.Variable = Variable;}
 	
 	public CustomItem getItem() {return this.Item;}
@@ -267,7 +265,7 @@ public class Quest {
 				q.Created = c.getTime();
 				break;
 			case "Active":
-				q.Active = Boolean.valueOf(fields[1]);
+				q.Active = Boolean.valueOf(fields[1].substring(0, fields[1].length()-2));
 				break;
 			default:
 				return null;

@@ -223,26 +223,42 @@ public class QuestMap {
      * @return true/false
      */
     private boolean isCompleteQuest(Quest quest) {
-		
-		if (quest.getNpcID() == null) return false;
+		System.out.println("npc");
+    	if (quest.getNpcID() == null) return false;
+    	System.out.println("faction");
 		if (quest.getFaction() == null) return false;
+		System.out.println("title");
 		if (quest.getTitle() == null) return false;
+		System.out.println("icon");
 		if (quest.getIcon() == null) return false;
+		System.out.println("description");
 		if (quest.getDescription() == null) return false;
+		System.out.println("short");
 		if (quest.getShort() == null) return false;
+		System.out.println("accept");
 		if (quest.getMessageAccept() == null) return false;
+		System.out.println("decline");
 		if (quest.getMessageDecline() == null) return false;
+		System.out.println("fail");
 		if (quest.getMessageFail() == null) return false;
+		System.out.println("success");
 		if (quest.getMessageSuccess() == null) return false;
+		System.out.println("type");
 		if (quest.getType() == null) return false;
+		System.out.println("xp");
 		if (quest.getRewardXP() == null) return false;
+		System.out.println("rep");
 		if (quest.getReputationGain() == null) return false;
+		System.out.println("complete");
 		if (quest.getCompletionText() == null) return false;
+		System.out.println("follow");
 		if (quest.getDoesFollow() == null) return false;
+		System.out.println("creator");
 		if (quest.getCreator() == null) return false;
+		System.out.println("created");
 		if (quest.getCreated() == null) return false;
-		if (quest.getActive() == false ||
-			quest.getActive() == null)
+		System.out.println("active : " + quest.getActive());
+		if (quest.getActive() == null || !quest.getActive())
 		{
 			return false;
 		}

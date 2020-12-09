@@ -34,10 +34,12 @@ public class ItemManager implements Listener{
 		item = CustomItem.createSimpleItem(new ItemID(ItemGroup.MONEY,Material.GOLD_INGOT, "Gold"), 100);
 		registerItem(item);
 		
-		Bukkit.getServer().getPluginManager().registerEvents(new AttackSpeedListener(), plugin);
-		Bukkit.getServer().getPluginManager().registerEvents(new ItemSpawnListener(), plugin);
-		Bukkit.getServer().getPluginManager().registerEvents(new ItemDropListener(), plugin);
-		Bukkit.getServer().getPluginManager().registerEvents(new ItemPickupListener(), plugin);
+		if (!Main.isStandaloneProgram) {
+			Bukkit.getServer().getPluginManager().registerEvents(new AttackSpeedListener(), plugin);
+			Bukkit.getServer().getPluginManager().registerEvents(new ItemSpawnListener(), plugin);
+			Bukkit.getServer().getPluginManager().registerEvents(new ItemDropListener(), plugin);
+			Bukkit.getServer().getPluginManager().registerEvents(new ItemPickupListener(), plugin);
+		}
 	}
 
 	/**

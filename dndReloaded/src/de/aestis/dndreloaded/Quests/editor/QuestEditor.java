@@ -6,7 +6,12 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -22,6 +27,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
+import de.aestis.dndreloaded.Players.Faction;
 import de.aestis.dndreloaded.Quests.Quest;
 import de.aestis.dndreloaded.Quests.QuestTypes;
 import de.aestis.dndreloaded.itemManager.items.CustomItem;
@@ -55,7 +61,7 @@ public class QuestEditor extends JFrame {
 	private JLabel lVariable = new JLabel();
 	private JLabel lQuestitem = new JLabel();
 	private JLabel lQuestitemAmount = new JLabel();
-	private JLabel lDestination = new JLabel();
+	private JLabel lRegion = new JLabel();
 	private JLabel lMobtype = new JLabel();
 	private JLabel lBlockMaterial = new JLabel();
 	private JLabel lRewardXP = new JLabel();
@@ -86,9 +92,8 @@ public class QuestEditor extends JFrame {
 	private DefaultComboBoxModel<String> bonusRewardTypeModel = new DefaultComboBoxModel<String>();
 	private JTextField startItemAmount = new JTextField();
 	private JTextField qVariable = new JTextField();
-	private JTextField qItem = new JTextField();
 	private JTextField qItemAmount = new JTextField();
-	private JTextField qDestination = new JTextField();
+	private JTextField qRegion = new JTextField();
 	private JTextField rewardXp = new JTextField();
 	private JTextField rewardRep = new JTextField();
 	private JTextField bonusReward = new JTextField();
@@ -99,13 +104,24 @@ public class QuestEditor extends JFrame {
 	private DefaultComboBoxModel<String> blockMaterialModel = new DefaultComboBoxModel<String>();
 	private JComboBox<String> qIcon = new JComboBox<String>();
 	private DefaultComboBoxModel<String> qIconModel = new DefaultComboBoxModel<String>();
+	private JLabel lQuestCompleteMessage = new JLabel();
+	private JTextField qComplete = new JTextField();
+	private JLabel lCreator = new JLabel();
+	private JTextField qCreator = new JTextField();
+	private JLabel lLastChanged = new JLabel();
+	private JTextField qLastChanged = new JTextField();
+	private JLabel lIsactive = new JLabel();
+	private JComboBox<String> isActive = new JComboBox<String>();
+	private DefaultComboBoxModel<String> isActiveModel = new DefaultComboBoxModel<String>();
+	private JComboBox<String> questItem = new JComboBox<String>();
+	private DefaultComboBoxModel<String> questItemModel = new DefaultComboBoxModel<String>();
 	private Quest q;
-	
+
 	private QuestEditor() { 
 		super();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		int frameWidth = 1087; 
-		int frameHeight = 897;
+		int frameWidth = 1033; 
+		int frameHeight = 907;
 		setSize(frameWidth, frameHeight);
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (d.width - getSize().width) / 2;
@@ -184,9 +200,9 @@ public class QuestEditor extends JFrame {
 		lQuestitemAmount.setBounds(535, 225, 110, 20);
 		lQuestitemAmount.setText("Questitem Amount");
 		cp.add(lQuestitemAmount);
-		lDestination.setBounds(535, 265, 110, 20);
-		lDestination.setText("Destination");
-		cp.add(lDestination);
+		lRegion.setBounds(535, 265, 110, 20);
+		lRegion.setText("Region");
+		cp.add(lRegion);
 		lMobtype.setBounds(535, 305, 110, 20);
 		lMobtype.setText("Mobtype");
 		cp.add(lMobtype);
@@ -241,19 +257,17 @@ public class QuestEditor extends JFrame {
 		cp.add(startItemAmount);
 		qVariable.setBounds(690, 145, 310, 20);
 		cp.add(qVariable);
-		qItem.setBounds(690, 185, 310, 20);
-		cp.add(qItem);
 		qItemAmount.setBounds(690, 225, 310, 20);
 		cp.add(qItemAmount);
-		qDestination.setBounds(690, 265, 310, 20);
-		cp.add(qDestination);
+		qRegion.setBounds(690, 265, 310, 20);
+		cp.add(qRegion);
 		rewardXp.setBounds(690, 385, 310, 20);
 		cp.add(rewardXp);
 		rewardRep.setBounds(690, 425, 310, 20);
 		cp.add(rewardRep);
 		bonusReward.setBounds(690, 505, 310, 20);
 		cp.add(bonusReward);
-		bCheck.setBounds(690, 745, 310, 25);
+		bCheck.setBounds(690, 785, 310, 25);
 		bCheck.setText("Check");
 		bCheck.setMargin(new Insets(2, 2, 2, 2));
 		bCheck.addActionListener(new ActionListener() { 
@@ -262,10 +276,10 @@ public class QuestEditor extends JFrame {
 			}
 		});
 		cp.add(bCheck);
-		lCheckInputs.setBounds(535, 745, 110, 20);
+		lCheckInputs.setBounds(535, 785, 110, 20);
 		lCheckInputs.setText("Check Inputs");
 		cp.add(lCheckInputs);
-		output.setBounds(535, 785, 465, 20);
+		output.setBounds(535, 825, 465, 20);
 		output.setEditable(false);
 		cp.add(output);
 		blockMaterial.setModel(blockMaterialModel);
@@ -274,22 +288,51 @@ public class QuestEditor extends JFrame {
 		qIcon.setModel(qIconModel);
 		qIcon.setBounds(180, 225, 310, 20);
 		cp.add(qIcon);
+		lQuestCompleteMessage.setBounds(25, 825, 150, 20);
+		lQuestCompleteMessage.setText("Quest Complete Message");
+		cp.add(lQuestCompleteMessage);
+		qComplete.setBounds(180, 825, 310, 20);
+		cp.add(qComplete);
+		lCreator.setBounds(535, 625, 110, 20);
+		lCreator.setText("Creator");
+		cp.add(lCreator);
+		qCreator.setBounds(690, 625, 310, 20);
+		cp.add(qCreator);
+		lLastChanged.setBounds(535, 665, 110, 20);
+		lLastChanged.setText("Last Changed");
+		cp.add(lLastChanged);
+		qLastChanged.setBounds(690, 665, 310, 20);
+		qLastChanged.setEditable(false);
+		cp.add(qLastChanged);
+		lIsactive.setBounds(535, 745, 110, 20);
+		lIsactive.setText("Is active");
+		cp.add(lIsactive);
+		isActive.setModel(isActiveModel);
+		isActive.setBounds(690, 745, 310, 20);
+		cp.add(isActive);
+		questItem.setModel(questItemModel);
+		questItem.setBounds(690, 185, 310, 20);
+		cp.add(questItem);
 
 		addOptionsToDropDown();
 
 		setVisible(true);
 	}
-	
+
 	public QuestEditor(Quest q) {
-		this(q.getNpcID(), q.getTitle(), q.getDescription(), q.getShort(), q.getTarget(), q.getMessageAccept(), q.getMessageDecline(), q.getMessageRunning(), q.getMessageSuccess(), q.getMessageFail(),
-				q.getDestination(), q.getFaction(), q.getIcon() == null ? null : q.getIcon().getType(), q.getStarterItem() == null ? null : q.getStarterItem().getItemID().getMaterial(), q.getBlockMaterial(),
-				q.getMobType(), q.getType(), q.getRequired(), q.getMinReputation(), q.getStarterItem() == null ? 1 : q.getStarterItem().getSpigotItem().getAmount(), q.getReputationGain(), q.getRewardXP());
+		this(q.getNpcID(), q.getTitle(), q.getDescription(), q.getShort(), q.getTarget(), q.getMessageAccept(), q.getMessageDecline(), q.getMessageRunning(), q.getMessageSuccess(), q.getMessageFail(), q.getCompletionText(),
+				q.getDestination(), q.getFaction(), q.getIcon() == null ? null : q.getIcon().getType(), q.getStarterItem() == null ? null : q.getStarterItem().getItemID().getMaterial(), q.getItem() == null ? null : q.getItem().getItemID(), q.getBlockMaterial(),
+						q.getMobType(), q.getType(), q.getRequired(), q.getMinReputation(), q.getStarterItem() == null ? 1 : q.getStarterItem().getSpigotItem().getAmount(), q.getItem() == null ? 1 : q.getItem().getSpigotItem().getAmount(), q.getVariable(), q.getReputationGain(), q.getRewardXP(), q.getCreator(), q.getCreated());
 		this.q = q;
 	}
 
-	private QuestEditor (String npcID, String questTitle, String questDescription, String questShort, String questGoal, String questAccept, String questDecline, String questRunning, String questSuccess, String questFail,
-			String destination, String faction, Material icon, Material starterItem, Material blockMaterial, EntityType mobType, QuestTypes questType, int reqQuest, int minRep, int startItemAmount,	int rewardRep, int rewardXp) {
+	private QuestEditor (String npcID, String questTitle, String questDescription, String questShort, String questGoal, String questAccept, String questDecline, String questRunning, String questSuccess, String questFail, String questComplete,
+			String region, String faction, Material icon, Material starterItem, ItemID farmItem, Material blockMaterial, EntityType mobType, QuestTypes questType, int reqQuest, int minRep, int startItemAmount, int farmMaterialAmount ,int variable ,int rewardRep, int rewardXp, String creator, Date lastChanged) {
 		this();
+		
+		List<Material> material = new ArrayList<>(Arrays.asList(Material.values()));
+		material.sort((a,b) -> a.name().compareTo(b.name()));
+		
 		this.npcId.setText(npcID);
 		this.qTitle.setText(questTitle);
 		this.qDescription.setText(questDescription);
@@ -300,39 +343,50 @@ public class QuestEditor extends JFrame {
 		this.qRunning.setText(questRunning);
 		this.qSuccess.setText(questSuccess);
 		this.qFail.setText(questFail);
-		this.qDestination.setText(destination);
-		
-		//TODO add Faction Enum to traverse over
-		String[] factions = new String[0];
-		for (int i = 0; i< factions.length; i++) {
-			if (factions[i].equals(faction)) {
+		this.qComplete.setText(questComplete);
+		this.qRegion.setText(region);
+
+		for (int i = 0; i< Faction.values().length; i++) {
+			if (Faction.values()[i].name().equals(faction)) {
 				this.faction.setSelectedIndex(i);
 			}
 		}
-		this.qIcon.setSelectedIndex(Arrays.asList(Material.values()).indexOf(icon));
-		this.startItem.setSelectedIndex(Arrays.asList(Material.values()).indexOf(starterItem));
-		this.blockMaterial.setSelectedIndex(Arrays.asList(Material.values()).indexOf(blockMaterial));
-		
+
+		this.qIcon.setSelectedIndex(material.indexOf(icon));
+		this.startItem.setSelectedIndex(material.indexOf(starterItem));
+		this.blockMaterial.setSelectedIndex(material.indexOf(blockMaterial));
+		if (farmItem != null) {
+			this.questItem.setSelectedIndex(material.indexOf(farmItem.getMaterial()));
+		} else {
+			this.questItem.setSelectedIndex(-1);
+		}
+		this.qItemAmount.setText("" + farmMaterialAmount);
+
 		this.mobType.setSelectedIndex(Arrays.asList(EntityType.values()).indexOf(mobType));
 		this.qType.setSelectedIndex(Arrays.asList(QuestTypes.values()).indexOf(questType));
-		
+
 		this.reqiredQuest.setText("" + reqQuest);
 		this.minRep.setText("" + minRep);
 		this.startItemAmount.setText("" + startItemAmount);
+		this.qVariable.setText("" + variable);
 		this.rewardRep.setText("" + rewardRep);
 		this.rewardXp.setText("" + rewardXp);
-		
+
+		this.qCreator.setText(creator);
+		this.qLastChanged.setText(new SimpleDateFormat("YYYY-MM-dd").format(lastChanged));
 	}
-	
+
 	private void addOptionsToDropDown() {
-		//TODO add Faction Enum to traverse over
-		for (String faction:new String[0]) {
-			this.faction.addItem(faction);
+		for (Faction faction:Faction.values()) {
+			this.faction.addItem(faction.name());
 		}
-		for (Material m:Material.values()) {
+		List<Material> material = new ArrayList<>(Arrays.asList(Material.values()));
+		material.sort((a,b) -> a.name().compareTo(b.name()));
+		for (Material m:material) {
 			this.startItem.addItem(m.name());
 			this.qIcon.addItem(m.name());
 			this.blockMaterial.addItem(m.name());
+			this.questItem.addItem(m.name());
 		}
 		for (EntityType t: EntityType.values()) {
 			this.mobType.addItem(t.name());
@@ -344,6 +398,9 @@ public class QuestEditor extends JFrame {
 		for (String reward: new String[0]) {
 			this.bonusRewardType.addItem(reward);
 		}
+
+		this.isActive.addItem("true");
+		this.isActive.addItem("false");
 	}
 
 	public void bCheck_ActionPerformed(ActionEvent evt) {
@@ -357,72 +414,105 @@ public class QuestEditor extends JFrame {
 		String questRunning = qRunning.getText();
 		String questSuccess = qSuccess.getText();
 		String questFail = qFail.getText();
-		String destination = qDestination.getText();
+		String questComplete = qComplete.getText();
+		String region = qRegion.getText();
 		String faction = this.faction.getItemAt(this.faction.getSelectedIndex());
+		String creator = this.qCreator.getText();
+		String starterItemName = "-"; //TODO replace name
+		String farmItemName = "-"; //TODO replace name
+		boolean isAcive = Boolean.valueOf(isActive.getItemAt(isActive.getSelectedIndex()));
+
 		Material icon = null;
 		try {
 			icon = Material.valueOf(this.qIcon.getItemAt(this.qIcon.getSelectedIndex()));
 		} catch (NullPointerException e) {}
+
 		Material starterItem = null;
 		try {
 			starterItem = Material.valueOf(this.startItem.getItemAt(this.startItem.getSelectedIndex()));
 		} catch (NullPointerException e) {}
+
 		Material blockMaterial = null;
 		try {
 			blockMaterial = Material.valueOf(this.blockMaterial.getItemAt(this.blockMaterial.getSelectedIndex()));
 		} catch (NullPointerException e) {}
-		
+
+		Material farmMaterial = null;
+		try {
+			farmMaterial = Material.valueOf(this.questItem.getItemAt(this.questItem.getSelectedIndex()));
+		} catch (NullPointerException e) {}
+
 		EntityType mobType = null;
 		try {
 			mobType = EntityType.valueOf(this.mobType.getItemAt(this.mobType.getSelectedIndex()));
 		} catch (NullPointerException e) {}
-		
+
 		QuestTypes questType = QuestTypes.valueOf(qType.getItemAt(qType.getSelectedIndex()));
-		int reqQuest = 0;
+		int reqQuest = -1;
 		int minRep = 0;
 		int startItemAmount = 0;
 		int rewardRep = 0;
 		int rewardXp = 0;
-		
+		int variable = 0;
+		int farmMaterialAmount = 0;
+
 		try {
-			reqQuest = Integer.valueOf(this.reqiredQuest.getText());
+			if (!this.reqiredQuest.getText().isEmpty()) {
+				reqQuest = Integer.valueOf(this.reqiredQuest.getText());
+			}
 		} catch (Exception e) {
-			output.setText("Required Quest is Empty or not a number!");
+			output.setText("Required Quest is not a number!");
 			return;
 		}
-		
+
 		try {
 			minRep = Integer.valueOf(this.minRep.getText());
 		} catch (Exception e) {
 			output.setText("Min Reputation is Empty or not a number!");
 			return;
 		}
-		
+
 		try {
 			startItemAmount = Integer.valueOf(this.startItemAmount.getText());
 		} catch (Exception e) {
 			output.setText("StarterItem Amount is Empty or not a number!");
 			return;
 		}
-		
+
 		try {
 			rewardRep = Integer.valueOf(this.rewardRep.getText());
 		} catch (Exception e) {
 			output.setText("Reward Reputation is Empty or not a number!");
 			return;
 		}
-		
+
 		try {
 			rewardXp = Integer.valueOf(this.rewardXp.getText());
 		} catch (Exception e) {
 			output.setText("Reward XP is Empty or not a number!");
 			return;
 		}
-		
+
+		try {
+			variable = Integer.valueOf(this.qVariable.getText());
+		} catch (Exception e) {
+			output.setText("Variable is Empty or not a number!");
+			return;
+		}
+
+		try {
+			farmMaterialAmount = Integer.valueOf(this.qItemAmount.getText());
+		} catch (Exception e) {
+			output.setText("Variable is Empty or not a number!");
+			return;
+		}
+
 		output.setText("Updated Quest Successfully!");
-		
+
 		q.setNpcID(npcID);
-		q.setRequired(reqQuest);
+		if (reqQuest != -1) {
+			q.setRequired(reqQuest);
+		}
 		q.setFaction(faction);
 		q.setMinReputation(minRep);
 		q.setTitle(questTitle);
@@ -436,27 +526,31 @@ public class QuestEditor extends JFrame {
 		q.setMessageFail(questFail);
 		q.setMessageSuccess(questSuccess);
 		if (starterItem != null) {
-			q.setStarterItem(CustomItem.loadCustomItem(new ItemID(ItemGroup.UNKNOWN, starterItem, "-")));
+			q.setStarterItem(CustomItem.createSimpleItem(starterItem, ItemGroup.QUEST, starterItemName));
 			if (q.getStarterItem() instanceof SimpleItem) {
 				((SimpleItem) q.getStarterItem()).setAmount(startItemAmount);
 			}
 		}
 		q.setType(questType);
-//		q.setVariable();
-//		q.setItem();
-		q.setDestination(destination);
-//		q.setRegion();
+		q.setVariable(variable);
+		if (farmMaterial != null) {
+			q.setItem(CustomItem.createSimpleItem(farmMaterial, ItemGroup.QUEST, farmItemName));
+			if (q.getItem() instanceof SimpleItem) {
+				((SimpleItem) q.getStarterItem()).setAmount(farmMaterialAmount);
+			}
+		}
+		q.setRegion(region);
 		q.setMobType(mobType);
 		q.setBlockMaterial(blockMaterial);
 		q.setRewardXP(rewardXp);
 		q.setReputationGain(rewardRep);
-//		q.setBonusRewardType();
-//		q.setBonusReward();
-//		q.setCompletionText();
-//		q.setDoesFollow();
-//		q.setFollowID();
-//		q.setCreator();
-//		q.setCreated();
-//		q.setActive();
+		//		q.setBonusRewardType();
+		//		q.setBonusReward();
+		q.setCompletionText(questComplete);
+		//		q.setDoesFollow();
+		//		q.setFollowID();
+		q.setCreator(creator);
+		q.setCreated(Calendar.getInstance().getTime());
+		q.setActive(isAcive);
 	}
 }

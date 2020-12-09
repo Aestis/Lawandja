@@ -1,6 +1,7 @@
 package de.aestis.dndreloaded.itemManager.enchants.effects;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -8,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import de.aestis.dndreloaded.Main;
+import de.aestis.dndreloaded.Helpers.maths.RomanNumerals;
 import de.aestis.dndreloaded.Players.PlayerData;
 import de.aestis.dndreloaded.itemManager.enchants.CustomEnchantment;
 import de.aestis.dndreloaded.itemManager.enchants.EnchantmentData;
@@ -48,6 +50,14 @@ public interface EnchantmentCore extends Listener, Comparable<EnchantmentCore>{
 	 * @return the Group this Enchantment belongs to
 	 */
 	EnchantmentGroup getGroup();
+	
+	/**
+	 * @param level the level to convert to Roman literals
+	 * @return the Roman literals
+	 */
+	default String toRoman(int level) {
+		return RomanNumerals.toRoman(level);
+	}
 	
 	/**
 	 * @return true if the enchantment is currently in cooldown for the specified player

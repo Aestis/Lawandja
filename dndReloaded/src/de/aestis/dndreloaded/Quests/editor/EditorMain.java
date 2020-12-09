@@ -6,18 +6,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Stream;
-
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,13 +19,14 @@ import de.aestis.dndreloaded.Quests.Quest;
 @SuppressWarnings("serial")
 public class EditorMain extends JFrame {
 	private JButton bLoadQuests = new JButton();
-	private JComboBox<String> jComboBox1 = new JComboBox<String>();
-	private DefaultComboBoxModel<String> jComboBox1Model = new DefaultComboBoxModel<String>();
+	private JComboBox<String> selectQuest = new JComboBox<String>();
+	private DefaultComboBoxModel<String> selectQuestModel = new DefaultComboBoxModel<String>();
 	private JButton bEdit = new JButton();
 	private JButton bUpdateFiles = new JButton();
-	
+	private JButton bCreateQuest = new JButton();
+
 	private List<Quest> quests;
-	
+
 	public EditorMain() { 
 		super();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -51,7 +42,7 @@ public class EditorMain extends JFrame {
 		Container cp = getContentPane();
 		cp.setLayout(null);
 
-		bLoadQuests.setBounds(16, 16, 115, 25);
+		bLoadQuests.setBounds(16, 16, 115, 28);
 		bLoadQuests.setText("Load Quests");
 		bLoadQuests.setMargin(new Insets(2, 2, 2, 2));
 		bLoadQuests.addActionListener(new ActionListener() { 
@@ -60,10 +51,10 @@ public class EditorMain extends JFrame {
 			}
 		});
 		cp.add(bLoadQuests);
-		jComboBox1.setModel(jComboBox1Model);
-		jComboBox1.setBounds(152, 16, 318, 28);
-		cp.add(jComboBox1);
-		bEdit.setBounds(152, 56, 75, 25);
+		selectQuest.setModel(selectQuestModel);
+		selectQuest.setBounds(152, 16, 318, 28);
+		cp.add(selectQuest);
+		bEdit.setBounds(152, 56, 75, 28);
 		bEdit.setText("Edit");
 		bEdit.setMargin(new Insets(2, 2, 2, 2));
 		bEdit.addActionListener(new ActionListener() { 
@@ -72,7 +63,7 @@ public class EditorMain extends JFrame {
 			}
 		});
 		cp.add(bEdit);
-		bUpdateFiles.setBounds(16, 112, 115, 25);
+		bUpdateFiles.setBounds(16, 112, 115, 28);
 		bUpdateFiles.setText("Update Files");
 		bUpdateFiles.setMargin(new Insets(2, 2, 2, 2));
 		bUpdateFiles.addActionListener(new ActionListener() { 
@@ -81,6 +72,15 @@ public class EditorMain extends JFrame {
 			}
 		});
 		cp.add(bUpdateFiles);
+		bCreateQuest.setBounds(152, 112, 318, 28);
+		bCreateQuest.setText("Create Quest");
+		bCreateQuest.setMargin(new Insets(2, 2, 2, 2));
+		bCreateQuest.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent evt) { 
+				bCreateQuest_ActionPerformed(evt);
+			}
+		});
+		cp.add(bCreateQuest);
 
 		setVisible(true);
 	}
@@ -94,20 +94,20 @@ public class EditorMain extends JFrame {
 			if (q == null) {
 				continue;
 			}
-			jComboBox1.addItem(q.getTitle());
+			selectQuest.addItem(q.getTitle());
 		}
 	}
-	
+
 	public void bLoadQuests_ActionPerformed(ActionEvent evt) {
-		jComboBox1.removeAll();
-		
+		selectQuest.removeAll();
+
 		quests = QuestParser.loadQuests();
-		
+
 		updateDropDown();
 	}
 
 	public void bEdit_ActionPerformed(ActionEvent evt) {
-		new QuestEditor(quests.get(jComboBox1.getSelectedIndex()));
+		new QuestEditor(quests.get(selectQuest.getSelectedIndex()));
 	}
 
 	public void bUpdateFiles_ActionPerformed(ActionEvent evt) {		
@@ -118,5 +118,20 @@ public class EditorMain extends JFrame {
 			}
 			QuestParser.storeQuest(q);
 		}
+	}
+
+	public void bCreateQuest_ActionPerformed(ActionEvent evt) {
+		if (quests == null) {
+			selectQuest.removeAll();
+
+			quests = QuestParser.loadQuests();
+		}
+		
+		Quest q = new Quest(-1);
+		q.setTitle("New Quest");
+		q.setCreated(Calendar.getInstance().getTime());
+		quests.add(q);
+		
+		updateDropDown();
 	}
 }

@@ -349,7 +349,7 @@ public class DatabaseHandler {
 			
 			if (q.getIcon() != null)
 			{
-				stmt.setString(6, "minecraft:" + q.getIcon().getType().name());
+				stmt.setString(6, q.getIcon().getType().name());
 			} else
 			{
 				stmt.setString(6, null);

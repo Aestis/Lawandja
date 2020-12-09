@@ -21,7 +21,6 @@ import de.aestis.dndreloaded.Quests.Quest;
 public class QuestParser {
 
 	private QuestParser() {
-
 	}
 	
 	public static String compressAndReturnB64(String text) throws IOException {

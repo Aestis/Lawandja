@@ -99,7 +99,6 @@ public class QuestHandler {
         						continue;
         					}
         					
-        					System.out.println(quests);
         					for (Quest q : quests)
         					{
         						/*
